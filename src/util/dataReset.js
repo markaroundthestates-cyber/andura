@@ -163,7 +163,7 @@ export async function clearUserCloudData() {
   try {
     const fb = await import('../firebase.js');
     const { SYNCED_WV2_NODES } = await import('../react/lib/storeSync');
-    const res = await fb.clearFirebaseKeys([...fb.SYNC_KEYS, ...SYNCED_WV2_NODES]);
+    const res = await fb.clearFirebaseKeys([...fb.SYNC_KEYS, ...fb.LWW_CLOUD_NODES, ...SYNCED_WV2_NODES]);
     // A swallowed per-key DELETE failure (fbRemove returns false on a 500/timeout
     // without throwing) must NOT pass as success — that is the silent cloud
     // resurrection. Report partial failure so the caller surfaces the retry toast.

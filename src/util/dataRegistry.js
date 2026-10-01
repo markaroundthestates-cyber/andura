@@ -19,6 +19,10 @@ export const USER_DATA_KEYS = [
   'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament',
   'dp-fatigue-curve', 'dp-learned-volume', 'dp-pivot-prompts',
   'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'dp-gyms', 'tombstones',
+  // sync-lww-ts — per-key write stamps for the last-write-wins settings
+  // (firebase.js LWW_SYNC_KEYS); a stale stamp after a start-over would block the
+  // fresh cloud value, so it resets with the data it stamps.
+  'sync-lww-ts',
   // debug-recent — synced cross-device RECENT debug slice (2026-07-06). Mirrors the
   // per-UID behavior archive's last-3-session slice; synced → must reset locally on a
   // start-over so a prior user's debug events don't bleed on a shared device.

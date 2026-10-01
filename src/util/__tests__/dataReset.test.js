@@ -145,6 +145,7 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
     vi.doMock('../../firebase.js', () => ({
       clearFirebaseKeys,
       SYNC_KEYS: ['logs', 'weights'],
+      LWW_CLOUD_NODES: ['_lww_phase-override'],
     }));
     // Re-import so the mocked firebase.js is the one the function resolves.
     vi.resetModules();
@@ -162,6 +163,8 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
       expect(passedKeys).toContain(node);
     }
     expect(passedKeys).toContain('wv2/aerobic');
+    // ...and the last-write-wins mirrors, else a stale setting resurrects.
+    expect(passedKeys).toContain('_lww_phase-override');
 
     vi.doUnmock('../../firebase.js');
     vi.resetModules();
@@ -172,7 +175,7 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
   // gone while the remote survives, so the next boot resurrects the data.
   it('returns {ok:true} when the cloud delete succeeds', async () => {
     const clearFirebaseKeys = vi.fn(async () => {});
-    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'] }));
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'], LWW_CLOUD_NODES: [] }));
     vi.resetModules();
     const { clearUserCloudData: freshClear } = await import('../dataReset.js');
 
@@ -186,7 +189,7 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
   it('returns {ok:false, error} when the cloud delete rejects (never throws)', async () => {
     const boom = new Error('network down');
     const clearFirebaseKeys = vi.fn(async () => { throw boom; });
-    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'] }));
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'], LWW_CLOUD_NODES: [] }));
     vi.resetModules();
     const { clearUserCloudData: freshClear } = await import('../dataReset.js');
 
@@ -203,7 +206,7 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
   // A real 500/timeout must surface {ok:false} so the cloud copy doesn't resurrect.
   it('returns {ok:false} when some keys fail to delete (succeeded < total, no throw)', async () => {
     const clearFirebaseKeys = vi.fn(async (keys) => ({ succeeded: 1, total: keys.length }));
-    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs', 'weights'] }));
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs', 'weights'], LWW_CLOUD_NODES: [] }));
     vi.resetModules();
     const { clearUserCloudData: freshClear } = await import('../dataReset.js');
 

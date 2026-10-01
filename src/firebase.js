@@ -27,6 +27,7 @@ import { toast } from './ui/toast.js';
 import { logger } from './util/logger.js';
 import { COACH_RELEVANT_KEYS, DYNAMIC_KEY_PREFIXES } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
+import { isEnabled } from './util/featureFlags.js';
 
 // §4-H4 audit fix — env-var (build-time inject via deploy.yml secret
 // VITE_FIREBASE_RTDB_URL). The prior hardcoded PROD RTDB fallback was REMOVED:
@@ -117,7 +118,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-nof1-preference', // dp-nof1-preference — F6c #34 per-exercise N-of-1 kept preference (object engineName -> {arm:'volume'|'intensity',decidedTs,slopeA,slopeB}); name-keyed object-merge sync (in NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
   'dp-nof1-experiment', // dp-nof1-experiment — F6c #34 single in-flight experiment state (fixed-key object {exercise,arm,sessionsInArm,slopeArmA}); only ONE lift at a time; exercise NAME lives in a VALUE field (Firebase-safe — NOT a key), so NOT name-keyed; per-UID, durable
   'dp-behavior-tuning', // dp-behavior-tuning — #59 D107 behavioral-log distillation → per-user tuning (fixed-key object {ratingRirOffset:{offset,n}}); a GLOBAL per-user rating-semantic offset (NOT name-keyed, like dp-pivot-prompts); object-merge sync, learned per-UID, durable across sessions/devices
-  'dp-gyms', // dp-gyms — per-gym curated equipment stacks ("Sala mea" 2026-07-02): {activeId, gyms:{[id]:{id,name,stacks:{[equipType]:number[]}}}}. Fixed-shape object; ids are gym_<ts> + equipType tokens (Firebase-safe → NOT name-keyed, like dp-pivot-prompts); object-merge sync, per-UID, durable across sessions/devices
+  'dp-gyms', // dp-gyms — per-gym curated equipment stacks ("Sala mea" 2026-07-02): {activeId, gyms:{[id]:{id,name,stacks:{[equipType]:number[]}}}}. Fixed-shape object; ids are gym_<ts> + equipType tokens (Firebase-safe → NOT name-keyed, like dp-pivot-prompts) — except the nested per-gym `equivalents` name map, encoded by _toCloud; last-write-wins sync (LWW_SYNC_KEYS), per-UID, durable across sessions/devices
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node
@@ -205,6 +206,64 @@ export function decodeNameKeyed(arr) {
       : rest; // object value — keep as-is (round-trips exactly)
   }
   return out;
+}
+
+// dp-gyms nests a FREE-TEXT-name-keyed map inside each gym: `equivalents`
+// ({fromEngineName -> toEngineName}, Sala mea 2026-08-28). The editor offers every
+// logged name as a source, so picking "Pec Deck / Cable Fly" put a `/` in a nested
+// key → the same whole-PATCH 400 that NAME_KEYED_SYNC_KEYS closed for the learned
+// maps. Only that nested map is encoded (array of {name, ...}); stacks/ids stay as-is.
+// A pre-fix client reading the array shape sees no equivalences (gymEquivalentFor
+// rejects arrays) — degraded, never broken.
+/** @param {unknown} state @param {(m: unknown) => unknown} fn */
+function _mapGymEquivalents(state, fn) {
+  const s = /** @type {any} */ (state);
+  if (!s || typeof s !== 'object' || Array.isArray(s) || !s.gyms || typeof s.gyms !== 'object') return state;
+  /** @type {Record<string, unknown>} */
+  const gyms = {};
+  for (const [id, g] of Object.entries(s.gyms)) {
+    gyms[id] = (g && typeof g === 'object' && /** @type {any} */ (g).equivalents)
+      ? { .../** @type {any} */ (g), equivalents: fn(/** @type {any} */ (g).equivalents) }
+      : g;
+  }
+  return { ...s, gyms };
+}
+
+/** Cloud shape of one SYNC_KEY value (forbidden-char-safe). @param {string} k @param {unknown} v */
+function _toCloud(k, v) {
+  if (NAME_KEYED_SYNC_KEYS.includes(k)) return encodeNameKeyed(v);
+  if (k === 'dp-gyms') return _mapGymEquivalents(v, encodeNameKeyed);
+  return v;
+}
+
+/** Inverse of _toCloud (tolerant of the legacy plain shape). @param {string} k @param {unknown} v */
+function _fromCloud(k, v) {
+  if (NAME_KEYED_SYNC_KEYS.includes(k)) return decodeNameKeyed(v);
+  if (k === 'dp-gyms') return _mapGymEquivalents(v, decodeNameKeyed);
+  return v;
+}
+
+// ── Last-write-wins for SETTING-shaped keys (founder 2026-10-01) ─────────────
+// The pull merge is "local wins": a scalar keeps the local value, an object is a
+// SHALLOW Object.assign(remote, local). Right for date-keyed history, wrong for a
+// setting: a change made on one device never reaches another that already holds a
+// value. Founder live: he switched to CUT on 07-12 (phase-log carries the entry)
+// but phase-override stayed STRENGTH for 2.5 months, so every "on a cut" branch
+// read STRENGTH; and dp-gyms' whole `gyms` subtree is ONE top-level key, so an
+// edit from elsewhere (same-machine equivalences) could never land.
+// These keys carry a per-key write time: DB.set stamps it, the push mirrors
+// {ts, v} under `_lww_<node>` (a node pre-LWW clients never write, so their stale
+// push of the plain key cannot erase a newer edit), and the pull adopts a STRICTLY
+// newer remote stamp. No stamp anywhere → the legacy merge, byte-identical.
+export const LWW_SYNC_KEYS = Object.freeze(['phase-override', 'phase-change-date', 'dp-gyms']);
+export const LWW_CLOUD_NODES = Object.freeze(LWW_SYNC_KEYS.map((k) => `_lww_${fbKey(k)}`));
+const LWW_TS_KEY = 'sync-lww-ts';
+let _lwwPulling = false;
+
+/** @returns {Record<string, number>} */
+function _lwwStamps() {
+  const s = DB.get(LWW_TS_KEY);
+  return (s && typeof s === 'object' && !Array.isArray(s)) ? { .../** @type {Record<string, number>} */ (s) } : {};
 }
 
 // Collapse a pr-records array to ONE entry per exercise (`ex`), keeping the higher
@@ -441,8 +500,15 @@ export async function syncToFirebase() {
       // e.g. the dot in `sf.userConfig`). localStorage key `k` stays as-is.
       // Name-keyed maps (dp-cal-factors) → array-of-entries so a free-text
       // exercise name with a forbidden char (`/` etc.) can't 400 the whole PATCH.
-      payload[fbKey(k)] = NAME_KEYED_SYNC_KEYS.includes(k) ? encodeNameKeyed(v) : v;
+      payload[fbKey(k)] = _toCloud(k, v);
     });
+    if (isEnabled('sync_lww_settings_v1')) {
+      const stamps = _lwwStamps();
+      LWW_SYNC_KEYS.forEach((k, i) => {
+        if (typeof stamps[k] !== 'number') return;
+        payload[LWW_CLOUD_NODES[i]] = { ts: stamps[k], v: _toCloud(k, DB.get(k) ?? null) };
+      });
+    }
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
     payload['_schemaVersion'] = USER_DOC_SCHEMA_VERSION;
@@ -492,17 +558,29 @@ export async function syncFromFirebase() {
       logger.warn(`[Firebase] remote doc schema v${remoteSchema} newer than client v${USER_DOC_SCHEMA_VERSION} — merging known keys only`);
     }
 
-    suppressInvalidations(() => {
+    const lwwOn = isEnabled('sync_lww_settings_v1');
+    const stamps = lwwOn ? _lwwStamps() : {};
+    _lwwPulling = true;
+    try { suppressInvalidations(() => {
       SYNC_KEYS.forEach(k => {
         // Read from the sanitized remote node name (matches the push side), but
         // keep writing to the original localStorage key `k`.
         const rk = fbKey(k);
+        const li = lwwOn ? LWW_SYNC_KEYS.indexOf(k) : -1;
+        if (li >= 0) {
+          const r = remote[LWW_CLOUD_NODES[li]];
+          if (r && typeof r === 'object' && typeof r.ts === 'number' && r.ts > (stamps[k] || 0)) {
+            DB.set(k, r.v == null ? null : _fromCloud(k, r.v));
+            stamps[k] = r.ts;
+            return;
+          }
+        }
         if (remote[rk] == null) return;
         // Name-keyed maps were pushed as an array-of-{name,...} (forbidden-char
         // safe). Decode back to the exact {name -> value} object BEFORE the merge
         // so DP reads its per-exercise factor by the original name. Tolerant of the
         // legacy plain-object shape (decode returns non-arrays untouched).
-        const remoteVal = NAME_KEYED_SYNC_KEYS.includes(k) ? decodeNameKeyed(remote[rk]) : remote[rk];
+        const remoteVal = _fromCloud(k, remote[rk]);
         const local = DB.get(k);
         if (local == null) { DB.set(k, remoteVal); return; }
 
@@ -532,7 +610,8 @@ export async function syncFromFirebase() {
           // Scalar — keep local
         }
       });
-    });
+    }); } finally { _lwwPulling = false; }
+    if (lwwOn) _origSet(LWW_TS_KEY, stamps);
 
     // Apply tombstone filter (Memory Paradox hotfix — Batch B Task 2).
     // Done AFTER merge so any deleted entries can't reappear from remote.
@@ -595,6 +674,9 @@ export function suppressInvalidations(fn) {
 
 DB.set = function(key, val) {
   _origSet(key, val);
+  if (!_lwwPulling && LWW_SYNC_KEYS.includes(key) && isEnabled('sync_lww_settings_v1')) {
+    _origSet(LWW_TS_KEY, { ..._lwwStamps(), [key]: Date.now() });
+  }
   if (COACH_RELEVANT_KEYS.includes(key)) {
     scheduleInvalidation();
   }

@@ -2341,6 +2341,15 @@ export const FLAGS = Object.freeze({
   // any engine/compose path (debug archive is DARK) → fp byte-identical without pinning.
   // Kill-switch: flip default false → snapshot returns local IDB only (legacy).
   debug_recent_sync_v1: { rollout: 1, default: true },
+  // sync_lww_settings_v1 (2026-10-01) — the pull merge keeps the LOCAL value of a
+  // scalar and shallow-merges objects local-wins, so a setting changed on one device
+  // never reached another: founder switched to CUT on 07-12 (phase-log has it) yet
+  // phase-override read STRENGTH on his phone for 2.5 months. ON: phase-override,
+  // phase-change-date and dp-gyms carry a per-key write stamp mirrored under
+  // `_lww_<node>`; a strictly newer remote stamp wins. Sync layer only (no engine
+  // path) → fp byte-identical without pinning. Kill-switch: flip default false →
+  // legacy local-wins merge (stamps are ignored, mirror nodes stop being written).
+  sync_lww_settings_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
