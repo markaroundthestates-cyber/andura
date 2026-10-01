@@ -121,6 +121,9 @@
     "zustand": "^5.0.14"
   },
   "overrides": {
-    "protobufjs": "^7.6.4"
+    "protobufjs": "^7.6.4",
+    "@firebase/firestore": {
+      "@grpc/grpc-js": "^1.14.5"
+    }
   }
 }
