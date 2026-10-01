@@ -44,9 +44,19 @@ function canonicalIdentity(ex) {
  */
 export function loggedRowMatcher(ex) {
   const canon = canonicalIdentity(ex);
-  return canon
-    ? (l) => l.ex === ex || canonicalIdentity(l.ex) === canon
-    : (l) => l.ex === ex;
+  if (!canon) return (l) => l.ex === ex;
+  // Perf (measured 2026-10-01): canonicalIdentity re-reads the dev flags + the gym
+  // profile from localStorage on every call, and getLogs ran it for EVERY row (786
+  // on the founder's account, ~35 getLogs per recommendation → ~200 ms). The log
+  // carries ~100 distinct names: resolve each once per matcher. Same answers.
+  /** @type {Map<string|undefined, string|null>} */
+  const memo = new Map();
+  return (l) => {
+    if (l.ex === ex) return true;
+    let c = memo.get(l.ex);
+    if (c === undefined) { c = canonicalIdentity(l.ex); memo.set(l.ex, c); }
+    return c === canon;
+  };
 }
 
 /**
