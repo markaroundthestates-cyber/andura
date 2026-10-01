@@ -123,9 +123,27 @@ describe('getSimilarityMultiplier — #11 unit-aware equipment conversion', () =
   });
 
   it('no pattern accessor → the #12 layer is inert (back-compat, equipment layer still applies)', () => {
-    // Without getPattern, leg-press→squat falls to the equipment layer (machine_barbell
-    // 1.00) — the OLD behavior, proving the new layer is purely additive + opt-in.
-    expect(getSimilarityMultiplier('Barbell Back Squat (High Bar)', 'Leg Press', eqType)).toBe(1.0);
+    // Without getPattern, leg-press→squat falls to the equipment layer — barbell FROM a
+    // (non-Smith) machine = the free-bar discount 0.75 (dp_machine_to_free_discount_v1),
+    // proving the #12 layer is purely additive + opt-in.
+    expect(getSimilarityMultiplier('Barbell Back Squat (High Bar)', 'Leg Press', eqType)).toBe(0.75);
+  });
+
+  // Founder replay 2026-10-01: barbell OHP INIT 67.5x6 off his Machine Shoulder Press 60x10
+  // at 1.00. dp_machine_to_free_discount_v1: a FREE bar seeded from a selectorized machine.
+  it('barbell FROM a selectorized machine is discounted (×0.75), the reverse is not', () => {
+    expect(getSimilarityMultiplier('OHP', 'Machine Shoulder Press', eqType)).toBe(0.75);
+    expect(getSimilarityMultiplier('Machine Shoulder Press', 'OHP', eqType)).toBe(1.0);
+  });
+
+  it('barbell FROM a Smith (filed machine, same bar path) keeps 1.00', () => {
+    expect(getSimilarityMultiplier('Flat Barbell Bench', 'Smith Machine Bench', eqType)).toBe(1.0);
+  });
+
+  it('flag OFF → machine_barbell 1.00 (legacy)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_machine_to_free_discount_v1: false }));
+    expect(getSimilarityMultiplier('OHP', 'Machine Shoulder Press', eqType)).toBe(1.0);
+    localStorage.removeItem('_devFlags');
   });
 });
 

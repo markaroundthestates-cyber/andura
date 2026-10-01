@@ -553,6 +553,11 @@ export const FLAGS = Object.freeze({
   // Machine Pullover at 70 kg (Pull day) off his BB Shrug. ON: generic-to-generic only
   // between variants of one movement (same last name word). Pinned OFF in fp + sims.
   dp_transfer_generic_wall_v1: { rollout: 1, default: true },
+  // dp_machine_to_free_discount_v1 (2026-10-01) — a free barbell seeded from a machine
+  // e1RM at 1.00 (founder replay: barbell OHP INIT 67.5x6 off his Machine Shoulder Press
+  // 60x10). ON: barbell<-machine transfers at 0.75 (exerciseMapping); the reverse keeps
+  // 1.00; squat<-leg press keeps its own 0.45. Pinned OFF in fp + calibration sims.
+  dp_machine_to_free_discount_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

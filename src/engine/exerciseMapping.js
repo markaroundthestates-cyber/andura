@@ -13,6 +13,7 @@
 // the documented FALLBACK layer only.
 
 import { getChainSubstitutes } from './exerciseChains.js';
+import { isEnabled } from '../util/featureFlags.js';
 
 export const SIMILAR_EXERCISES = {
   'Cable Curl': ['Bayesian Curl', 'Incline DB Curl'],
@@ -147,6 +148,16 @@ const EQUIP_CONVERSION = /** @type {Record<string, number>} */ ({
   'machine_barbell': 1.00, 'barbell_machine': 1.00,
   'machine_dumbbell': 2.50, 'dumbbell_machine': 0.40,
 });
+// A FREE barbell seeded FROM a machine (founder replay 2026-10-01: barbell OHP INIT
+// 67.5x6 off his Machine Shoulder Press 60x10 at 'barbell_machine' 1.00). The
+// machine supplies the stabilization — and often the leverage — the bar does not; a
+// strict barbell press runs ~0.65-0.80 of a selectorized one. The squat/leg-press
+// case already has its own pattern ratio (0.45, wins above this layer).
+// dp_machine_to_free_discount_v1: 0.75 in THIS direction only (a machine seeded from
+// a barbell keeps 1.00 — the safe direction, it under-shoots if anything). A Smith
+// source keeps 1.00 too: it is filed 'machine' but runs the same bar path (the small
+// free-bar gap stays unmodelled by design — see the Smith note in the tests).
+const MACHINE_TO_BARBELL = 0.75;
 
 // ══ #12 MOVEMENT-PATTERN CONVERSION LAYER (intra-family, mechanics-aware) ══════
 // The MOVEMENT_FAMILY gate (dp/ceiling.js) lets a same-family lift seed across
@@ -217,6 +228,7 @@ export function getSimilarityMultiplier(target, source, getEquipType, getPattern
     const tEq = getEquipType(target);
     const sEq = getEquipType(source);
     if (tEq && sEq && tEq !== sEq) {
+      if (tEq === 'barbell' && sEq === 'machine' && !/smith/i.test(source) && isEnabled('dp_machine_to_free_discount_v1')) return MACHINE_TO_BARBELL;
       const conv = EQUIP_CONVERSION[tEq + '_' + sEq];
       if (typeof conv === 'number') return conv;
     }
