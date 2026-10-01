@@ -198,7 +198,12 @@ describe('REPLAY-REAL — founder real history vs live engine', () => {
 
           if (prior > 0) {
             // WARM — tight band around demonstrated working weight.
-            const lo = WARM_LO * actual;
+            // dp_logged_rungs_snap_v1 (2026-10-01): a rec that IS a load he logged before
+            // this date is his own working load, never a crater (a crater is a cold-start /
+            // under-floor value, not a real set of his) — 06-10 Cable Fly rec 12.5 (his
+            // 06-01 12.5x10) vs a same-day jump to 23 (0.543×).
+            const priorLoads = new Set(DP.getLogs(ex, 50).map((l) => Number(l.w)));
+            const lo = priorLoads.has(kg) ? Math.min(WARM_LO * actual, kg) : WARM_LO * actual;
             const hi = WARM_HI * actual;
             expect(
               kg,

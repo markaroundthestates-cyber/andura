@@ -5,6 +5,7 @@ import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
 import { activeGymStepsForType, activeGym } from '../engine/dp/gymProfile.js';
+import { loggedRungs } from '../engine/dp/loggedRungs.js';
 
 /** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
  *  lighter, safer load). PURE. `ladder` must be a non-empty ascending number[]. */
@@ -496,6 +497,36 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
     const gymSteps = activeGymStepsForType(getEquipmentType(exerciseName));
     if (gymSteps) return _nearestRung(weight, gymSteps);
   }
+  // LOGGED RUNGS (dp_logged_rungs_snap_v1, dp/loggedRungs.js) — no measured stack for
+  // this station → the loads the user actually sets on it are the ground truth. Inside
+  // his used range: nearest logged rung. Above it: the legacy chain decides, but may
+  // never clamp BELOW a load he uses (a stale ladder top). Below it / < 2 distinct
+  // loads / flag off → legacy chain (byte-identical).
+  const rungs = isEnabled('dp_logged_rungs_snap_v1') && Number.isFinite(weight) && typeof exerciseName === 'string'
+    ? loggedRungs(exerciseName) : null;
+  const legacy = _legacyRound(weight, exerciseName, ctx, generic);
+  if (rungs) {
+    const lo = rungs[0];
+    const hi = rungs[rungs.length - 1];
+    // Above his range: the chain may go up, never clamp below a load he uses.
+    if (weight > hi) return Math.max(legacy, hi);
+    // Half the finest gap under his lightest still belongs to it (72.5 → his 75).
+    let minGap = Infinity;
+    for (let i = 1; i < rungs.length; i++) minGap = Math.min(minGap, rungs[i] - rungs[i - 1]);
+    if (weight >= lo - (Number.isFinite(minGap) ? minGap / 2 : 0)) {
+      // His logged load wins when it is (almost) as close as the chain's guess — 61 → 60,
+      // 42 → 41, a stale 42-clamp → 50 — but a real intermediate step the chain offers
+      // (75 between his 60 and 80) is kept, so an ease or a climb never bounces back.
+      const near = _nearestRung(weight, rungs);
+      const tol = Math.min(2.5, 0.04 * weight);
+      return Math.abs(near - weight) <= Math.abs(legacy - weight) + tol ? near : legacy;
+    }
+  }
+  return legacy;
+}
+
+/** The pre-logged-rungs snap chain (learned ladder → founder seed → template/generic). */
+function _legacyRound(weight, exerciseName, ctx, generic) {
   // Back-compat: no ctx → legacy generic rounding. PRECEDENCE (founder goal 2026-06-12):
   //   per-user learned ladder (_snapToUserLadder, dp_user_ladder_v1) — THIS user's real
   //   rungs from THEIR own logs — wins, THEN the founder's measured stack as a cold-start

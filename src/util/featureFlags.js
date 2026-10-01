@@ -562,8 +562,8 @@ export const FLAGS = Object.freeze({
   // stacks) sat inside the override noise band, so the next set re-showed 73; and a
   // potrivit set short on reps held the rep target (or trimmed one). ON: one step
   // down anchors the next set at his load (reps follow if he fell short), and a short
-  // potrivit set sets the next target to the reps he did. In-session only (not on
-  // the compose path) → no sim pin needed.
+  // potrivit set sets the next target to the reps he did. In-session only; pinned
+  // OFF in fp + the calibration sim (it exercises checkInSessionAdjust).
   dp_insession_follow_user_v1: { rollout: 1, default: true },
   // dp_cap_yields_to_repeated_v1 (2026-10-01, founder "reverse pec deck cu o greutate
   // pe care nu o are aparatul, si mereu o schimb") — MAX_KG Reverse Pec Deck = 45 (set
@@ -572,6 +572,14 @@ export const FLAGS = Object.freeze({
   // load above the defensive cap logged in >= 2 sessions (>= 6 reps, not greu) moves
   // the cap to that load + 25% (still a fat-finger bound). Pinned OFF in fp + sims.
   dp_cap_yields_to_repeated_v1: { rollout: 1, default: true },
+  // dp_logged_rungs_snap_v1 (2026-10-01, founder "nu e un caz izolat" + "61 in loc de
+  // 60 cat bag eu") — stations with no measured stack in the active gym snapped via
+  // priors from the OLD gym or guesses that never healed (RPD clamped to 42, Converging
+  // Chest Press capped at 50, Seated Calf all → 70). ON: inside the range he has used,
+  // the nearest load he actually logged (modal-step gaps filled); above it the chain
+  // may never clamp below a load he uses. engine/dp/loggedRungs.js. Pinned OFF in fp +
+  // calibration sims.
+  dp_logged_rungs_snap_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what
