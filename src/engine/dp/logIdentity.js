@@ -10,6 +10,7 @@
 // resolveExerciseName maps name/id/alias/old-name → the current canonical name.
 
 import { resolveExerciseName } from '../exerciseLibrary.js';
+import { resolveCanonical } from '../exerciseAliases.js';
 import { gymEquivalentFor } from './gymProfile.js';
 import { isEnabled } from '../../util/featureFlags.js';
 
@@ -29,7 +30,14 @@ import { isEnabled } from '../../util/featureFlags.js';
 function canonicalIdentity(ex) {
   if (typeof ex !== 'string' || !ex) return null;
   const viaGym = isEnabled('dp_gym_exercise_equivalents_v1') ? gymEquivalentFor(ex) : null;
-  const base = viaGym ?? ex;
+  // dp_read_alias_fold_v1 (founder live 2026-10-01: Hammer Curl rec 8 kg for three
+  // months while he curled 12-14) — the log WRITE folds explicit aliases
+  // (workoutStore.logic: dp_library_chains_v1 → resolveCanonical, 'Hammer Curl' →
+  // 'DB Hammer Curl Standing') but this READ seam resolved through the library only,
+  // where both are real entries — so the planner's 'Hammer Curl' read two June sets
+  // and never saw a single new one. Read with the same fold the write used.
+  const base = isEnabled('dp_read_alias_fold_v1') && isEnabled('dp_library_chains_v1')
+    ? resolveCanonical(viaGym ?? ex) : (viaGym ?? ex);
   return resolveExerciseName(base) ?? (viaGym ? viaGym : null);
 }
 

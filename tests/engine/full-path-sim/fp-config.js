@@ -65,7 +65,7 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_energy_perf_aware_v1', 'dp_gym_exercise_equivalents_v1',
   'dp_recent_capacity_floor_v1', 'dp_reps_follow_recent_v1', 'dp_cap_yields_to_repeated_v1',
   'dp_logged_rungs_snap_v1', 'dp_cut_restraint_energy_v1', 'dp_corridor_forta_only_v1',
-  'dp_insession_follow_user_v1',
+  'dp_insession_follow_user_v1', 'dp_read_alias_fold_v1',
   // THE FLIP 2026-06-08 — per-exercise intelligence brain + path-A dependents now
   // default ON. Added here so the A/B OFF baseline forces them explicitly OFF
   // (the harness can no longer rely on "no _devFlags ⇒ off"), keeping hashOff a

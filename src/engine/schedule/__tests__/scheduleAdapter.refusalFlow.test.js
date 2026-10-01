@@ -81,8 +81,10 @@ describe('scheduleAdapter — toggleSkippedExercise', () => {
   it('removes exercise when present', () => {
     setSkippedExercises(['Cable Curl', 'Lateral Raises']);
     const result = toggleSkippedExercise('Cable Curl');
-    expect(result).toEqual(['Lateral Raises']);
-    expect(getSkippedExercises()).toEqual(['Lateral Raises']);
+    // dp_read_alias_fold_v1 (2026-10-01): reads fold explicit aliases the way log
+    // writes do, so the legacy 'Lateral Raises' surfaces as its canonical engine key.
+    expect(result).toEqual(['DB Lateral Raise']);
+    expect(getSkippedExercises()).toEqual(['DB Lateral Raise']);
   });
 
   it('idempotent — add then remove yields original empty', () => {

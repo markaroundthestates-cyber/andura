@@ -88,3 +88,27 @@ describe('canonicalizeNameKeyedMap', () => {
     expect(canonicalizeNameKeyedMap([1, 2], (a, _b) => a)).toEqual({});
   });
 });
+
+// dp_read_alias_fold_v1 (founder live 2026-10-01): his Hammer Curl sets are WRITTEN as
+// 'DB Hammer Curl Standing' (dp_library_chains_v1 explicit fold) while the planner
+// prescribes and READS 'Hammer Curl' — both real library entries → rec 8 kg for three
+// months while he curled 12-14. Reads must fold the way writes do.
+describe('read-side alias fold parity (Hammer Curl)', () => {
+  const withFlags = (o, fn) => {
+    localStorage.setItem('_devFlags', JSON.stringify(o));
+    try { fn(); } finally { localStorage.removeItem('_devFlags'); }
+  };
+  it('ON: querying the planner name sees the rows written under the folded name', () => {
+    withFlags({ dp_read_alias_fold_v1: true, dp_library_chains_v1: true }, () => {
+      const m = loggedRowMatcher('Hammer Curl');
+      expect(m({ ex: 'DB Hammer Curl Standing' })).toBe(true);
+      expect(m({ ex: 'Hammer Curl' })).toBe(true);
+      expect(m({ ex: 'Incline DB Curl' })).toBe(false);
+    });
+  });
+  it('OFF (the bug): the planner name misses every row written under the folded name', () => {
+    withFlags({ dp_read_alias_fold_v1: false, dp_library_chains_v1: true }, () => {
+      expect(loggedRowMatcher('Hammer Curl')({ ex: 'DB Hammer Curl Standing' })).toBe(false);
+    });
+  });
+});

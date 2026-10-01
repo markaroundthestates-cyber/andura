@@ -556,6 +556,13 @@ export const FLAGS = Object.freeze({
   // got its load cut to the corridor ceiling. ON: forta also needs an absolute low
   // band (goal low <= 6). Pinned OFF in fp + calibration sims.
   dp_corridor_forta_only_v1: { rollout: 1, default: true },
+  // dp_read_alias_fold_v1 (2026-10-01, founder Hammer Curl rec 8 kg for three months
+  // while he curled 12-14) — the log write folds explicit aliases ('Hammer Curl' →
+  // 'DB Hammer Curl Standing', dp_library_chains_v1) but the read seam resolved via
+  // the library only, where both names are real entries: the planner's 'Hammer Curl'
+  // saw two June sets forever. ON: reads fold the same way writes do (also Preacher
+  // Curl, Rear Delt Fly, Pec Deck...). Pinned OFF in fp + calibration sims.
+  dp_read_alias_fold_v1: { rollout: 1, default: true },
   // dp_insession_follow_user_v1 (2026-10-01, founder "nu tine cont de cat bag eu" +
   // "daca prima oara fac 10... dupa pot 10 ori mai putine, nu tot 10 mereu") — two
   // in-session deafnesses: a ONE-pin-lower entry (73 → 66, 59 → 52 — ~10% on his
