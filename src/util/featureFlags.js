@@ -524,6 +524,45 @@ export const FLAGS = Object.freeze({
   // the fallback when a caller cannot quote a slot. Swap paths are user actions,
   // not on the fp/calibration compose path → no sim pin needed.
   dp_swap_keeps_prescribed_sets_v1: { rollout: 1, default: true },
+  // dp_recent_capacity_floor_v1 (2026-10-01, founder "nu tine cont de cat pot si
+  // imi face push in deficit... am dat jos de la 148 la 88 kg") — every
+  // "demonstrated" read (PR-floor, catch-up target, Kalman demo, calibration clamp)
+  // took the best set of the last 12 logs. Cable Row 73x10 — one set, rated greu,
+  // 08-29 — held the rec at 73 for a month while he logged 66x7-9 each session
+  // ("catch up to your real level", four sessions running). ON: the window is the
+  // last 3 distinct sessions — the floor is still the best of three (one weak day
+  // never drags it), but a capacity that genuinely dropped is followed. Fewer than
+  // 2 sessions → legacy window. Pinned OFF in fp + calibration sims.
+  dp_recent_capacity_floor_v1: { rollout: 1, default: true },
+  // dp_reps_follow_recent_v1 (2026-10-01, founder "daca prima oara fac 10 repetari
+  // dupa clar pot ori 10 ori mai putine... nu tot 10 mereu") — the plan's rep target
+  // came from the goal band (clamped UP to 10) and the load from the demo floor, so
+  // neither looked at what he had actually done: 73x10 on a lift he logged 66x7-9.
+  // ON: the final gate in getSmartRecommendation caps reps at what his recent
+  // sessions support + 1, and backs the load off when even that sits under the
+  // exercise's range floor. Only lowers. Pinned OFF in fp + calibration sims.
+  dp_reps_follow_recent_v1: { rollout: 1, default: true },
+  // dp_cut_restraint_energy_v1 (2026-10-01, founder "imi face push in deficit... am
+  // dat jos de la 148 la 88 kg, clar nu am forta") — the "no new max under-fuelled"
+  // restraint keyed only on the raw phase-override token; his reads STRENGTH (stale
+  // multi-device write — phase-log says CUT since 07-12) while the resolved energy
+  // phase is CUT. ON: the resolved energy phase counts as the deliberate deficit too.
+  // Pinned OFF in fp + calibration sims.
+  dp_cut_restraint_energy_v1: { rollout: 1, default: true },
+  // dp_corridor_forta_only_v1 (2026-10-01, founder Reverse Pec Deck 41 vs his 50; Leg
+  // Extension 64 vs 75-84; Leg Curl 82 vs 100-118) — the forta-goal %1RM corridor
+  // opened whenever the goal band's low end sat under the LIFT's floor, so every
+  // isolation lift with a 12-rep floor read a hypertrophy [10,15] goal as "forta" and
+  // got its load cut to the corridor ceiling. ON: forta also needs an absolute low
+  // band (goal low <= 6). Pinned OFF in fp + calibration sims.
+  dp_corridor_forta_only_v1: { rollout: 1, default: true },
+  // dp_cap_yields_to_repeated_v1 (2026-10-01, founder "reverse pec deck cu o greutate
+  // pe care nu o are aparatul, si mereu o schimb") — MAX_KG Reverse Pec Deck = 45 (set
+  // at the old gym) while he works at 50 every session → "over the cap" every time:
+  // kg clamped to 45 (snapped 42), reps to the range top (42x20 vs his 50x10). ON: a
+  // load above the defensive cap logged in >= 2 sessions (>= 6 reps, not greu) moves
+  // the cap to that load + 25% (still a fat-finger bound). Pinned OFF in fp + sims.
+  dp_cap_yields_to_repeated_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what

@@ -70,7 +70,9 @@ describe('deficitClimbFactor — pure throttle factor', () => {
 });
 
 describe('dp_deficit_throttle_v1 OFF — byte-identical regardless of energyPhase', () => {
-  beforeEach(() => { localStorage.clear(); seedEasyRun(); });
+  // Explicit OFF: the flag defaults ON now, and dp_cut_restraint_energy_v1 reads the
+  // threaded energy phase only behind it — so this block must really turn it off.
+  beforeEach(() => { localStorage.clear(); seedEasyRun(); localStorage.setItem('_devFlags', JSON.stringify({ dp_deficit_throttle_v1: false })); });
 
   it('a CUT phase token with the flag OFF gives the SAME climb as no phase', () => {
     const noPhase = smart(null);

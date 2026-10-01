@@ -211,10 +211,37 @@ describe('T2.2 — dp.js recommend properties (DB-seeded)', () => {
     expect(rec.kg).toBeGreaterThanOrEqual(getPrevWeight(demoW, ex) - 0.001);
   });
 
-  it('PR-floor: rec never below demonstrated working load over random ratings', () => {
+  // dp_recent_capacity_floor_v1 (founder 2026-10-01): the floor is the best of the
+  // last 3 sessions. The invariant's intent — a TIMID rating never ratchets the rec
+  // down — holds for any run length when the greu sets HIT the reps (property below);
+  // a FAILING streak (greu + short) is only floored while the proven set is still
+  // inside the window. Three straight sessions failing the load is real lost capacity
+  // (his Cable Row: floored at a month-old 73 while he logged 66x7-9) — followed.
+  it('PR-floor: a timid greu-at-target run never drops the rec below the proven load', () => {
     fc.assert(
       fc.property(
         fc.array(fc.constantFrom(RPE.usor, RPE.potrivit, RPE.greu), { minLength: 1, maxLength: 6 }),
+        (ratings) => {
+          reset();
+          const ex = 'Leg Press';
+          const demoW = listFor(ex)[6];
+          const rows = [{ w: demoW, reps: 10, rpe: RPE.potrivit, ts: NOW - (ratings.length + 1) * 86400000 }];
+          ratings.forEach((rpe, i) => rows.push({ w: demoW, reps: 10, rpe, ts: NOW - (ratings.length - i) * 86400000 }));
+          rows.reverse();
+          DB.set('logs', rows.map((r) => ({ ex, w: r.w, reps: String(r.reps), rpe: r.rpe, ts: r.ts })));
+          const rec = DP.getSmartRecommendation(ex, null, null, NOW, null, []);
+          if (rec.status !== 'RETURN DELOAD') {
+            expect(rec.kg).toBeGreaterThanOrEqual(roundToEquipmentWeight(demoW, ex) - 0.001);
+          }
+        },
+      ),
+    );
+  });
+
+  it('PR-floor: rec never below demonstrated working load over random ratings (proven set within the 3-session window)', () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.constantFrom(RPE.usor, RPE.potrivit, RPE.greu), { minLength: 1, maxLength: 2 }),
         (ratings) => {
           reset();
           const ex = 'Leg Press';

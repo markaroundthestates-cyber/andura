@@ -8,6 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   lookbackBaseE1RM,
+  recentSessionRows,
   LOOKBACK_SESSIONS,
   MIN_SESSIONS,
   MAX_LIFT_ABOVE_LATEST,
@@ -119,5 +120,35 @@ describe('lookbackBaseE1RM — cold / thin history is inert', () => {
     );
     const base = lookbackBaseE1RM(rows, e1);
     expect(base).toBeCloseTo(e1(60, 10, 7.5), 5);
+  });
+});
+
+// dp_recent_capacity_floor_v1 — the window every "demonstrated" read uses.
+
+describe('recentSessionRows — demonstrated means demonstrated RECENTLY', () => {
+  const day = (d, h = 9) => Date.UTC(2026, 8, d, h);
+  // Founder's real Cable Row, newest-first: the 73x10 lives on 08-29 (> 3 sessions back).
+  const rows = [
+    { w: 59, reps: 8, ts: day(29, 10) }, { w: 66, reps: 7, ts: day(29) },
+    { w: 66, reps: 8, ts: day(22, 10) }, { w: 66, reps: 8, ts: day(22) },
+    { w: 59, reps: 10, ts: day(16, 10) }, { w: 66, reps: 7, ts: day(16) },
+    { w: 66, reps: 9, ts: day(10, 10) }, { w: 73, reps: 7, ts: day(10) },
+    { w: 73, reps: 10, ts: Date.UTC(2026, 7, 29, 9) },
+  ];
+
+  it('keeps only the last 3 distinct sessions (the month-old 73s drop out)', () => {
+    const out = recentSessionRows(rows);
+    expect(out).toHaveLength(6);
+    expect(Math.max(...out.map((r) => r.w))).toBe(66);
+  });
+
+  it('fewer than MIN_SESSIONS distinct days → rows unchanged (same reference)', () => {
+    const one = rows.slice(0, 2);
+    expect(recentSessionRows(one)).toBe(one);
+  });
+
+  it('defensive: empty / non-array input returned as-is', () => {
+    expect(recentSessionRows([])).toEqual([]);
+    expect(recentSessionRows(null)).toBe(null);
   });
 });

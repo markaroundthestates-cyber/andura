@@ -31,7 +31,8 @@ import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { manualOverrideTarget } from './dp/inSessionOverride.js';
-import { lookbackBaseE1RM } from './dp/baseLookback.js';
+import { lookbackBaseE1RM, recentSessionRows } from './dp/baseLookback.js';
+import { followRecentReps, yieldedCap, lastSessionTop } from './dp/followRecent.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { behaviorRirOffset } from './dp/behaviorDistill.js';
@@ -552,13 +553,17 @@ export const DP = {
   // OWN, never on a grind they could not complete. Returns 0 when no qualifying
   // log exists (cold start) → the floor/catch-up are inert and the path is
   // byte-unchanged for a brand-new user.
+  // dp_recent_capacity_floor_v1: "demonstrated" = the last 3 sessions (dp/baseLookback.recentSessionRows).
+  /** @param {string} ex */
+  _demoLogs(ex) { const l = this.getLogs(ex, 12); return isEnabled('dp_recent_capacity_floor_v1') ? recentSessionRows(l) : l; },
+
   /**
    * @param {string} ex
    * @param {number} rMin minimum reps of the active (phase-aware) range
    * @returns {number} heaviest completed-at-target-reps load, or 0
    */
   _demonstratedWorkingW(ex, rMin) {
-    const logs = this.getLogs(ex, 12); // newest-first
+    const logs = this._demoLogs(ex); // newest-first
     let best = 0;
     const floorReps = rMin ?? 8;
     for (const l of logs) {
@@ -744,7 +749,9 @@ export const DP = {
   // (byte-identical legacy).
   /** @param {string} ex @param {number} repTarget @returns {number|null} */
   _effectiveMaxKg(ex, repTarget) {
-    const flat = resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') });
+    const flat0 = resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') });
+    // dp_cap_yields_to_repeated_v1: a stale cap yields to a load repeated in >= 2 sessions (dp/followRecent.js).
+    const flat = flat0 > 0 && isEnabled('dp_cap_yields_to_repeated_v1') ? yieldedCap(flat0, this.getLogs(ex, 24)) : flat0;
     if (!isEnabled('dp_ceiling_v1')) return flat;
     const ceil = this.roundToStep(this._ceilingKg(ex, repTarget), ex);
     if (!(ceil > 0)) return flat; // ceiling unavailable → keep the flat cap
@@ -783,7 +790,7 @@ export const DP = {
   /** raw=skip the realistic ceiling + bridge sub-target reps (calibration guard: the user's own logs bound it, not a population ceiling). @param {string} ex @param {number} rMin @param {boolean} [raw] @returns {number} */
   _demonstratedWorkingW_e1rm(ex, rMin, raw) {
     if (!this._e1rmEligible(ex)) return 0;
-    const logs = this.getLogs(ex, 12);
+    const logs = this._demoLogs(ex);
     const floorReps = rMin ?? 8;
     let bestE1RM = 0;
     for (const l of logs) {
@@ -857,9 +864,15 @@ export const DP = {
   // saw-tooth the raw max-of-logs can introduce). Returns 0 when no usable
   // observation (cold start / e1RM-ineligible) → caller falls to the raw path.
   /** @param {string} ex @param {number} rMin @param {boolean} [persist] @returns {number} */
-  _kalmanDemoW(ex, rMin, persist = false) {
+  _kalmanDemoW(ex, rMin, persist = false, windowLogs = null) {
     if (!this._e1rmEligible(ex)) return 0;
-    const logs = this.getLogs(ex, 12); // newest-first
+    // dp_recent_capacity_floor_v1: the shorter window may only LOWER the posterior floor, never raise it.
+    if (windowLogs === null && isEnabled('dp_recent_capacity_floor_v1')) {
+      const all = this.getLogs(ex, 12); const recent = recentSessionRows(all);
+      const full = this._kalmanDemoW(ex, rMin, persist, all);
+      return recent === all ? full : Math.min(full, this._kalmanDemoW(ex, rMin, false, recent));
+    }
+    const logs = windowLogs ?? this.getLogs(ex, 12); // newest-first
     const floorReps = rMin ?? 8;
     // PURE recompute over the available log window (oldest-first), seeded fresh each
     // time → deterministic and side-effect-free for the READ path. `recommend()`
@@ -1484,7 +1497,9 @@ export const DP = {
       // demonstrated capacity — lifts a sub-proof base UP to proven load, never compounds
       // past it (Daniel bug 2026-06-10: 96×10/e1RM128 → 110×15). Raw e1RM + raw-W fallback (@821).
       const rt = result.repsTarget ?? 12;
-      const demoCap = this._demonstratedWorkingW_e1rm(ex, rt, true) || this._demonstratedWorkingW(ex, rt);
+      // dp_cut_restraint_energy_v1: on a deliberate cut, calibration lifts no higher than his last session's top load.
+      const cutProvenOnly = isEnabled('dp_cut_restraint_energy_v1') && (DB.get('phase-override') === 'CUT' || (isEnabled('dp_deficit_throttle_v1') && energyPhase === 'CUT'));
+      const demoCap = cutProvenOnly ? lastSessionTop(this.getLogs(ex, 12)) : this._demonstratedWorkingW_e1rm(ex, rt, true) || this._demonstratedWorkingW(ex, rt);
       const calibrated = clampCalibratedToDemonstrated(this._applyCalibration(ex, result.kg), result.kg, demoCap);
       result.kg = this.roundToStep(calibrated, ex);
 
@@ -1513,7 +1528,7 @@ export const DP = {
       if (this._returnDeload(ex, nowMs) == null) {
         const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
         const rng = this.getPhaseAwareRepRange(ex, this._isInCut(phaseOverride, nowMs));
-        const floorW = isEnabled('dp_demo_floor_subfloor_v1') ? Math.max(this._demoWorkingW(ex, rng[0] ?? 8), subfloorDemoW(this.getLogs(ex, 12), rng[0] ?? 8, (w, r, p) => this.e1RMForSet(w, r, p, ex), (e, rt) => this._kgFromE1RM(e, rt))) : this._demoWorkingW(ex, rng[0] ?? 8);
+        const floorW = cutProvenOnly ? this._demonstratedWorkingW(ex, rng[0] ?? 8) : isEnabled('dp_demo_floor_subfloor_v1') ? Math.max(this._demoWorkingW(ex, rng[0] ?? 8), subfloorDemoW(this._demoLogs(ex), rng[0] ?? 8, (w, r, p) => this.e1RMForSet(w, r, p, ex), (e, rt) => this._kgFromE1RM(e, rt))) : this._demoWorkingW(ex, rng[0] ?? 8);
         if (floorW > 0 && Number.isFinite(result.kg) && result.kg > 0 && result.kg < floorW) {
           // CLUSTER 2 (cycle-10, dp/ladderReconcile.js): roundToStep(floorW) is NEAREST,
           // so on a COARSE barbell PLATE grid it snaps the proven load DOWN below the floor
@@ -1839,7 +1854,8 @@ export const DP = {
     // the estimate implies. Once at/above the PROVEN demonstrated load in an explicit
     // cut, do not chase a new PR (under-fuelled). OFF, proven == demoW → byte-safe.
     const provenCutW = this._demonstratedWorkingW(ex, rMin);
-    const explicitCutAtCap = phaseOverride === 'CUT'
+    // dp_cut_restraint_energy_v1: the resolved energy phase counts as a deliberate deficit too.
+    const explicitCutAtCap = (phaseOverride === 'CUT' || (isEnabled('dp_cut_restraint_energy_v1') && deficitThrottleOn && energyPhase === 'CUT'))
       && ((demoW > 0 && lastW >= demoW) || (provenCutW > 0 && lastW >= provenCutW));
     const easyRun = consecutiveEasyHit >= 2 && lastRPE <= 6.5 && !explicitCutAtCap;
     // A belowDemo that is only an e1RM ESTIMATE above the proven load (no heavier RAW
@@ -2800,7 +2816,7 @@ export const DP = {
       // GOAL low win so forta actually prescribes ~3-6. Gated + scoped to compounds →
       // hipertrofie/other goals (low >= default) and isolation lifts are untouched.
       const goalLo = Math.min(repMod[0], repMod[1]);
-      goalIsForta = goalLo < rMinSafe;
+      goalIsForta = goalLo < rMinSafe && (!isEnabled('dp_corridor_forta_only_v1') || goalLo <= 6); // forta = a LOW absolute band
       const strengthUnclamp =
         isEnabled('dp_strength_goal_v1')
         && goalLo < rMinSafe
@@ -2820,8 +2836,10 @@ export const DP = {
         }
       }
     }
+    // dp_reps_follow_recent_v1: reps capped at what he did at this load recently + 1 (dp/followRecent.js).
+    if (isEnabled('dp_reps_follow_recent_v1') && !result.returnDeload && Number.isFinite(result.repsTarget) && result.kg > 0) result.repsTarget = followRecentReps(this.getLogs(ex, 12), result.kg, result.repsTarget);
     const rTarget = result.repsTarget || rMinSafe;
-    const rLow = Math.max(rMinSafe, rTarget - 1);
+    const rLow = Math.max(isEnabled('dp_reps_follow_recent_v1') && rTarget < rMinSafe ? rTarget : rMinSafe, rTarget - 1);
     const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);
 
     // ── #4/I MPC — model-predictive progression (dp_mpc_v1, default OFF) ─────────

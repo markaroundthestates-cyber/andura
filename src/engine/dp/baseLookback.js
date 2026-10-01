@@ -134,3 +134,33 @@ export function lookbackBaseE1RM(rows, e1RMForSet) {
   // the latest session itself (max with latestMedian) — the day's level is the floor.
   return Math.max(latestMedian, Math.min(maxMedian, ceiling));
 }
+
+/**
+ * dp_recent_capacity_floor_v1 (founder live 2026-10-01) — the rows of the most
+ * recent LOOKBACK_SESSIONS distinct calendar days, so "demonstrated" capacity
+ * means demonstrated RECENTLY. The demo floor took the best set of the last 12
+ * logs: Cable Row 73x10 (one set, rated greu, 08-29) floored the rec at 73 for a
+ * month while he logged 66x7-9 every session — four sessions of "catch up to your
+ * real level" on a 1000 kcal cut. Same day bucketing as sessionsFromRows. Fewer
+ * than MIN_SESSIONS distinct days → rows unchanged (a single session is not a
+ * window; cold/thin history keeps its existing behavior). PURE.
+ * @template T
+ * @param {T[]} rows newest-first
+ * @returns {T[]}
+ */
+export function recentSessionRows(rows) {
+  if (!Array.isArray(rows) || rows.length === 0) return rows;
+  const days = [];
+  let legacyCounter = 0;
+  const keyOf = (l) => {
+    const ts = Number(l && /** @type {any} */ (l).ts);
+    return Number.isFinite(ts) && ts > 0 ? `d${Math.floor(ts / 86400000)}` : `legacy${legacyCounter++}`;
+  };
+  const keys = rows.map(keyOf);
+  for (const k of keys) {
+    if (!days.includes(k)) days.push(k);
+  }
+  if (days.length < MIN_SESSIONS) return rows;
+  const keep = new Set(days.slice(0, LOOKBACK_SESSIONS));
+  return rows.filter((_, i) => keep.has(keys[i]));
+}

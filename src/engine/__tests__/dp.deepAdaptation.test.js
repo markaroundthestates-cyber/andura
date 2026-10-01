@@ -176,7 +176,23 @@ describe('DP deep adaptation — (c) PHASE-AWARE push above established capacity
     // so a deficit user is held at their real working level (160@8 ≡ 150@12), labeled
     // MAINTAIN. The coach is not pushing past what the user already did.
     expect(rec.status).toBe('MAINTAIN');
-    expect(rec.kg).toBe(160); // e1RM 8-rep equivalent of the proven 150×12 (held, not chased)
+    // dp_cut_restraint_energy_v1 ON (founder 2026-10-01: "61 in loc de 60 cat bag eu"):
+    // on a deliberate cut the floor is the RAW proven load, not its e1RM re-expression
+    // at the range floor — the prescribed reps rarely sit at that floor, so 160 lands as
+    // a heavier set than he did. Held at the load he actually lifts.
+    expect(rec.kg).toBe(150);
+  });
+
+  it('CUT legacy (dp_cut_restraint_energy_v1 OFF): the floor re-expresses 150x12 at 8 reps (160)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ ...JSON.parse(localStorage.getItem('_devFlags') || '{}'), dp_cut_restraint_energy_v1: false }));
+    store['phase-override'] = 'CUT';
+    store['logs'] = [
+      { ex: EX, w: 150, reps: 12, rpe: 6.5, ts: NOW - DAY },
+      { ex: EX, w: 150, reps: 12, rpe: 7.5, ts: NOW - 3 * DAY },
+    ];
+    const rec = DP.recommend(EX, NOW);
+    expect(rec.status).toBe('MAINTAIN');
+    expect(rec.kg).toBe(160);
   });
 
   it('STRENGTH: an easy set pushes the WEIGHT up aggressively even below top reps', () => {

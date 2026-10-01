@@ -152,7 +152,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // 2026-06-11/12/14/16/17/24 for call-site wiring — see header; 2026-06-17 ratchet down).
 // 2026-06-24 (3069→3074): egoCap EASY-exempt wiring in checkInSessionAdjust (thread
 // wasEasy behind dp_ego_cap_easy_exempt_v1) — a caller clamp, no extractable logic.
-const DP_LINE_CEILING = 3074;
+// 2026-10-01 (3074→3096): founder live "nu tine cont de cat pot si imi face push in
+// deficit" — seven call sites wiring flag-gated helpers that live OUTSIDE dp.js
+// (dp/followRecent.js reps cap + cap yield, dp/baseLookback.recentSessionRows window,
+// dp/inSessionOverride one-step anchor): the demo-window accessor, the Kalman min of
+// two windows (recursive on the in-method posterior), the cut-proven calibration
+// bound + PR-floor (read in-flight result/energyPhase), the explicit-cut energy
+// phase, the forta absolute band, the potrivit short-reps branch and the reps cap
+// before the band. No extractable logic left inline; ratchet-down-only resumes.
+const DP_LINE_CEILING = 3096;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*
