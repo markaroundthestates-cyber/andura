@@ -510,6 +510,14 @@ export const FLAGS = Object.freeze({
   // → flipping the flag off fully restores the split view. No gym / no declared
   // equivalence → byte-identical; pinned OFF in fp + calibration sims.
   dp_gym_exercise_equivalents_v1: { rollout: 1, default: true },
+  // dp_gym_station_name_v1 (2026-10-01) — the equivalence folded the READS but the
+  // plan still prescribed the library entry: with Cable Fly ≡ Pec Deck / Cable Fly
+  // his Push day said "Cable Fly" and snapped it to the cable stack (59x12) while he
+  // walks to the pec deck he logs at 57-60. ON (with the equivalence flag): the
+  // composed session renames a declared slot to its target station (gymProfile
+  // onGymStations) → one name, one rung ladder, one log identity. No map → same
+  // array. Pinned OFF in fp + calibration sims (compose path).
+  dp_gym_station_name_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

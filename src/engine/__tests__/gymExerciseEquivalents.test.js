@@ -12,7 +12,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DP } from '../dp.js';
 import { DB } from '../../db.js';
-import { GYMS_KEY, gymEquivalentFor } from '../dp/gymProfile.js';
+import { GYMS_KEY, gymEquivalentFor, onGymStations } from '../dp/gymProfile.js';
 import { canonicalLoggedName } from '../dp/logIdentity.js';
 import * as flags from '../../util/featureFlags.js';
 
@@ -136,5 +136,40 @@ describe('canonicalLoggedName', () => {
     seedGym({ 'Cable Fly': 'Pec Deck / Cable Fly' });
     expect(canonicalLoggedName('Cable Fly')).toBe('Pec Deck / Cable Fly');
     expect(canonicalLoggedName('Some Brand New Machine')).toBe('Some Brand New Machine');
+  });
+});
+
+// Founder live 2026-10-01 (replay of his 10-05 Push day): with the equivalences set,
+// the reads folded but the plan still SAID 'Cable Fly' and snapped it to the cable
+// stack (59x12) while he walks to the pec deck he logs at 57-60. The session is
+// prescribed on the gym's stations instead.
+describe('onGymStations — the plan names the station he walks to', () => {
+  const PUSH = [
+    { name: 'Machine Shoulder Press', sets: 4 },
+    { name: 'Converging Chest Press', sets: 3 },
+    { name: 'Reverse Pec Deck', sets: 2 },
+    { name: 'Cable Fly', sets: 2 },
+  ];
+
+  it('renames each declared slot to its target, keeping sets and order', () => {
+    seedGym({ 'Converging Chest Press': 'Flat Chest Press Machine', 'Cable Fly': 'Pec Deck / Cable Fly' });
+    expect(onGymStations(PUSH)).toEqual([
+      { name: 'Machine Shoulder Press', sets: 4 },
+      { name: 'Flat Chest Press Machine', sets: 3 },
+      { name: 'Reverse Pec Deck', sets: 2 },
+      { name: 'Pec Deck / Cable Fly', sets: 2 },
+    ]);
+  });
+
+  it('never repeats a name already in the session (two slots stay two entries)', () => {
+    seedGym({ 'Cable Fly': 'Pec Deck / Cable Fly' });
+    const both = [{ name: 'Pec Deck / Cable Fly', sets: 2 }, { name: 'Cable Fly', sets: 2 }];
+    expect(onGymStations(both)).toEqual(both);
+  });
+
+  it('no active gym / no equivalences -> the same array back', () => {
+    expect(onGymStations(PUSH)).toBe(PUSH);
+    seedGym({});
+    expect(onGymStations(PUSH)).toBe(PUSH);
   });
 });

@@ -73,6 +73,29 @@ export function gymEquivalentFor(engineName) {
 }
 
 /**
+ * Prescribe a session ON the active gym's stations (founder live 2026-10-01: the
+ * equivalence folded the READS, but the plan still named the library entry — his
+ * Push day said "Cable Fly" and snapped it to the cable stack (59x12) while the
+ * station he walks to is the pec deck he logs at 57-60). A slot the gym declares
+ * equivalent is renamed to its target, so display, rung snap and the logs it
+ * writes all belong to the one machine. A rename that would repeat a name already
+ * in the session is skipped (two slots stay two entries). No map → same array.
+ * @template {{name: string}} T @param {ReadonlyArray<T>} exercises @returns {ReadonlyArray<T>}
+ */
+export function onGymStations(exercises) {
+  const g = activeGym();
+  const map = g && g.equivalents;
+  if (!Array.isArray(exercises) || !map || typeof map !== 'object' || Array.isArray(map) || !Object.keys(map).length) return exercises;
+  const names = new Set(exercises.map((e) => e && e.name));
+  return exercises.map((e) => {
+    const to = e && gymEquivalentFor(e.name);
+    if (!to || names.has(to)) return e;
+    names.add(to);
+    return { ...e, name: to };
+  });
+}
+
+/**
  * The ACTIVE gym's sorted clean rungs for one equipment type, or null when none.
  * PURE (single DB read). Bad/empty/no-active-gym → null so the caller keeps its
  * existing ladder (byte-identical). @param {string} equipType @returns {number[]|null}

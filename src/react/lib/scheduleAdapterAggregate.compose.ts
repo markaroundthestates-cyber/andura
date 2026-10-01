@@ -22,6 +22,7 @@ import { DP } from '../../engine/dp.js';
 import { isEnabled } from '../../util/featureFlags.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { resolveMaxKg } from '../../engine/dp/loadModel.js';
+import { onGymStations } from '../../engine/dp/gymProfile.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import { warmupRampFor } from '../../engine/warmupRamp.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
@@ -1511,7 +1512,9 @@ export async function composePlannedWorkoutToday(
       energyDir !== 'NONE' && Number.isFinite(energyMag) && energyMag !== 0
         ? { direction: energyDir as 'UP' | 'DOWN', magnitudePct: energyMag }
         : null;
-    const planExercises = plan.exercises ?? [];
+    const planExercises = isEnabled('dp_gym_station_name_v1') && isEnabled('dp_gym_exercise_equivalents_v1')
+      ? onGymStations(plan.exercises ?? [])
+      : plan.exercises ?? [];
     const mapped = planExercises.map((ex, idx) =>
       // priorExercises = the exercises positioned BEFORE this one in today's plan,
       // so a small-muscle isolation later in the session is discounted for the
