@@ -49,10 +49,15 @@ export const MAKEUP_PER_SESSION_CAP_FRACTION = 0.30;
  * @param {string} [focusPreset='balanced'] - focus preset id (split reshape)
  * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
  * @param {string[]} [owedClusters=[]] - clusters front-loaded (dp_carryover_balance_v1)
+ * @param {boolean} [throughYesterday=false] - dp_makeup_through_yesterday_v1: `elapsed`
+ *   counts PAST days only. Counting TODAY made its own due target a "deficit" before
+ *   it was trained: a fresh Monday PUSH added chest/shoulders/triceps make-up and the
+ *   coach said "Am adaugat putin piept si umeri ca sa prinzi ritmul" with nothing missed
+ *   (founder replay 2026-10-01), and each group's last day of the week inflated most.
  * @returns {{ elapsed: Record<string, number>, remaining: Record<string, number> }}
  *   per-RO-group session counts (PAST+TODAY / TODAY+FUTURE)
  */
-export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'balanced', rebalance = false, owedClusters = []) {
+export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'balanced', rebalance = false, owedClusters = [], throughYesterday = false) {
   /** @type {Record<string, number>} */
   const elapsed = {};
   /** @type {Record<string, number>} */
@@ -64,7 +69,7 @@ export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'ba
     // Per-group membership of a SINGLE training day = the cluster's weight-map keys.
     const groupsThisDay = weeklySessionsPerGroup([cluster]);
     for (const roGroup of Object.keys(groupsThisDay)) {
-      if (day <= todayIdx) elapsed[roGroup] = (elapsed[roGroup] || 0) + 1;
+      if (throughYesterday ? day < todayIdx : day <= todayIdx) elapsed[roGroup] = (elapsed[roGroup] || 0) + 1;
       if (day >= todayIdx) remaining[roGroup] = (remaining[roGroup] || 0) + 1;
     }
   }

@@ -48,8 +48,11 @@ function activeOffsets(freq) {
 async function composeWeek(data, floorOff) {
   resetWorld();
   try {
-    if (floorOff) localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_posterior_maint_floor_v1: false }));
-    else localStorage.removeItem(DEV_FLAGS_KEY);
+// Synthetic weeks log nothing, so every later day carries a "skipped" deficit; the LEAN A/B
+    // was calibrated on the legacy make-up environment → held there (same pin as the fp/
+    // calibration sims) so the A/B isolates the floor, not the week make-up.
+    if (floorOff) localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_posterior_maint_floor_v1: false, dp_makeup_through_yesterday_v1: false }));
+    else localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_makeup_through_yesterday_v1: false }));
   } catch { /* jsdom always has localStorage */ }
   world.useOnboardingStore.setState({
     data: { ...data, focusPresetPickedAt: data.focusPreset !== 'balanced' ? START - 7 * MS_DAY : null },

@@ -518,6 +518,14 @@ export const FLAGS = Object.freeze({
   // onGymStations) → one name, one rung ladder, one log identity. No map → same
   // array. Pinned OFF in fp + calibration sims (compose path).
   dp_gym_station_name_v1: { rollout: 1, default: true },
+  // dp_makeup_through_yesterday_v1 (2026-10-01) — the intra-week make-up counted
+  // TODAY as an elapsed day, so today's own due target read as a "deficit" before it
+  // was trained: replaying the founder's week, a fresh Monday PUSH (nothing done)
+  // added chest/shoulders/triceps make-up and the coach said "Am adaugat putin piept
+  // si umeri azi ca sa prinzi ritmul saptamanii"; each group's LAST day inflated most
+  // (Upper Row 4 vs Pull Row 2). ON: the deficit is measured over PAST days only and
+  // spread over today + the rest. Pinned OFF in fp + calibration sims (compose path).
+  dp_makeup_through_yesterday_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

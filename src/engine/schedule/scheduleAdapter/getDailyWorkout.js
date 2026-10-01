@@ -799,7 +799,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           ? weekContext.volumeDone
           : {},
         split,
-        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters),
+        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters, isEnabled('dp_makeup_through_yesterday_v1')),
       )
     : { added: {}, behind: {} };
   const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);

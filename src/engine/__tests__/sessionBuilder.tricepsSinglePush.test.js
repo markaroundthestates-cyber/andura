@@ -69,6 +69,10 @@ function setFlags(guaranteeOn) {
   const o = {};
   for (const f of Object.keys(FLAGS)) o[f] = FLAGS[f].default;
   o.dp_triceps_split_guarantee_v1 = guaranteeOn;
+  // Synthetic weeks log nothing, so every later day carries a "skipped" deficit; this A/B
+  // was calibrated on the legacy make-up environment → held there (same pin as the fp/
+  // calibration sims) so it isolates the guarantee, not the week make-up.
+  o.dp_makeup_through_yesterday_v1 = false;
   localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(o));
 }
 

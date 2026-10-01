@@ -86,6 +86,35 @@ describe('weekSessionSpreadByGroup — PAST+TODAY vs TODAY+FUTURE per group', ()
   });
 });
 
+// dp_makeup_through_yesterday_v1 (founder replay 2026-10-01): counting TODAY as elapsed
+// made today's own due target a 'deficit' before it was trained — a fresh Monday PUSH
+// (nothing done, nothing missed) added chest/shoulders/triceps make-up and the coach
+// said it was catching up the week. throughYesterday measures the deficit on PAST days.
+describe('weekSessionSpreadByGroup — throughYesterday (past days only)', () => {
+  const aw5 = activeWeekForFrequency('5');
+  const split5 = frequencyToSplit(5);
+
+  it('today is no longer elapsed, but stays a remaining opportunity', () => {
+    const { elapsed, remaining } = weekSessionSpreadByGroup(aw5, 2, 'balanced', false, [], true);
+    expect(elapsed.umeri).toBe(1); // upper (day0) only — push today is not yet due
+    expect(remaining.umeri).toBe(1); // push today
+  });
+
+  it('a fresh first day of the week owes nothing (no phantom make-up)', () => {
+    const spread = weekSessionSpreadByGroup(aw5, 0, 'balanced', false, [], true);
+    const { added, behind } = computeIntraWeekMakeup({ back: 20, chest: 20 }, {}, split5, spread);
+    expect(added).toEqual({});
+    expect(behind).toEqual({});
+  });
+
+  it('a group really skipped on a PAST day is still made up', () => {
+    // Wednesday push: chest trained Monday (upper) → 10 owed, 0 done → spread over push today.
+    const spread = weekSessionSpreadByGroup(aw5, 2, 'balanced', false, [], true);
+    const { added } = computeIntraWeekMakeup({ chest: 20 }, { chest: 0 }, split5, spread);
+    expect(added.chest).toBeCloseTo(6, 9); // min(10 / 1, cap 0.30 × 20)
+  });
+});
+
 describe('computeIntraWeekMakeup — proration + recover-only deficit + ≤30% cap', () => {
   const split5 = frequencyToSplit(5);
   const aw5 = activeWeekForFrequency('5');
