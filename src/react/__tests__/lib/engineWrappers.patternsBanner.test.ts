@@ -12,6 +12,7 @@ import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 vi.mock('../../../engine/stagnationDetector.js', () => ({
   detectGlobalStagnation: vi.fn(() => ({ maxStagnationWeeks: 0, byExercise: {} })),
+  detectStagnation: vi.fn(() => ({ stagnationWeeks: 0, progression: [] })),
 }));
 
 // adherence.js is still imported by engineWrappers (other adapters) — mock it so
@@ -34,7 +35,7 @@ import {
   isLowWeeklyWorkoutAdherence,
   STAGNATION_WEEKS_THRESHOLD,
 } from '../../lib/engineWrappers';
-import { detectGlobalStagnation } from '../../../engine/stagnationDetector.js';
+import { detectGlobalStagnation, detectStagnation } from '../../../engine/stagnationDetector.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 
@@ -123,6 +124,39 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     expect(banners[0]!.id).toBe('STAGNATION');
     expect(banners[0]!.severity).toBe('info');
     expect(banners[0]!.text).toMatch(/progres, nu stagnare/);
+  });
+
+  // patterns_cut_honest_decline_v1 (founder 2026-10-01: "strength keeps up even in
+  // deficit... nu cred ca e real") — his Cable Row weekly e1RM in September (real
+  // avg Brzycki ~86 → ~78) counted as 'stagnation' (< +1%/week) and read 'held'.
+  it('STAGNATION pe CUT cu scadere reala >= 5% → spune scaderea, nu "stabila"', () => {
+    vi.mocked(resolveEnergyMagnitude).mockReturnValue({ phase: 'CUT', severity: 0.51 });
+    vi.mocked(detectGlobalStagnation).mockReturnValue({ maxStagnationWeeks: 3, byExercise: { 'Cable Row': 3 } });
+    vi.mocked(detectStagnation).mockReturnValue({
+      stagnationWeeks: 3,
+      progression: [
+        { week: '2026-W35', avg1RM: 86.4 }, { week: '2026-W37', avg1RM: 84.1 },
+        { week: '2026-W38', avg1RM: 81.0 }, { week: '2026-W40', avg1RM: 78.2 },
+      ],
+    });
+    const banners = getPatternsBanner();
+    expect(banners).toHaveLength(1);
+    expect(banners[0]!.severity).toBe('info');
+    expect(banners[0]!.text).toMatch(/~9% mai putin in 3 saptamani pe deficit/);
+    expect(banners[0]!.text).not.toMatch(/stabila/);
+  });
+
+  it('STAGNATION pe CUT cu forta chiar mentinuta (< 5%) → ramane "stabila"', () => {
+    vi.mocked(resolveEnergyMagnitude).mockReturnValue({ phase: 'CUT', severity: 0.51 });
+    vi.mocked(detectGlobalStagnation).mockReturnValue({ maxStagnationWeeks: 3, byExercise: { 'Machine Shoulder Press': 3 } });
+    vi.mocked(detectStagnation).mockReturnValue({
+      stagnationWeeks: 3,
+      progression: [
+        { week: '2026-W36', avg1RM: 80.0 }, { week: '2026-W37', avg1RM: 79.6 },
+        { week: '2026-W38', avg1RM: 79.1 }, { week: '2026-W39', avg1RM: 78.8 },
+      ],
+    });
+    expect(getPatternsBanner()[0]!.text).toMatch(/Forta stabila de 3 saptamani/);
   });
 
   it('STAGNATION banner NU triggered cand maxStagnationWeeks < 2', () => {

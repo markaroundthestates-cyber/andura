@@ -478,6 +478,13 @@ export const FLAGS = Object.freeze({
   // severity info) instead of a warning. React-banner only (no engine/compose
   // path → no fp pin). Kill-switch: default false → legacy warn copy.
   patterns_cut_aware_stagnation_v1: { rollout: 1, default: true },
+  // patterns_cut_honest_decline_v1 (2026-10-01, founder "strength keeps up even in
+  // deficit... nu cred ca e real") — the cut reframe said "Strength held" for any
+  // week under +1%, including lifts going DOWN (his Cable Row / Lat Pulldown ~-10% in
+  // September). ON: a stagnating lift that lost >= 5% over its stagnant window is
+  // named with the number; the held copy only when it held. Banner-only (no engine
+  // path) → no sim pin needed.
+  patterns_cut_honest_decline_v1: { rollout: 1, default: true },
   // dp_energy_perf_aware_v1 (2026-08-28) — the energy modulation read ONLY the kcal
   // deficit, so a deep cut pinned every knob at MAXIMUM (−30% volume, +2 RIR,
   // deloadBias 1.0 → deload pulled forward every mesocycle) regardless of how the

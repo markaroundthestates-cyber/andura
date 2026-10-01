@@ -1241,7 +1241,8 @@
   "patterns": {
     "stagnation": "Stagnare la {exercise}",
     "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea.",
-    "stagnationCutHold": "Forta stabila de {weeks} saptamani pe deficit — la cut asta e progres, nu stagnare."
+    "stagnationCutHold": "Forta stabila de {weeks} saptamani pe deficit — la cut asta e progres, nu stagnare.",
+    "stagnationCutDown": "{lift}: ~{pct}% mai putin in {weeks} saptamani pe deficit — normal la ritmul asta. Tintele urmeaza acum ce ridici efectiv."
   },
   "proactive": {
     "proteinDeficit": "Proteina medie ultimele {days} zile: {avg}g. Tinta: {target}g. Creste aportul.",

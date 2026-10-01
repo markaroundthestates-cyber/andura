@@ -43,7 +43,8 @@ import { detectPR } from '../../engine/prEngine.js';
 import { whySummary } from '../../engine/whyEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
-import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
+import { detectGlobalStagnation, detectStagnation } from '../../engine/stagnationDetector.js';
+import { toExerciseDisplay } from './exerciseDisplay';
 import { proposeGoalPivot } from '../../engine/dp/autoPivot.js';
 import { ceilingE1RM } from '../../engine/dp/ceiling.js';
 import { resolveGoalId } from '../../engine/periodization/volumeLandmarks.js';
@@ -652,14 +653,36 @@ export function getPatternsBanner(): PatternBanner[] {
         ? resolveEnergyMagnitude()
         : null;
       const onCut = mag !== null && mag.phase === 'CUT';
+      // patterns_cut_honest_decline_v1 (founder 2026-10-01: "strength keeps up even
+      // in deficit... nu cred ca e real") — "stagnation" counts every week under +1%,
+      // so a lift that is going DOWN also got "Strength held". His Cable Row / Lat
+      // Pulldown dropped ~10% in September while the banner said held. Find the
+      // stagnating lift that lost the most over its stagnant window; >= 5% down →
+      // say so (with the number), otherwise the held copy stays true.
+      let down: { lift: string; pct: number; weeks: number } | null = null;
+      if (onCut && isEnabled('patterns_cut_honest_decline_v1')) {
+        for (const [ex, weeks] of Object.entries(stag.byExercise)) {
+          if (weeks < STAGNATION_WEEKS_THRESHOLD) continue;
+          const prog = detectStagnation(ex, logs).progression;
+          const last = prog[prog.length - 1];
+          const start = prog[prog.length - 1 - weeks];
+          if (!last || !start || !(start.avg1RM > 0)) continue;
+          const pct = (start.avg1RM - last.avg1RM) / start.avg1RM;
+          if (pct >= 0.05 && (!down || pct * 100 > down.pct)) {
+            down = { lift: toExerciseDisplay(ex).name, pct: Math.round(pct * 100), weeks };
+          }
+        }
+      }
       banners.push({
         id: 'STAGNATION',
         severity: onCut ? 'info' : 'warn',
         // i18n render boundary: resolve to localized copy via t() (engine-side
         // stagnationDetector stays locale-agnostic — it returns a week count).
-        text: onCut
-          ? __t('patterns.stagnationCutHold', { weeks: stag.maxStagnationWeeks })
-          : __t('patterns.stagnationWeeks', { weeks: stag.maxStagnationWeeks }),
+        text: down
+          ? __t('patterns.stagnationCutDown', down)
+          : onCut
+            ? __t('patterns.stagnationCutHold', { weeks: stag.maxStagnationWeeks })
+            : __t('patterns.stagnationWeeks', { weeks: stag.maxStagnationWeeks }),
       });
     }
   } catch (e) {

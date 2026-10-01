@@ -1241,7 +1241,8 @@
   "patterns": {
     "stagnation": "Stagnation on {exercise}",
     "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity.",
-    "stagnationCutHold": "Strength held for {weeks} weeks in a deficit — on a cut that's progress, not stagnation."
+    "stagnationCutHold": "Strength held for {weeks} weeks in a deficit — on a cut that's progress, not stagnation.",
+    "stagnationCutDown": "{lift}: down ~{pct}% over {weeks} weeks in a deficit — expected at this pace. Your targets now follow what you actually lift."
   },
   "proactive": {
     "proteinDeficit": "Average protein over the last {days} days: {avg}g. Target: {target}g. Increase your intake.",
