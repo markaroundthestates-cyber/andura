@@ -1,5 +1,5 @@
 // Tests pentru modelul de incarcare la exercitiile cu greutatea corpului.
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import {
   isBodyweightExercise,
   bodyweightFraction,
@@ -107,5 +107,31 @@ describe('effectiveLoadKg — math corect cu bodyweight + added', () => {
   it('rotunjire la 0.5 (grid real de discuri)', () => {
     // 73kg x 0.65 = 47.45 -> 47.5
     expect(effectiveLoadKg('Push-up', 0, 73)).toBe(47.5);
+  });
+});
+
+// Founder replay 2026-10-01: back-extension benches and the GHR are filed 'machine'
+// (they need a station), so every cold-start route seeded a plate load the station does
+// not have — 45° Hyperextension 73 kg on his Pull day, Glute-Ham Raise 100 kg on Lower.
+describe('isBodyweightExercise — bodyweight stations (dp_station_bodyweight_v1)', () => {
+  afterEach(() => localStorage.removeItem('_devFlags'));
+
+  it('back-extension benches and the GHR load the body', () => {
+    for (const n of ['45° Hyperextension', 'Roman Chair Back Extension', 'GHD Back Extension', 'Glute-Ham Raise']) {
+      expect(isBodyweightExercise(n)).toBe(true);
+    }
+  });
+
+  it('a Reverse Hyperextension machine (real pendulum load) stays loaded', () => {
+    expect(isBodyweightExercise('Reverse Hyperextension')).toBe(false);
+  });
+
+  it('a back extension still tracks the ADDED kg only (fraction 0)', () => {
+    expect(effectiveLoadKg('45° Hyperextension', 10, 88)).toBe(10);
+  });
+
+  it('flag OFF → the library tag decides (legacy)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_station_bodyweight_v1: false }));
+    expect(isBodyweightExercise('45° Hyperextension')).toBe(false);
   });
 });

@@ -534,6 +534,12 @@ export const FLAGS = Object.freeze({
   // total unchanged; equal-weight weeks and de-emphasized groups keep the count.
   // Pinned OFF in fp + calibration sims (compose path).
   dp_home_day_volume_v1: { rollout: 1, default: true },
+  // dp_station_bodyweight_v1 (2026-10-01) — back-extension benches and the GHR are
+  // filed 'machine' (they need a station), so every cold-start route read them as a
+  // plate stack: founder replay → 45° Hyperextension 73 kg (Pull), Glute-Ham Raise
+  // 100 kg (Lower). ON: bodyweightLoad BODYWEIGHT_STATIONS load the body; the target
+  // is the ADDED kg, cold start 0. Pinned OFF in fp + calibration sims.
+  dp_station_bodyweight_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

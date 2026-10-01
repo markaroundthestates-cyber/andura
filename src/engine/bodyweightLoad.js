@@ -10,7 +10,8 @@
 // CLASSIFIER (mechanism): the exercise library already tags every entry with
 // equipment_type (exerciseLibrary.js §36.36, D081 = coarse SoT). The 131
 // 'bodyweight' entries ARE the curated set — we do NOT guess per-exercise at
-// runtime. isBodyweightExercise() reads that tag. No new per-exercise list.
+// runtime. isBodyweightExercise() reads that tag. No new per-exercise list
+// (one documented exception: BODYWEIGHT_STATIONS, below the imports).
 //
 // FRACTION (how much of bodyweight the movement actually loads): rather than
 // 131 hand-tuned numbers (over-engineered, drift-prone), we map the canonical
@@ -47,6 +48,19 @@
 //   - src/react/lib/scheduleAdapterAggregate.ts toPlannedExercise (target)
 
 import { EXERCISE_METADATA } from './exerciseLibrary.js';
+import { isEnabled } from '../util/featureFlags.js';
+
+// The ONE gap the coarse tag cannot express: a bodyweight movement that needs a
+// STATION, so the library files it under 'machine' (equipment availability must still
+// require the bench). Read as a stack, every cold-start route seeded a plate load the
+// station does not have — founder replay 2026-10-01: 45° Hyperextension 73 kg on his
+// Pull day, Glute-Ham Raise 100 kg on his Lower day. dp_station_bodyweight_v1: these
+// load the body (fraction by pattern below), the prescribed kg is the ADDED weight,
+// starting at 0. Kept to stations whose load is unambiguously the body (a Reverse
+// Hyperextension machine swings a real pendulum load → stays loaded).
+const BODYWEIGHT_STATIONS = new Set([
+  '45° Hyperextension', 'Roman Chair Back Extension', 'GHD Back Extension', 'Glute-Ham Raise',
+]);
 
 /**
  * True when the exercise is a bodyweight movement per the library's coarse
@@ -57,6 +71,7 @@ import { EXERCISE_METADATA } from './exerciseLibrary.js';
  */
 export function isBodyweightExercise(exerciseName) {
   if (typeof exerciseName !== 'string') return false;
+  if (BODYWEIGHT_STATIONS.has(exerciseName) && isEnabled('dp_station_bodyweight_v1')) return true;
   const meta = EXERCISE_METADATA[exerciseName];
   return !!meta && meta.equipment_type === 'bodyweight';
 }
