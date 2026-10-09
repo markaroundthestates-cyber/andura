@@ -474,6 +474,22 @@ function _inferredGymStack(ex) {
   return hits.length === 1 ? hits[0] : null;
 }
 
+// dp_gym_light_station_v1 (founder audit 2026-10-09) — the light isolation ladders are
+// not stations of their own: a cable lateral raise hangs on the gym's cable pulley, a DB
+// lateral raise comes off its dumbbell rack. Sala mea has no light_iso_* station, so a
+// new Cable Lateral Raise fell to the generic fine ladder (17.5 — no such pin on his
+// Matrix). Gated on the library's equipment so a machine or band never borrows them.
+const LIGHT_STATION = { light_iso_cable: ['cable', 'matrix_cable'], light_iso_db: ['dumbbell', 'dumbbell'] };
+
+/** The active gym's stack for this lift's station, or null. @param {string} ex @returns {number[]|null} */
+function _gymStationSteps(ex) {
+  const type = getEquipmentType(ex);
+  const own = activeGymStepsForType(type) ?? _inferredGymStack(ex);
+  if (own || !isEnabled('dp_gym_light_station_v1')) return own;
+  const alias = /** @type {Record<string, string[]>} */ (LIGHT_STATION)[type];
+  return alias && getExerciseMetadata(ex)?.equipment_type === alias[0] ? activeGymStepsForType(alias[1]) : null;
+}
+
 /**
  * dp_steps_follow_logged_v1 — at or above the heaviest load he sets on this exercise a
  * step UP continues his machine's own increment (the generic grid may top out below
@@ -535,7 +551,7 @@ function _typeGrid(ex) {
  */
 function _activeGymLadder(exerciseName) {
   if (!isEnabled('dp_gym_ladder_steps_v1') || typeof exerciseName !== 'string' || !exerciseName) return null;
-  const steps = activeGymStepsForType(getEquipmentType(exerciseName)) ?? _inferredGymStack(exerciseName);
+  const steps = _gymStationSteps(exerciseName);
   return Array.isArray(steps) && steps.length >= 2 ? steps : null;
 }
 
@@ -578,7 +594,8 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   // real rung of the machine he uses: never snapped away, by any ladder (dp/loggedRungs).
   const used = isEnabled('dp_logged_loads_sacred_v1') && Number.isFinite(weight) && typeof exerciseName === 'string'
     ? usedLoads(exerciseName) : null;
-  if (used && used.some((w) => Math.abs(w - weight) < 1e-9)) return weight;
+  const sacred = used ? used.find((w) => Math.abs(w - weight) < 1e-9) : undefined;
+  if (sacred !== undefined) return sacred;
   const list = getList(exerciseName);
   const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
@@ -591,7 +608,7 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   // falls through → byte-identical. Highest precedence — applies to BOTH the ctx + no-ctx
   // paths.
   if (isEnabled('dp_active_gym_ladder_v1') && Number.isFinite(weight)) {
-    const gymSteps = activeGymStepsForType(getEquipmentType(exerciseName)) ?? _inferredGymStack(exerciseName);
+    const gymSteps = _gymStationSteps(exerciseName);
     if (gymSteps) {
       return _nearestRung(weight, used && used.length
         ? [...new Set([...gymSteps, ...used])].sort((a, b) => a - b) : gymSteps);

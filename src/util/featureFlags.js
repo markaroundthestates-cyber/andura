@@ -594,6 +594,11 @@ export const FLAGS = Object.freeze({
   //   whose every used load (>= 3) sits on exactly one of his measured stacks is on that
   //   stack (his Reverse Pec Deck = the Matrix stack). Pinned OFF in fp + sims.
   dp_station_from_loads_v1: { rollout: 1, default: true },
+  // dp_gym_light_station_v1 — a light cable / DB isolation (Cable Lateral Raise, DB Fly)
+  //   has no station of its own in Sala mea: it uses the gym's cable pulley / dumbbell
+  //   rack (a new Cable Lateral Raise read 17.5, no such pin on his Matrix). Library
+  //   equipment gates it (machines, bands untouched). Pinned OFF in fp + sims.
+  dp_gym_light_station_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

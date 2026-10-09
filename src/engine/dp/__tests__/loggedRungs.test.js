@@ -124,6 +124,20 @@ describe('the ladder follows the loads he sets (2026-10-09 audit)', () => {
     expect(getPrevWeight(80, 'Leg Press')).toBeGreaterThan(60); // a real plate rung, not his 60
   });
 
+  it('a float a hair off his load comes back as his load (Bayesian Curl 13.999999999999998 → 14)', () => {
+    localStorage.setItem('logs', JSON.stringify(rows('Bayesian Curl', [14, 14, 18])));
+    expect(roundToEquipmentWeight(13.999999999999998, 'Bayesian Curl')).toBe(14);
+  });
+
+  it('a new cable lateral raise lands on his cable pulley, not the generic fine ladder', () => {
+    gym({ matrix_cable: MATRIX, dumbbell: DUMBBELLS });
+    expect(roundToEquipmentWeight(17.5, 'Cable Lateral Raise')).toBe(18);
+    expect(roundToEquipmentWeight(7, 'DB Lateral Raise')).toBe(8); // his rack starts at 8
+    expect(roundToEquipmentWeight(41, 'Reverse Pec Deck')).not.toBe(41); // a machine borrows no Matrix pin
+    flags({ dp_gym_light_station_v1: false });
+    expect(roundToEquipmentWeight(17.5, 'Cable Lateral Raise')).toBe(17.5);
+  });
+
   it('above his heaviest the smaller real step wins (Flat Chest Press 70 → 75, not +10)', () => {
     localStorage.setItem('logs', JSON.stringify(rows('Flat Chest Press Machine', [70, 60, 60, 70, 60])));
     expect(getNextWeight(70, 'Flat Chest Press Machine')).toBe(75);
