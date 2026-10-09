@@ -558,6 +558,13 @@ export const FLAGS = Object.freeze({
   // 60x10). ON: barbell<-machine transfers at 0.75 (exerciseMapping); the reverse keeps
   // 1.00; squat<-leg press keeps its own 0.45. Pinned OFF in fp + calibration sims.
   dp_machine_to_free_discount_v1: { rollout: 1, default: true },
+  // dp_week_done_early_swap_v1 (2026-10-09, founder: trained legs off-app on Friday —
+  // scheduled UPPER — "nu vreau sa ma trezesc ca imi recomanda maine iar picioare";
+  // replay: Saturday still LOWER). ON: when a past scheduled day of this week trained
+  // today's cluster and its own cluster was trained nowhere this week, the two trade
+  // places (carryoverBalance.detectDoneEarlySwap); the make-up is planned as that day.
+  // Pinned OFF in fp + calibration sims (compose path).
+  dp_week_done_early_swap_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

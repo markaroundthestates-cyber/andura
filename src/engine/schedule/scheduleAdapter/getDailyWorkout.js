@@ -62,7 +62,7 @@ import { computeAdherence } from '../../adherence.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, effectiveFocusPreset } from './focus.js';
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
-import { detectOwedClusters } from './carryoverBalance.js';
+import { detectOwedClusters, detectDoneEarlySwap } from './carryoverBalance.js';
 import { ISRAETEL_BASELINES, PHASE_CLUSTERS_BIG6 } from '../../periodization/constants.js';
 import {
   laggingGroupsFromLogs,
@@ -325,7 +325,23 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       nowMs: date.getTime(),
     })
     : [];
-  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters);
+  // dp_week_done_early_swap_v1 — a past day of THIS week already trained today's
+  // cluster (off-app / rogue) while its own cluster went untrained → today takes the
+  // skipped cluster, planned as that day (makeup spread below uses fromDay).
+  const doneEarly = isEnabled('dp_week_done_early_swap_v1')
+    ? detectDoneEarlySwap({
+      recoveryLogs: flattenSessionsToRecoveryLogs(userState?.recentSessions),
+      activeWeek,
+      todayIdx: dayIdx,
+      focusPreset,
+      splitRebalance,
+      owedClusters,
+      nowMs: date.getTime(),
+    })
+    : null;
+  const scheduledCluster = doneEarly
+    ? doneEarly.cluster
+    : clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
   // from the user's logged sessions. Recovery flatten + state are pure + cheap;
@@ -799,7 +815,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           ? weekContext.volumeDone
           : {},
         split,
-        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters, isEnabled('dp_makeup_through_yesterday_v1')),
+        weekSessionSpreadByGroup(activeWeek, doneEarly ? doneEarly.fromDay : dayIdx, focusPreset, splitRebalance, owedClusters, isEnabled('dp_makeup_through_yesterday_v1')),
       )
     : { added: {}, behind: {} };
   const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);

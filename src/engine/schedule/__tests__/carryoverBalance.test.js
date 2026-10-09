@@ -6,7 +6,7 @@
 // time comes from the injected clock, never Date.now().
 
 import { describe, it, expect } from 'vitest';
-import { detectOwedClusters } from '../scheduleAdapter/carryoverBalance.js';
+import { detectOwedClusters, detectDoneEarlySwap } from '../scheduleAdapter/carryoverBalance.js';
 import { clusterForDay, frequencyToSplit, reorderSplitForCarryover } from '../scheduleAdapter/frequencySplit.js';
 
 // A fixed planning clock (Thu 2026-06-04, LOCAL). resolveWeekStartMs derives the
@@ -283,5 +283,43 @@ describe('FOUNDER CASE — v-taper @4d, skipped lower last week', () => {
     // Same day-type multiset as the legacy week (no add/drop).
     const clustersBefore = ACTIVE_IDXS.map((d) => clusterForDay(VTAPER_WEEK, d, 'v-taper', false));
     expect([...clustersAfter].sort()).toEqual([...clustersBefore].sort());
+  });
+});
+
+// Founder 2026-10-09: v-taper 4d on Tue/Thu/Fri/Sat (push/pull/upper/lower). He trained
+// LEGS off-app on Friday (scheduled UPPER); the template still planned LOWER for Saturday.
+describe('detectDoneEarlySwap — a past day already trained today\'s cluster', () => {
+  const HIS_WEEK = [false, true, false, true, true, true, false];
+  const SAT = new Date(2026, 9, 10, 8, 0).getTime();
+  const at = (d, h = 8) => new Date(2026, 9, d, h, 0).getTime(); // Oct d, 2026 (Mon = 5th)
+  const base = { activeWeek: HIS_WEEK, focusPreset: 'v-taper', nowMs: SAT, todayIdx: 5 };
+
+  it('Friday did the legs → Saturday takes Friday\'s skipped UPPER, planned as Friday', () => {
+    expect(clusterForDay(HIS_WEEK, 5, 'v-taper', false)).toBe('lower');
+    expect(clusterForDay(HIS_WEEK, 4, 'v-taper', false)).toBe('upper');
+    const recoveryLogs = [
+      log(EX.chest, at(6)), log(EX.shoulders, at(6)), // Tue push
+      log(EX.back, at(8)), log(EX.biceps, at(8)), // Thu pull
+      log(EX.quads, at(9)), log(EX.hams, at(9)), // Fri: legs instead of upper
+    ];
+    expect(detectDoneEarlySwap({ ...base, recoveryLogs })).toEqual({ cluster: 'upper', fromDay: 4 });
+  });
+
+  it('the week went as scheduled → no swap', () => {
+    const recoveryLogs = [log(EX.chest, at(6)), log(EX.back, at(8)), log(EX.chest, at(9)), log(EX.back, at(9))];
+    expect(detectDoneEarlySwap({ ...base, recoveryLogs })).toBeNull();
+  });
+
+  it('the skipped cluster was trained elsewhere this week → no swap', () => {
+    const recoveryLogs = [
+      log(EX.chest, at(6)), log(EX.back, at(6)), log(EX.shoulders, at(6)), log(EX.biceps, at(6)), // Tue did upper
+      log(EX.quads, at(9)), log(EX.hams, at(9)), // Fri legs
+    ];
+    expect(detectDoneEarlySwap({ ...base, recoveryLogs })).toBeNull();
+  });
+
+  it('legs on a REST day leave the template alone (no skipped scheduled cluster to take)', () => {
+    const recoveryLogs = [log(EX.quads, at(7)), log(EX.hams, at(7))]; // Wed = rest
+    expect(detectDoneEarlySwap({ ...base, recoveryLogs })).toBeNull();
   });
 });

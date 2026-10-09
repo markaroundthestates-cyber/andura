@@ -162,3 +162,73 @@ export function detectOwedClusters({
   }
   return owed;
 }
+
+/**
+ * WITHIN-WEEK done-early swap (dp_week_done_early_swap_v1, founder 2026-10-09): he
+ * trained legs on Friday (scheduled UPPER) off-app, and the fixed weekday template
+ * still planned LOWER for Saturday ("nu vreau sa ma trezesc ca imi recomanda maine
+ * iar picioare"). When a PAST scheduled day of THIS microcycle actually trained
+ * today's cluster (its logged primary groups overlap today's cluster most) while that
+ * day's own cluster was trained nowhere this week, the two days trade places: today
+ * becomes the skipped cluster, planned AS that day (the caller uses `fromDay` for the
+ * week make-up, so the swapped session is not also counted as owed). A rest-day
+ * session or a cluster whose own work happened elsewhere → null (template stands).
+ * PURE (the planning clock is injected).
+ *
+ * @param {Object} input
+ * @param {Array<{ex?: string, ts?: number}>} input.recoveryLogs
+ * @param {ReadonlyArray<boolean>} input.activeWeek - length-7 (Monday=0)
+ * @param {number} input.todayIdx - today's weekday index (Monday=0)
+ * @param {string} [input.focusPreset='balanced']
+ * @param {boolean} [input.splitRebalance=false]
+ * @param {string[]} [input.owedClusters=[]]
+ * @param {number} input.nowMs - the injected planning clock
+ * @returns {{cluster: string, fromDay: number}|null}
+ */
+export function detectDoneEarlySwap({
+  recoveryLogs, activeWeek, todayIdx, focusPreset = 'balanced', splitRebalance = false,
+  owedClusters = [], nowMs,
+} = {}) {
+  if (!Array.isArray(activeWeek) || !Array.isArray(recoveryLogs) || !activeWeek[todayIdx]) return null;
+  const start = resolveWeekStartMs(undefined, nowMs);
+  if (start === null) return null;
+  const todayStart = new Date(nowMs);
+  todayStart.setHours(0, 0, 0, 0);
+  /** @param {number} day */
+  const clusterOf = (day) => clusterForDay(activeWeek, day, focusPreset, splitRebalance, owedClusters);
+  const today = clusterOf(todayIdx);
+  const weekClusters = [];
+  for (let d = 0; d < 7; d++) if (activeWeek[d] && !weekClusters.includes(clusterOf(d))) weekClusters.push(clusterOf(d));
+
+  /** @type {Map<number, Set<string>>} weekday → RO groups trained that day */
+  const byDay = new Map();
+  for (const row of recoveryLogs) {
+    const ts = row && typeof row.ts === 'number' ? row.ts : NaN;
+    if (!Number.isFinite(ts) || ts < start || ts >= todayStart.getTime()) continue;
+    const g = typeof row.ex === 'string' ? getExerciseMetadata(row.ex).muscle_target_primary : null;
+    if (typeof g !== 'string' || !g || g === 'unknown') continue;
+    const dow = (new Date(ts).getDay() + 6) % 7;
+    if (!byDay.has(dow)) byDay.set(dow, new Set());
+    /** @type {Set<string>} */ (byDay.get(dow)).add(g);
+  }
+  /** @type {Map<number, string>} weekday → the cluster that day actually trained */
+  const actual = new Map();
+  for (const [day, groups] of byDay) {
+    const own = activeWeek[day] ? clusterOf(day) : null;
+    let best = own;
+    let bestN = own ? [...clusterTrainedGroups(own)].filter((g) => groups.has(g)).length : -1;
+    for (const c of weekClusters) {
+      const n = [...clusterTrainedGroups(c)].filter((g) => groups.has(g)).length;
+      if (n > bestN) { best = c; bestN = n; }
+    }
+    if (best && bestN > 0) actual.set(day, best);
+  }
+  const done = new Set(actual.values());
+  for (const [day, did] of actual) {
+    if (did !== today || !activeWeek[day]) continue;
+    const skipped = clusterOf(day);
+    if (skipped === today || done.has(skipped)) continue;
+    return { cluster: skipped, fromDay: day };
+  }
+  return null;
+}
