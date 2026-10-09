@@ -3,7 +3,7 @@
 // loads from his account dump; the stale June ladder record is his real one.
 import { describe, it, expect, beforeEach } from 'vitest';
 import { loggedRungsFromRows } from '../loggedRungs.js';
-import { roundToEquipmentWeight } from '../../../config/weights.js';
+import { roundToEquipmentWeight, getNextWeight, getPrevWeight, getNextWeightGym, getEquipmentType } from '../../../config/weights.js';
 
 const rows = (ex, ws) => ws.map((w, i) => ({ ex, w, reps: 10, ts: 1_790_000_000_000 - i * 86_400_000 }));
 
@@ -45,7 +45,7 @@ describe('roundToEquipmentWeight — logged rungs beat stale priors', () => {
   });
 
   it('OFF (the bug): a 54 rec clamps to the stale 42', () => {
-    flags({ dp_logged_rungs_snap_v1: false });
+    flags({ dp_logged_rungs_snap_v1: false, dp_logged_loads_sacred_v1: false, dp_steps_follow_logged_v1: false });
     expect(roundToEquipmentWeight(54, 'Reverse Pec Deck')).toBe(42);
   });
 
@@ -64,5 +64,69 @@ describe('roundToEquipmentWeight — logged rungs beat stale priors', () => {
     flags({ dp_logged_rungs_snap_v1: true });
     expect(roundToEquipmentWeight(61.8, 'Machine Shoulder Press')).toBe(60);
     expect(roundToEquipmentWeight(61, 'Machine Shoulder Press')).toBe(60);
+  });
+});
+
+// Founder audit 2026-10-09 ("verifica daca mai e vre-o linie de greutati pe vre-un aparat
+// incorecta fata de ce loghez eu"): every lift he logged at his gym, each load he set run
+// through the snap + steps. Real loads and his real Sala mea stacks.
+describe('the ladder follows the loads he sets (2026-10-09 audit)', () => {
+  const flags = (o) => localStorage.setItem('_devFlags', JSON.stringify(o));
+  const gym = (stacks) => localStorage.setItem('dp-gyms', JSON.stringify({
+    activeId: 'g', gyms: { g: { id: 'g', name: 'MyGym Domnesti', stacks } },
+  }));
+  const DUMBBELLS = [8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+  const MATRIX = [4.5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 73];
+  beforeEach(() => localStorage.clear());
+
+  it('a load set again and again is never snapped away — not even by the gym stack', () => {
+    gym({ dumbbell: DUMBBELLS });
+    localStorage.setItem('logs', JSON.stringify(rows('Preacher Curl', [25, 25, 25])));
+    expect(roundToEquipmentWeight(25, 'Preacher Curl')).toBe(25);
+    flags({ dp_logged_loads_sacred_v1: false });
+    expect(roundToEquipmentWeight(25, 'Preacher Curl')).not.toBe(25);
+  });
+
+  it('above the ladder top "next" steps UP (M Torture 60 was "next" 59)', () => {
+    expect(getNextWeight(60, 'Pec Deck / Cable Fly')).toBe(65);
+    flags({ dp_steps_follow_logged_v1: false });
+    expect(getNextWeight(60, 'Pec Deck / Cable Fly')).toBe(59);
+  });
+
+  it('outside his range the snap continues HIS increment, not an old-gym ladder', () => {
+    localStorage.setItem('dp-equipment-ladder', JSON.stringify({
+      'Machine Shoulder Press': { max: 81, min: 41, modalGaps: 2, n: 3, nDistinct: 3, step: 10 },
+    }));
+    localStorage.setItem('logs', JSON.stringify(rows('Machine Shoulder Press', [60, 60, 55, 55, 50, 60])));
+    expect(roundToEquipmentWeight(65, 'Machine Shoulder Press')).toBe(65);
+    expect(roundToEquipmentWeight(75, 'Machine Shoulder Press')).toBe(75);
+  });
+
+  it('every load he uses sits on one measured stack → that stack is the station (RPD = Matrix)', () => {
+    gym({ matrix_cable: MATRIX, dumbbell: DUMBBELLS });
+    localStorage.setItem('logs', JSON.stringify(rows('Reverse Pec Deck', [50, 50, 41, 41, 32, 32, 54, 59])));
+    expect(roundToEquipmentWeight(64, 'Reverse Pec Deck')).toBe(64);
+    expect(getNextWeightGym(59, 'Reverse Pec Deck')).toBe(64);
+    flags({ dp_station_from_loads_v1: false });
+    expect(getNextWeightGym(59, 'Reverse Pec Deck')).not.toBe(64);
+  });
+
+  it('an unmapped dumbbell lift is a dumbbell, not the cable stack', () => {
+    expect(getEquipmentType('Wrist Curl DB Seated Palms-Up')).toBe('dumbbell');
+    flags({ dp_unmapped_by_library_v1: false });
+    expect(getEquipmentType('Wrist Curl DB Seated Palms-Up')).toBe('bailib_stack');
+  });
+
+  it('a grid step a kilo off his load becomes his load; a real plate step between sparse loads survives', () => {
+    localStorage.setItem('logs', JSON.stringify(rows('Pec Deck / Cable Fly', [60, 60, 57, 57, 55, 50, 45])));
+    expect(getPrevWeight(60, 'Pec Deck / Cable Fly')).toBe(57); // grid 59 → his 57
+    localStorage.setItem('logs', JSON.stringify(rows('Leg Press', [80, 80, 60, 60])));
+    expect(getPrevWeight(80, 'Leg Press')).toBeGreaterThan(60); // a real plate rung, not his 60
+  });
+
+  it('above his heaviest the smaller real step wins (Flat Chest Press 70 → 75, not +10)', () => {
+    localStorage.setItem('logs', JSON.stringify(rows('Flat Chest Press Machine', [70, 60, 60, 70, 60])));
+    expect(getNextWeight(70, 'Flat Chest Press Machine')).toBe(75);
+    expect(roundToEquipmentWeight(75, 'Flat Chest Press Machine')).toBe(75);
   });
 });

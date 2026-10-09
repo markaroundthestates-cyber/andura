@@ -114,14 +114,20 @@ describe('T2.1 — weights.js pure-function properties', () => {
     );
   });
 
-  it('getNextWeight is monotone-up and bounded by the top rung', () => {
+  // Founder audit 2026-10-09: "bounded by the top rung" let next(60) on a pec deck whose
+  // grid tops at 59 return 59 — a step UP that went DOWN. The intent: next never steps
+  // down; inside the ladder it stays within it, above the top it climbs one top increment.
+  it('getNextWeight never steps down and climbs at most one top increment above the ladder', () => {
     fc.assert(
       fc.property(exArb, fc.double({ min: 1, max: 500, noNaN: true }), (ex, current) => {
         const list = listFor(ex);
         const top = list[list.length - 1];
+        const topStep = list.length >= 2 ? top - list[list.length - 2] : 0;
         const next = getNextWeight(current, ex);
-        expect(next).toBeLessThanOrEqual(Math.max(top, current));
         expect(next).toBeGreaterThanOrEqual(Math.min(current, top));
+        if (current <= top) expect(next).toBeLessThanOrEqual(top);
+        else expect(next).toBeLessThanOrEqual(current + topStep + 1e-9);
+        if (current > top) expect(next).toBeGreaterThanOrEqual(current);
       }),
     );
   });

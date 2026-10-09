@@ -576,6 +576,24 @@ export const FLAGS = Object.freeze({
   // → CATCH UP to 230. ON: the window stops at a >= 21-day gap between sessions
   // (baseLookback.recentSessionRows). Pinned OFF in fp + calibration sims.
   dp_recent_window_gap_cut_v1: { rollout: 1, default: true },
+  // Founder audit 2026-10-09 ("verifica daca mai e vre-o linie de greutati pe vre-un
+  // aparat incorecta fata de ce loghez eu"): every lift he logged at his gym, each
+  // load he set run through the app's snap + steps. Three classes (config/weights.js):
+  // dp_logged_loads_sacred_v1 — a load set >= 2x in 90 days is never snapped away
+  //   (Machine Shoulder Press 70 → 71 / 80 → 81, Preacher Curl 25 → 24, DB Wrist Curl
+  //   14 → 11); it also joins the active-gym stack when that stack decides.
+  // dp_steps_follow_logged_v1 — inside his used range a step lands on his next/previous
+  //   load; above the ladder top "next" steps UP by the top increment (it returned the
+  //   top rung — M Torture 60 → 59, Reverse Pec Deck 59 → 35).
+  // dp_unmapped_by_library_v1 — an unmapped dumbbell/barbell lift no longer defaults to
+  //   the cable stack type. All pinned OFF in fp + calibration sims.
+  dp_logged_loads_sacred_v1: { rollout: 1, default: true },
+  dp_steps_follow_logged_v1: { rollout: 1, default: true },
+  dp_unmapped_by_library_v1: { rollout: 1, default: true },
+  // dp_station_from_loads_v1 — a lift whose type has no stack at the active gym but
+  //   whose every used load (>= 3) sits on exactly one of his measured stacks is on that
+  //   stack (his Reverse Pec Deck = the Matrix stack). Pinned OFF in fp + sims.
+  dp_station_from_loads_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

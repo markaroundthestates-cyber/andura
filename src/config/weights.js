@@ -5,7 +5,8 @@ import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
 import { activeGymStepsForType, activeGym } from '../engine/dp/gymProfile.js';
-import { loggedRungs } from '../engine/dp/loggedRungs.js';
+import { loggedRungs, usedLoads, rungStep } from '../engine/dp/loggedRungs.js';
+import { getExerciseMetadata } from '../engine/exerciseLibrary.js';
 
 /** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
  *  lighter, safer load). PURE. `ladder` must be a non-empty ascending number[]. */
@@ -368,7 +369,7 @@ export const EXERCISE_EQUIPMENT_MAP = {
 function getList(exerciseName) {
   const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
   const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
-  const equipType = exMap[exerciseName] || 'bailib_stack';
+  const equipType = getEquipmentType(exerciseName);
   const hardCoded = equipWeights[equipType] || equipWeights['bailib_stack'] || [];
   // F4 #10 learned per-gym ladder (dp_learned_ladder_v1, default OFF → hardCoded →
   // byte-identical). When ON + a learned step exists for this exercise, refine the
@@ -399,9 +400,26 @@ function getList(exerciseName) {
  * @param {string} exerciseName
  */
 export function getNextWeight(current, exerciseName) {
+  const own = _loggedStep(current, exerciseName, 1);
+  if (own !== null) return own;
+  return _towardLogged(current, exerciseName, 1, _genericNext(current, exerciseName));
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _genericNext(current, exerciseName) {
   const list = getList(exerciseName);
   const idx = list.findIndex((w) => w >= current);
-  if (idx === -1) return list[list.length - 1] ?? current;
+  if (idx === -1) {
+    // Above every rung: the old answer was the TOP rung — BELOW current (founder audit
+    // 2026-10-09: M Torture 60 → "next" 59, Reverse Pec Deck 59 → 35). Step up by the
+    // ladder's top increment instead (mirror of getPrevWeight's above-the-top fix).
+    if (isEnabled('dp_steps_follow_logged_v1')) {
+      const n = list.length;
+      const topStep = n >= 2 ? list[n - 1] - list[n - 2] : 0;
+      return topStep > 0 ? current + topStep : current;
+    }
+    return list[list.length - 1] ?? current;
+  }
   if (list[idx] === current) return list[Math.min(idx + 1, list.length - 1)] ?? current;
   return list[idx] ?? current;
 }
@@ -411,6 +429,11 @@ export function getNextWeight(current, exerciseName) {
  * @param {string} exerciseName
  */
 export function getPrevWeight(current, exerciseName) {
+  return _towardLogged(current, exerciseName, -1, _genericPrev(current, exerciseName));
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _genericPrev(current, exerciseName) {
   const list = getList(exerciseName);
   const idx = list.findIndex((w) => w >= current);
   // ── above-the-top (audit F-1b) ──────────────────────────────────────────────
@@ -430,6 +453,75 @@ export function getPrevWeight(current, exerciseName) {
 }
 
 /**
+ * dp_station_from_loads_v1 (founder audit 2026-10-09) — his Reverse Pec Deck loads are
+ * 32/41/50/54/59, rung for rung the Matrix stack he measured in Sala mea, but the lift
+ * is typed as a light generic cable (top 35), so steps and snaps guessed. When the
+ * lift's own type has no stack at the active gym and every load he uses on it (>= 3
+ * distinct, each set >= 2x in 90 days) sits on exactly ONE of his gym's stacks, that
+ * stack is the station. @param {string} ex @returns {number[]|null}
+ */
+function _inferredGymStack(ex) {
+  if (!isEnabled('dp_station_from_loads_v1') || typeof ex !== 'string') return null;
+  const g = activeGym();
+  if (!g || !g.stacks || typeof g.stacks !== 'object') return null;
+  const used = usedLoads(ex);
+  if (used.length < 3) return null;
+  const hits = [];
+  for (const type of Object.keys(g.stacks)) {
+    const steps = activeGymStepsForType(type);
+    if (steps && used.every((w) => steps.some((r) => Math.abs(r - w) <= 0.25))) hits.push(steps);
+  }
+  return hits.length === 1 ? hits[0] : null;
+}
+
+/**
+ * dp_steps_follow_logged_v1 — at or above the heaviest load he sets on this exercise a
+ * step UP continues his machine's own increment (the generic grid may top out below
+ * him: M Torture 60 → "next" 59). Inside his range the ladder decides (a real plate
+ * step between two sparse logged loads — 75 between his 60 and 80 — must survive; the
+ * snap already prefers his loads where the grid is off by a kilo). Downward steps and
+ * lifts without >= 2 rungs → null. @param {number} current @param {string} ex
+ * @param {1|-1} dir @returns {number|null}
+ */
+/**
+ * dp_steps_follow_logged_v1 — inside his range, a grid step that lands within the snap
+ * tolerance of a load he sets is replaced by that load (M Torture prev(60) = grid 59 →
+ * his 57); a real intermediate grid rung farther from his loads is kept (75 between his
+ * 60 and 80). Same tolerance as roundToEquipmentWeight. @param {number} current
+ * @param {string} ex @param {1|-1} dir @param {number} generic @returns {number}
+ */
+function _towardLogged(current, ex, dir, generic) {
+  if (!isEnabled('dp_steps_follow_logged_v1') || !Number.isFinite(current) || typeof ex !== 'string') return generic;
+  const r = loggedRungs(ex);
+  if (!r || r.length < 2 || current < r[0] - 1e-9 || current > r[r.length - 1] + 1e-9) return generic;
+  const mine = dir > 0 ? r.find((w) => w > current + 1e-9) : [...r].reverse().find((w) => w < current - 1e-9);
+  if (mine === undefined) return generic;
+  const tol = Math.min(2.5, 0.04 * Math.max(current, mine));
+  const genericMoves = dir > 0 ? generic > current + 1e-9 : generic < current - 1e-9;
+  if (!genericMoves || Math.abs(generic - mine) <= tol) return mine;
+  return Math.abs(generic - current) < Math.abs(mine - current) ? generic : mine;
+}
+
+function _loggedStep(current, ex, dir) {
+  if (dir < 0 || !isEnabled('dp_steps_follow_logged_v1') || !Number.isFinite(current) || typeof ex !== 'string') return null;
+  const r = loggedRungs(ex);
+  if (!r || r.length < 2 || current < r[r.length - 1] - 1e-9) return null;
+  const st = rungStep(r);
+  if (!(st > 0)) return null;
+  // A real rung of the station type closer than his increment wins (Flat Chest Press
+  // 70 → the 75 plate step, not his 60→70 gap of 10).
+  const grid = _typeGrid(ex).find((w) => w > current + 1e-9);
+  return grid !== undefined ? Math.min(current + st, grid) : current + st;
+}
+
+/** The hard-coded grid of the lift's station type (no learned refinement — that may be
+ *  an old gym's). @param {string} ex @returns {number[]} */
+function _typeGrid(ex) {
+  const grids = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
+  return grids[getEquipmentType(ex)] || [];
+}
+
+/**
  * ACTIVE-GYM ladder for a lift's equipment type — the user's MEASURED "Sala mea"
  * rungs (>= 2) for THIS station on their active gym, when dp_gym_ladder_steps_v1 is
  * ON. Returns the ascending rung array, else null (caller falls back to the generic
@@ -443,7 +535,7 @@ export function getPrevWeight(current, exerciseName) {
  */
 function _activeGymLadder(exerciseName) {
   if (!isEnabled('dp_gym_ladder_steps_v1') || typeof exerciseName !== 'string' || !exerciseName) return null;
-  const steps = activeGymStepsForType(getEquipmentType(exerciseName));
+  const steps = activeGymStepsForType(getEquipmentType(exerciseName)) ?? _inferredGymStack(exerciseName);
   return Array.isArray(steps) && steps.length >= 2 ? steps : null;
 }
 
@@ -482,6 +574,11 @@ export function getPrevWeightGym(current, exerciseName) {
  *   too, so it is safe to always pass ctx once wired.
  */
 export function roundToEquipmentWeight(weight, exerciseName, ctx) {
+  // dp_logged_loads_sacred_v1 — a load he set >= 2x on this exercise in 90 days is a
+  // real rung of the machine he uses: never snapped away, by any ladder (dp/loggedRungs).
+  const used = isEnabled('dp_logged_loads_sacred_v1') && Number.isFinite(weight) && typeof exerciseName === 'string'
+    ? usedLoads(exerciseName) : null;
+  if (used && used.some((w) => Math.abs(w - weight) < 1e-9)) return weight;
   const list = getList(exerciseName);
   const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
@@ -494,8 +591,11 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   // falls through → byte-identical. Highest precedence — applies to BOTH the ctx + no-ctx
   // paths.
   if (isEnabled('dp_active_gym_ladder_v1') && Number.isFinite(weight)) {
-    const gymSteps = activeGymStepsForType(getEquipmentType(exerciseName));
-    if (gymSteps) return _nearestRung(weight, gymSteps);
+    const gymSteps = activeGymStepsForType(getEquipmentType(exerciseName)) ?? _inferredGymStack(exerciseName);
+    if (gymSteps) {
+      return _nearestRung(weight, used && used.length
+        ? [...new Set([...gymSteps, ...used])].sort((a, b) => a - b) : gymSteps);
+    }
   }
   // LOGGED RUNGS (dp_logged_rungs_snap_v1, dp/loggedRungs.js) — no measured stack for
   // this station → the loads the user actually sets on it are the ground truth. Inside
@@ -508,6 +608,16 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   if (rungs) {
     const lo = rungs[0];
     const hi = rungs[rungs.length - 1];
+    // dp_steps_follow_logged_v1 — outside his range the old chain fell onto a ladder
+    // learned at his OLD gym (Machine Shoulder Press 65 → 66, M Torture 65 → 67, RPD
+    // 64 → 66): continue HIS machine's increment from his top/bottom rung instead.
+    const st = isEnabled('dp_steps_follow_logged_v1') ? rungStep(rungs) : 0;
+    if (st > 0 && weight > hi) {
+      const ext = [];
+      for (let k = 1; hi + (k - 1) * st <= weight + st; k++) ext.push(hi + k * st);
+      return _nearestRung(weight, [hi, ...ext, ..._typeGrid(exerciseName).filter((w) => w > hi)].sort((a, b) => a - b));
+    }
+    if (st > 0 && weight < lo - st / 2) return Math.max(st, lo - Math.round((lo - weight) / st) * st);
     // Above his range: the chain may go up, never clamp below a load he uses.
     if (weight > hi) return Math.max(legacy, hi);
     // Half the finest gap under his lightest still belongs to it (72.5 → his 75).
@@ -521,6 +631,10 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
       const tol = Math.min(2.5, 0.04 * weight);
       return Math.abs(near - weight) <= Math.abs(legacy - weight) + tol ? near : legacy;
     }
+  }
+  // One recent load only (no rung pair): his load + the type's grid, not an old-gym ladder.
+  if (!rungs && used && used.length && isEnabled('dp_steps_follow_logged_v1')) {
+    return _nearestRung(weight, [...new Set([...list, ...used])].sort((a, b) => a - b));
   }
   return legacy;
 }
@@ -552,7 +666,17 @@ function _legacyRound(weight, exerciseName, ctx, generic) {
 /** @param {string} exerciseName */
 export function getEquipmentType(exerciseName) {
   const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
-  return exMap[exerciseName] || 'bailib_stack';
+  const mapped = exMap[exerciseName];
+  if (mapped) return mapped;
+  // dp_unmapped_by_library_v1 (founder audit 2026-10-09: DB Wrist Curl 14 → 11) — an
+  // unmapped name fell to 'bailib_stack', so a dumbbell or barbell lift snapped onto the
+  // cable stack. Use the library's own equipment tag for those two; the rest unchanged.
+  if (isEnabled('dp_unmapped_by_library_v1')) {
+    const eq = getExerciseMetadata(exerciseName)?.equipment_type;
+    if (eq === 'dumbbell') return 'dumbbell';
+    if (eq === 'barbell') return 'barbell_plates';
+  }
+  return 'bailib_stack';
 }
 
 

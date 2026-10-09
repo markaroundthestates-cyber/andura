@@ -403,8 +403,9 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
 
   it('logged-history exercise gets a DP weight, NOT the old hardcoded 20', async () => {
     // Seed real per-set logs for Lat Pulldown (English canonical key DP reads).
-    // 3 sessions at 56 kg below top reps → DP CONSOLIDATE holds last weight,
-    // snapped to the equipment stack (bailib_stack 56 -> 55).
+    // 3 sessions at 56 kg below top reps → DP CONSOLIDATE holds last weight. A load
+    // set 3x is a rung of the machine he uses (dp_logged_loads_sacred_v1, founder audit
+    // 2026-10-09) → 56 stays 56 (it used to snap to the generic bailib 55).
     DB.set('logs', [
       { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 1000 },
       { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 2000 },
@@ -414,9 +415,9 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    // Real DP output (55, equipment-rounded) — proves the brain is wired, NOT
+    // Real DP output (56, the load he sets) — proves the brain is wired, NOT
     // the dead 20 default NOR the cold-start prior (30 for this exercise).
-    expect(lat!.targetKg).toBe(55);
+    expect(lat!.targetKg).toBe(56);
     expect(lat!.targetKg).not.toBe(20);
     expect(lat!.targetKg).not.toBe(suggestStartWeight('Lat Pulldown', 'intermediate'));
     // DP repsTarget wired too (not a hardcode). The seeded logs carry no rpe, so
