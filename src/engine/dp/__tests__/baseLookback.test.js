@@ -151,4 +151,18 @@ describe('recentSessionRows — demonstrated means demonstrated RECENTLY', () =>
     expect(recentSessionRows([])).toEqual([]);
     expect(recentSessionRows(null)).toBe(null);
   });
+
+  // Founder replay 2026-10-09: Leg Press done twice in four months — the window reached
+  // back across a 14-week gap to June's 230 kg (old gym) → "catch up to 230" on his 90.
+  it('stops at a layoff: sessions before a >= 21-day gap are not current capacity', () => {
+    const lp = [
+      { w: 90, reps: 8, ts: Date.UTC(2026, 9, 9, 5) },
+      { w: 90, reps: 9, ts: Date.UTC(2026, 8, 25, 5) },
+      { w: 230, reps: 8, ts: Date.UTC(2026, 5, 6, 5) },
+    ];
+    expect(recentSessionRows(lp).map((r) => r.w)).toEqual([90, 90]);
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_recent_window_gap_cut_v1: false }));
+    expect(recentSessionRows(lp).map((r) => r.w)).toEqual([90, 90, 230]);
+    localStorage.removeItem('_devFlags');
+  });
 });

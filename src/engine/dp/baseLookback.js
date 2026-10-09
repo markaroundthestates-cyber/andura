@@ -40,6 +40,7 @@
 // existing single-session base (byte-identical / inert for a new user).
 
 import { e1rmSeries } from './progressionSignal.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 // ── Tunables (DESIGN PROPOSALS — conservative; sim sweep + Daniel before flip) ──
 // How many DISTINCT sessions (calendar days) back the base aggregates over. 3 per
@@ -48,6 +49,8 @@ export const LOOKBACK_SESSIONS = 3;
 // Minimum DISTINCT sessions required before the lookback produces a base. < this →
 // 0 (inert; the caller's single-session path stands). One session is not a lookback.
 export const MIN_SESSIONS = 2;
+// A layoff long enough to detrain (mirrors DP.RETURN_GAP_MIN_WEEKS = 3).
+export const GAP_CUT_DAYS = 21;
 // Recency guard: the multi-session base may sit at most this FRACTION above the
 // LATEST session's own e1RM level. 5% absorbs ordinary one-session noise (a slightly
 // flat day) without forcing an old number back; beyond it (a real layoff — the
@@ -161,6 +164,22 @@ export function recentSessionRows(rows) {
     if (!days.includes(k)) days.push(k);
   }
   if (days.length < MIN_SESSIONS) return rows;
-  const keep = new Set(days.slice(0, LOOKBACK_SESSIONS));
+  let window = days.slice(0, LOOKBACK_SESSIONS);
+  // dp_recent_window_gap_cut_v1 (founder replay 2026-10-09): Leg Press done twice in
+  // four months — the 3-session window reached back across a 14-week gap to June's
+  // 230 kg at his OLD gym, so 90 kg today read as "easy, catch up to your real level
+  // 230". Capacity from before a layoff (>= GAP_CUT_DAYS between sessions) is not
+  // current capacity: the window stops at the gap (the post-gap sessions speak).
+  if (isEnabled('dp_recent_window_gap_cut_v1')) {
+    for (let i = 1; i < window.length; i++) {
+      const newer = Number(window[i - 1].slice(1));
+      const older = Number(window[i].slice(1));
+      if (window[i].startsWith('d') && window[i - 1].startsWith('d') && newer - older >= GAP_CUT_DAYS) {
+        window = window.slice(0, i);
+        break;
+      }
+    }
+  }
+  const keep = new Set(window);
   return rows.filter((_, i) => keep.has(keys[i]));
 }

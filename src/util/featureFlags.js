@@ -571,6 +571,11 @@ export const FLAGS = Object.freeze({
   // was trained within the gap window (ceiling.samePatternTrainedSince). Pinned OFF in
   // fp + calibration sims.
   dp_return_deload_sibling_v1: { rollout: 1, default: true },
+  // dp_recent_window_gap_cut_v1 (2026-10-09) — the 3-session "demonstrated" window
+  // reached back across a 14-week gap: Leg Press 90 today vs 230 in June at his old gym
+  // → CATCH UP to 230. ON: the window stops at a >= 21-day gap between sessions
+  // (baseLookback.recentSessionRows). Pinned OFF in fp + calibration sims.
+  dp_recent_window_gap_cut_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer
