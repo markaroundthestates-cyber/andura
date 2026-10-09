@@ -329,11 +329,25 @@ describe('ScheduleDayPreviewSheet — temporal awareness (clock)', () => {
     expect(screen.queryByTestId('schedule-day-preview-missed')).not.toBeInTheDocument();
   });
 
-  it('TODAY shows the live proposal even if a session is already logged today', async () => {
-    // A session finished earlier TODAY (Thu) — today still shows the proposal
-    // (the running plan), not the read-only history view.
+  // Founder 2026-10-09: today's finished session showed "Building today's plan…" and
+  // then the next proposal instead of what he had just done.
+  it('TODAY with a session already logged shows what was done, not a new proposal', async () => {
     const todaySession = { ...WED_SESSION, ts: new Date(2026, 5, 4, 9, 0, 0).getTime() };
     useWorkoutStore.setState({ sessionsHistory: [todaySession] });
+    render(<Calendar7Day />);
+    fireEvent.click(screen.getByTestId('calendar-day-3')); // Thu = TODAY
+
+    await screen.findByTestId('schedule-day-preview-sheet');
+    expect(getWorkoutForDayMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId('schedule-day-preview-done-title')).toHaveTextContent(
+      'Leg day (what actually happened)',
+    );
+    expect(screen.getByText('85 kg x 6')).toBeInTheDocument();
+    expect(screen.queryByTestId('schedule-day-preview-list')).not.toBeInTheDocument();
+  });
+
+  it('TODAY with nothing logged yet still shows the live proposal', async () => {
+    useWorkoutStore.setState({ sessionsHistory: [WED_SESSION] });
     render(<Calendar7Day />);
     fireEvent.click(screen.getByTestId('calendar-day-3')); // Thu = TODAY
 
@@ -342,7 +356,21 @@ describe('ScheduleDayPreviewSheet — temporal awareness (clock)', () => {
     await waitFor(() => {
       expect(screen.getAllByTestId('schedule-day-preview-exercise')).toHaveLength(2);
     });
-    expect(screen.queryByTestId('schedule-day-preview-logged-list')).not.toBeInTheDocument();
+  });
+
+  it('a session logged on a REST day shows what was done, not the rest copy', async () => {
+    useScheduleStore.setState({
+      weekStartISO: weekStartIso(),
+      days: ['training', 'training', 'rest', 'training', 'training', 'training', 'training'],
+      editMode: false,
+    });
+    useWorkoutStore.setState({ sessionsHistory: [WED_SESSION] });
+    render(<Calendar7Day />);
+    fireEvent.click(screen.getByTestId('calendar-day-2')); // Wed = PAST rest, but trained
+
+    await screen.findByTestId('schedule-day-preview-sheet');
+    expect(screen.getByTestId('schedule-day-preview-done-title')).toBeInTheDocument();
+    expect(screen.queryByTestId('schedule-day-preview-rest')).not.toBeInTheDocument();
   });
 });
 

@@ -210,6 +210,16 @@ export function ScheduleDayPreviewSheet({
   //   - TODAY/FUTURE   → live engine proposal (unchanged behavior).
   useEffect(() => {
     if (!open || dayIdx === null) return;
+    // A day that ALREADY HAS a logged session shows what was done — today included
+    // (founder 2026-10-09: today's finished session showed "Building today's plan…"
+    // then the next proposal), and a session logged on a rest day too.
+    const done = classifyPhase(dayIdx) === 'future' ? null : findLoggedSession(dayIdx);
+    if (done) {
+      setWorkout(null);
+      setLoggedSession(done);
+      setLoading(false);
+      return;
+    }
     if (dayKind === 'rest') {
       setWorkout(null);
       setLoggedSession(null);
@@ -293,9 +303,9 @@ export function ScheduleDayPreviewSheet({
   const exercises = workout?.exercises ?? [];
   // Proposed (TODAY/FUTURE training only) — never for a past day.
   const hasSession = !isRest && !isPast && workout !== null && exercises.length > 0;
-  // Logged (PAST training only) — the real session the user performed.
+  // Logged (past or today, any day kind) — the real session the user performed.
   const loggedExercises = loggedSession?.exercises ?? [];
-  const hasLogged = isPast && !isRest && loggedSession !== null && loggedExercises.length > 0;
+  const hasLogged = loggedSession !== null && loggedExercises.length > 0;
   // Past training day with no logged session → honest "missed" empty state.
   const isMissed = isPast && !isRest && !hasLogged;
 
@@ -359,7 +369,7 @@ export function ScheduleDayPreviewSheet({
         )}
 
         {/* REST state — the day is rest per the live schedule. */}
-        {isRest && (
+        {isRest && !hasLogged && (
           <p
             className="text-sm text-ink2 leading-relaxed mt-2"
             data-testid="schedule-day-preview-rest"
@@ -382,7 +392,7 @@ export function ScheduleDayPreviewSheet({
         {/* EMPTY state — TODAY/FUTURE training day but the engine can't propose a
             session (too far out / insufficient data). Honest copy, NO fabricated
             list. Past days use the MISSED state below, never a proposal. */}
-        {!isRest && !isPast && !loading && !hasSession && (
+        {!isRest && !isPast && !loading && !hasSession && !hasLogged && (
           <p
             className="text-sm text-ink2 leading-relaxed mt-2"
             data-testid="schedule-day-preview-empty"
