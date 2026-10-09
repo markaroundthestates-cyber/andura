@@ -141,6 +141,29 @@ const movementRoot = (n) => String(n).toLowerCase().replace(/[^a-z ]/g, ' ').tri
  * apart from the flag read.
  * @param {string} target @param {string} src @returns {boolean}
  */
+/**
+ * dp_return_deload_sibling_v1 (founder replay 2026-10-09): the return-after-gap deload
+ * read only the lift's OWN log — Smith OHP last logged in June (17 weeks) was halved to
+ * 12 kg while he pressed 60 on the Machine Shoulder Press every week. The movement was
+ * not laid off. True when another logged lift of the SAME known pattern (not 'generic')
+ * has a log at/after `sinceMs`. PURE apart from the injected readers.
+ * @param {string} ex
+ * @param {number} sinceMs
+ * @param {Iterable<string>} loggedNames
+ * @param {(name: string) => Array<{ts?: number}>} newestLogOf newest-first log reader
+ * @returns {boolean}
+ */
+export function samePatternTrainedSince(ex, sinceMs, loggedNames, newestLogOf) {
+  const p = classifyPattern(ex);
+  if (p === 'generic') return false;
+  for (const n of loggedNames) {
+    if (n === ex || classifyPattern(n) !== p) continue;
+    const l = newestLogOf(n)[0];
+    if (l && Number(l.ts) >= sinceMs) return true;
+  }
+  return false;
+}
+
 export function transferCompatibleLifts(target, src) {
   const tp = classifyPattern(target);
   const sp = classifyPattern(src);

@@ -565,6 +565,12 @@ export const FLAGS = Object.freeze({
   // places (carryoverBalance.detectDoneEarlySwap); the make-up is planned as that day.
   // Pinned OFF in fp + calibration sims (compose path).
   dp_week_done_early_swap_v1: { rollout: 1, default: true },
+  // dp_return_deload_sibling_v1 (2026-10-09) — the return-after-gap deload looked only
+  // at the lift's own log: Smith OHP (last June) halved to 12 kg while he pressed 60 on
+  // the Machine Shoulder Press weekly. ON: no comeback deload when a same-pattern lift
+  // was trained within the gap window (ceiling.samePatternTrainedSince). Pinned OFF in
+  // fp + calibration sims.
+  dp_return_deload_sibling_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

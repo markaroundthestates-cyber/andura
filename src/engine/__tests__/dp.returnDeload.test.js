@@ -183,3 +183,32 @@ describe('DP return-after-gap — golden-safe no-ops', () => {
     expect(DP._returnDeload(EX, NOW)).toBeNull();
   });
 });
+
+// Founder replay 2026-10-09: Smith OHP last logged in June (17 weeks) was halved to
+// 12 kg as a "comeback" while he pressed 60 on the Machine Shoulder Press every week.
+describe('return deload — the movement was not laid off (dp_return_deload_sibling_v1)', () => {
+  const seed = () => {
+    store['logs'] = [
+      { ex: 'Machine Shoulder Press', w: 60, reps: 9, rpe: 7.5, ts: NOW - 4 * DAY },
+      { ex: 'Machine Shoulder Press', w: 60, reps: 9, rpe: 7.5, ts: NOW - 4 * DAY - 60_000 },
+      { ex: 'Smith OHP', w: 25, reps: 8, rpe: 7.5, ts: NOW - 17 * WEEK },
+      { ex: 'Smith OHP', w: 25, reps: 7, rpe: 7.5, ts: NOW - 17 * WEEK - 60_000 },
+    ];
+  };
+
+  it('a same-pattern lift trained within the window → no comeback deload', () => {
+    seed();
+    const rec = DP.getSmartRecommendation('Smith OHP', null, null, NOW);
+    expect(rec.status).not.toBe('RETURN DELOAD');
+    expect(rec.kg).toBeGreaterThanOrEqual(24);
+  });
+
+  it('flag OFF → the legacy own-log comeback deload', () => {
+    seed();
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+      dp_base_lookback_v1: false, dp_return_deload_sibling_v1: false,
+    }));
+    expect(DP.getSmartRecommendation('Smith OHP', null, null, NOW).status).toBe('RETURN DELOAD');
+  });
+});

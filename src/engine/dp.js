@@ -25,7 +25,7 @@ import {
   advanceExperiment as advanceNof1Experiment,
   NOF1_ARMS,
 } from './dp/nof1.js';
-import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, transferCompatibleLifts } from './dp/ceiling.js';
+import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, transferCompatibleLifts, samePatternTrainedSince } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
@@ -1367,6 +1367,7 @@ export const DP = {
       return null;
     }
     if (!Number.isFinite(preGapW) || preGapW <= 0) return null;
+    if (isEnabled('dp_return_deload_sibling_v1') && samePatternTrainedSince(ex, ms - gapMinMs, this._loggedExerciseNames(), (n) => this.getLogs(n, 1))) return null;
 
     const gapWeeks = gapMs / this._WEEK_MS;
     // Depth scales linearly with gap length between the mild and deep anchors,
