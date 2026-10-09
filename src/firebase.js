@@ -255,10 +255,20 @@ function _fromCloud(k, v) {
 // {ts, v} under `_lww_<node>` (a node pre-LWW clients never write, so their stale
 // push of the plain key cannot erase a newer edit), and the pull adopts a STRICTLY
 // newer remote stamp. No stamp anywhere → the legacy merge, byte-identical.
-export const LWW_SYNC_KEYS = Object.freeze(['phase-override', 'phase-change-date', 'dp-gyms']);
+// The LEARNED engine state joins them (sync_lww_learned_v1, 2026-10-09): object-merged
+// local-wins, every device kept its own learned copy and the cloud held whichever
+// opened last — a second device of the founder's pushed its old copy over the phone's.
+// Learners build on what the device pulled at boot, so the last device to learn is right.
+export const LWW_LEARNED_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-recovery-constants', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament', 'dp-fatigue-curve', 'dp-learned-volume', 'dp-behavior-tuning']);
+export const LWW_SYNC_KEYS = Object.freeze(['phase-override', 'phase-change-date', 'dp-gyms', ...LWW_LEARNED_KEYS]);
 export const LWW_CLOUD_NODES = Object.freeze(LWW_SYNC_KEYS.map((k) => `_lww_${fbKey(k)}`));
 const LWW_TS_KEY = 'sync-lww-ts';
 let _lwwPulling = false;
+
+/** @param {string} k */
+function _lwwActive(k) {
+  return LWW_SYNC_KEYS.includes(k) && (!LWW_LEARNED_KEYS.includes(k) || isEnabled('sync_lww_learned_v1'));
+}
 
 /** @returns {Record<string, number>} */
 function _lwwStamps() {
@@ -505,7 +515,7 @@ export async function syncToFirebase() {
     if (isEnabled('sync_lww_settings_v1')) {
       const stamps = _lwwStamps();
       LWW_SYNC_KEYS.forEach((k, i) => {
-        if (typeof stamps[k] !== 'number') return;
+        if (typeof stamps[k] !== 'number' || !_lwwActive(k)) return;
         payload[LWW_CLOUD_NODES[i]] = { ts: stamps[k], v: _toCloud(k, DB.get(k) ?? null) };
       });
     }
@@ -566,7 +576,7 @@ export async function syncFromFirebase() {
         // Read from the sanitized remote node name (matches the push side), but
         // keep writing to the original localStorage key `k`.
         const rk = fbKey(k);
-        const li = lwwOn ? LWW_SYNC_KEYS.indexOf(k) : -1;
+        const li = lwwOn && _lwwActive(k) ? LWW_SYNC_KEYS.indexOf(k) : -1;
         if (li >= 0) {
           const r = remote[LWW_CLOUD_NODES[li]];
           if (r && typeof r === 'object' && typeof r.ts === 'number' && r.ts > (stamps[k] || 0)) {
@@ -574,6 +584,9 @@ export async function syncFromFirebase() {
             stamps[k] = r.ts;
             return;
           }
+          // This device learned last: keep its copy whole — a stale device's extra
+          // entries in the plain node must not be unioned back in.
+          if (typeof stamps[k] === 'number' && LWW_LEARNED_KEYS.includes(k) && DB.get(k) != null) return;
         }
         if (remote[rk] == null) return;
         // Name-keyed maps were pushed as an array-of-{name,...} (forbidden-char
@@ -674,7 +687,7 @@ export function suppressInvalidations(fn) {
 
 DB.set = function(key, val) {
   _origSet(key, val);
-  if (!_lwwPulling && LWW_SYNC_KEYS.includes(key) && isEnabled('sync_lww_settings_v1')) {
+  if (!_lwwPulling && _lwwActive(key) && isEnabled('sync_lww_settings_v1')) {
     _origSet(LWW_TS_KEY, { ..._lwwStamps(), [key]: Date.now() });
   }
   if (COACH_RELEVANT_KEYS.includes(key)) {

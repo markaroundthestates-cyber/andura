@@ -2439,6 +2439,16 @@ export const FLAGS = Object.freeze({
   // path) → fp byte-identical without pinning. Kill-switch: flip default false →
   // legacy local-wins merge (stamps are ignored, mirror nodes stop being written).
   sync_lww_settings_v1: { rollout: 1, default: true },
+  // sync_lww_learned_v1 (2026-10-09) — the per-user learned engine state (calibration,
+  // recovery, ladders, temperament, fatigue curve, volume band, behavior tuning) was
+  // object-merged local-wins, so each device kept its OWN copy and the cloud held
+  // whichever device opened last: a second device of the founder's pushed its old copy
+  // over the phone's (hamstring recovery back to 192h, Leg Press 90 gone from the
+  // ladder). ON: those keys ride the same `_lww_<node>` stamp as the settings above —
+  // the device that learned last wins everywhere, and a device whose own stamp is the
+  // newest keeps its copy whole. Sync layer only → fp byte-identical without pinning.
+  // Kill-switch: flip default false → legacy local-wins merge for those keys.
+  sync_lww_learned_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

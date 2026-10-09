@@ -168,3 +168,93 @@ describe('firebase — last-write-wins settings (phase-override, phase-change-da
     expect(lastPatch()['_lww_phase-override']).toBeUndefined();
   });
 });
+
+// ══ Learned engine state rides the same stamp (sync_lww_learned_v1) ═════════
+// EVIDENCE (founder account, 2026-10-09): his phone pushed its learned state at
+// 15:23; at 21:22 a second device of his — idle since the summer — opened the app
+// and its old copy replaced the phone's in the cloud: hamstring recovery back to the
+// inflated 192h (the phone had the recomputed 96h v2), the Leg Press 90 he logged
+// that morning gone from the observed loads, behavior tuning n 11129 → 17. Values
+// below are the two real copies.
+describe('firebase — learned engine state is last-learned-wins', () => {
+  /** @type {ReturnType<typeof vi.fn>} */
+  let fetchMock;
+  const remote = (doc) => fetchMock.mockResolvedValue(new Response(JSON.stringify(doc), { status: 200 }));
+  const lastPatch = () => JSON.parse(fetchMock.mock.calls[fetchMock.mock.calls.length - 1][1].body);
+  const PHONE_RECOVERY = { hamstring: { hours: 96, n: 3, v: 2 }, lat: { hours: 72, n: 3, v: 2 } };
+  const STALE_RECOVERY = { hamstring: { hours: 192, n: 14 }, lat: { hours: 60, n: 2 } };
+  const PHONE_OBS = { 'Leg Press': { loads: [90, 190, 210, 230], templateId: 'plate_metric_daniel' } };
+  const STALE_OBS = { 'Leg Press': { loads: [190, 210, 230], templateId: 'plate_metric_daniel' }, 'Pec Deck / Cable Fly': { loads: [18] } };
+
+  /** What the phone pushes after learning: the real encoded cloud nodes. */
+  async function phonePush() {
+    DB.set('dp-recovery-constants', PHONE_RECOVERY);
+    DB.set('dp-equipment-obs', PHONE_OBS);
+    await syncToFirebase();
+    const p = lastPatch();
+    localStorage.clear();
+    _seedAuth();
+    return p;
+  }
+
+  beforeEach(() => {
+    localStorage.clear();
+    _seedAuth();
+    fetchMock = vi.fn().mockResolvedValue(new Response('null', { status: 200 }));
+    globalThis.fetch = fetchMock;
+    delete window._suppressFirebaseSync;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it('the idle device adopts what the phone learned, name-keyed values decoded', async () => {
+    const p = await phonePush();
+    _legacyLocal('dp-recovery-constants', STALE_RECOVERY);
+    _legacyLocal('dp-equipment-obs', STALE_OBS);
+    remote(p);
+    await syncFromFirebase();
+    expect(DB.get('dp-recovery-constants')).toEqual(PHONE_RECOVERY);
+    expect(DB.get('dp-equipment-obs')).toEqual(PHONE_OBS);
+    // ...and its next push carries the phone's copy, not its own old one.
+    await syncToFirebase();
+    expect(lastPatch()['dp-recovery-constants'].hamstring.hours).toBe(96);
+  });
+
+  it('the device that learned last keeps its copy whole — no stale entries unioned back', async () => {
+    DB.set('dp-equipment-obs', PHONE_OBS); // stamped now
+    remote({ 'dp-equipment-obs': [{ name: 'Leg Press', loads: [190, 210, 230] }, { name: 'Pec Deck / Cable Fly', loads: [18] }] });
+    await syncFromFirebase();
+    expect(DB.get('dp-equipment-obs')).toEqual(PHONE_OBS);
+  });
+
+  it('no stamp anywhere → the legacy union merge (local wins per entry)', async () => {
+    _legacyLocal('dp-recovery-constants', PHONE_RECOVERY);
+    remote({ 'dp-recovery-constants': { ...STALE_RECOVERY, quad: { hours: 96, n: 3, v: 2 } } });
+    await syncFromFirebase();
+    expect(DB.get('dp-recovery-constants')).toEqual({ ...PHONE_RECOVERY, quad: { hours: 96, n: 3, v: 2 } });
+  });
+
+  it('a learned write is mirrored with cloud-safe keys', async () => {
+    DB.set('dp-equipment-obs', STALE_OBS);
+    await syncToFirebase();
+    const body = lastPatch();
+    expect(body['_lww_dp-equipment-obs']).toEqual({ ts: expect.any(Number), v: expect.any(Array) });
+    _assertNoForbiddenKeys(body['_lww_dp-equipment-obs']);
+    expect(LWW_CLOUD_NODES).toContain('_lww_dp-recovery-constants');
+  });
+
+  it('flag OFF → learned keys keep the legacy merge and are not mirrored', async () => {
+    const p = await phonePush();
+    localStorage.setItem('_devFlags', JSON.stringify({ sync_lww_learned_v1: false }));
+    _legacyLocal('dp-recovery-constants', STALE_RECOVERY);
+    remote(p);
+    await syncFromFirebase();
+    expect(DB.get('dp-recovery-constants')).toEqual(STALE_RECOVERY);
+    DB.set('dp-recovery-constants', PHONE_RECOVERY);
+    await syncToFirebase();
+    expect(lastPatch()['_lww_dp-recovery-constants']).toBeUndefined();
+  });
+});
