@@ -9,18 +9,23 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const syncFromFirebase = vi.fn(async () => true);
 const hydrateStoresFromCloud = vi.fn(async () => {});
+const flushPendingPush = vi.fn(async () => true);
+const flushPendingStorePushes = vi.fn(async (_now?: boolean) => true);
+let retryOn = false;
 let userPath: string | null = 'users/abc';
 let flagOn = true;
 
 vi.mock('../../../firebase.js', () => ({
   syncFromFirebase: () => syncFromFirebase(),
   getUserPath: () => userPath,
+  flushPendingPush: () => flushPendingPush(),
 }));
 vi.mock('../../lib/storeSync', () => ({
   hydrateStoresFromCloud: () => hydrateStoresFromCloud(),
+  flushPendingStorePushes: (now?: boolean) => flushPendingStorePushes(now),
 }));
 vi.mock('../../../util/featureFlags.js', () => ({
-  isEnabled: (k: string) => (k === 'live_sync_poll_v1' ? flagOn : false),
+  isEnabled: (k: string) => (k === 'live_sync_poll_v1' ? flagOn : k === 'sync_push_retry_v1' ? retryOn : false),
 }));
 vi.mock('../../../util/logger.js', () => ({
   logger: { debug: vi.fn(), warn: vi.fn(), info: vi.fn(), error: vi.fn() },
@@ -32,6 +37,7 @@ import {
   stopLiveSync,
   __resetLiveSyncForTest,
   FOREGROUND_POLL_MS,
+  flushBeforeBackground,
   MIN_PULL_GAP_MS,
 } from '../../lib/liveSync';
 
@@ -56,6 +62,9 @@ beforeEach(() => {
   vi.setSystemTime(BASE_TIME);
   syncFromFirebase.mockClear();
   hydrateStoresFromCloud.mockClear();
+  flushPendingPush.mockClear();
+  flushPendingStorePushes.mockClear();
+  retryOn = false;
   userPath = 'users/abc';
   flagOn = true;
   setOnline(true);
@@ -216,5 +225,34 @@ describe('startLiveSync lifecycle', () => {
     document.dispatchEvent(new Event('visibilitychange'));
     await vi.advanceTimersByTimeAsync(FOREGROUND_POLL_MS + 1);
     expect(syncFromFirebase).not.toHaveBeenCalled();
+  });
+});
+
+// sync_push_retry_v1 (founder 2026-10-10: Finish at 15:04, phone dark, session in the
+// cloud at 16:43) — resuming only pulled; now unsent writes go after every pull and the
+// moment the app leaves the foreground.
+describe('push retry', () => {
+  it('after a pull, sends what this device never landed', async () => {
+    retryOn = true;
+    await livePullNow('visible');
+    expect(flushPendingPush).toHaveBeenCalledTimes(1);
+    expect(flushPendingStorePushes).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaving the foreground flushes immediately, debounced pushes included', async () => {
+    retryOn = true;
+    startLiveSync();
+    setVisibility('hidden');
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushMicrotasks();
+    expect(flushPendingPush).toHaveBeenCalledTimes(1);
+    expect(flushPendingStorePushes).toHaveBeenCalledWith(true);
+  });
+
+  it('flag OFF → pull only, no flush', async () => {
+    await livePullNow('visible');
+    await flushBeforeBackground();
+    expect(flushPendingPush).not.toHaveBeenCalled();
+    expect(flushPendingStorePushes).not.toHaveBeenCalled();
   });
 });

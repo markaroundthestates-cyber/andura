@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AUTH_STORAGE_KEYS } from '../../../auth.js';
-import { hydrateStoresFromCloud, pushStoreNow, __resetStoreSyncForTest } from '../../lib/storeSync';
+import { hydrateStoresFromCloud, pushStoreNow, __resetStoreSyncForTest, startStoreSyncSubscriptions, flushPendingStorePushes } from '../../lib/storeSync';
 import { DB } from '../../../db.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useProgresStore } from '../../stores/progresStore';
@@ -465,5 +465,51 @@ describe('pushStoreNow — synchronous reset push (redo-onboarding survives a hy
     seedAuth();
     stubPatchCapture();
     expect(await pushStoreNow('not-a-real-node')).toBe(false);
+  });
+});
+
+// sync_push_retry_v1 (founder 2026-10-10: "am terminat sesiunea de mai bine de 1 ora")
+// — he tapped Finish at 15:04:11 and the phone went dark; the 3 s debounced PATCH never
+// left the frozen page and resuming only PULLED, so the session reached the cloud at
+// 16:43 when he cold-started the app. A push that did not land stays pending.
+describe('push retry — nothing finished on the phone stays on the phone', () => {
+  function stubPatch(state: { ok: boolean; patches: string[] }): void {
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if ((init?.method || 'GET').toUpperCase() === 'PATCH') { state.patches.push(url); return { ok: state.ok, json: async () => ({}) } as Response; }
+      return { ok: true, json: async () => null } as Response;
+    }));
+  }
+  const workoutPatches = (s: { patches: string[] }): number => s.patches.filter((u) => u.includes('wv2/workout')).length;
+
+  afterEach(() => { vi.useRealTimers(); __resetStoreSyncForTest(); });
+
+  it('a push that failed is sent again on the next flush, once', async () => {
+    seedAuth();
+    const state = { ok: false, patches: [] as string[] };
+    stubPatch(state);
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    startStoreSyncSubscriptions();
+    useWorkoutStore.setState({ streak: 11 });
+    await vi.advanceTimersByTimeAsync(3500);
+    expect(workoutPatches(state)).toBe(1);
+    state.ok = true;
+    expect(await flushPendingStorePushes()).toBe(true);
+    expect(workoutPatches(state)).toBe(2);
+    await flushPendingStorePushes();
+    expect(workoutPatches(state)).toBe(2);
+  });
+
+  it('going to the background sends a push still waiting out its debounce', async () => {
+    seedAuth();
+    const state = { ok: true, patches: [] as string[] };
+    stubPatch(state);
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    startStoreSyncSubscriptions();
+    useWorkoutStore.setState({ streak: 12 });
+    expect(workoutPatches(state)).toBe(0);
+    await flushPendingStorePushes(true);
+    expect(workoutPatches(state)).toBe(1);
+    await vi.advanceTimersByTimeAsync(3500);
+    expect(workoutPatches(state)).toBe(1);
   });
 });

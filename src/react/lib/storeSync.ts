@@ -419,6 +419,36 @@ export async function hydrateStoresFromCloud(): Promise<void> {
 
 let _unsubscribers: Array<() => void> = [];
 const _timers = new Map<string, ReturnType<typeof setTimeout>>();
+// sync_push_retry_v1 — nodes whose last debounced PATCH did not land (failed or not
+// yet answered); liveSync re-pushes them on resume / reconnect / the foreground tick.
+const _pendingNodes = new Set<string>();
+
+function _push(s: SyncedStore): Promise<boolean> {
+  const data = s.select(s.store.getState());
+  const updatedAt = Date.now();
+  if (s.node === 'settings') _localPrefsUpdatedAt = updatedAt;
+  _pendingNodes.add(s.node);
+  // PATCH child node only — never clobbers SYNC_KEYS / sibling nodes.
+  return fbPatchUserChild(`wv2/${s.node}`, { data, updatedAt }).then((ok) => {
+    if (ok) _pendingNodes.delete(s.node);
+    return ok;
+  });
+}
+
+/**
+ * Re-push every store whose last push did not land. `now` also sends the ones still
+ * waiting out their debounce (the app is going to the background: a frozen timer
+ * would hold a finished session on the phone). Resolves true when all landed.
+ */
+export async function flushPendingStorePushes(now = false): Promise<boolean> {
+  const nodes = SYNCED.filter((s) => _pendingNodes.has(s.node) || (now && _timers.has(s.node)));
+  for (const s of nodes) {
+    const t = _timers.get(s.node);
+    if (t) { clearTimeout(t); _timers.delete(s.node); }
+  }
+  const res = await Promise.all(nodes.map((s) => _push(s).catch(() => false)));
+  return res.every(Boolean);
+}
 
 function _schedulePush(s: SyncedStore): void {
   const existing = _timers.get(s.node);
@@ -427,11 +457,7 @@ function _schedulePush(s: SyncedStore): void {
     s.node,
     setTimeout(() => {
       _timers.delete(s.node);
-      const data = s.select(s.store.getState());
-      const updatedAt = Date.now();
-      if (s.node === 'settings') _localPrefsUpdatedAt = updatedAt;
-      // PATCH child node only — never clobbers SYNC_KEYS / sibling nodes.
-      void fbPatchUserChild(`wv2/${s.node}`, { data, updatedAt });
+      void _push(s);
     }, PUSH_DEBOUNCE_MS),
   );
 }
@@ -485,4 +511,5 @@ export function stopStoreSyncSubscriptions(): void {
 export function __resetStoreSyncForTest(): void {
   stopStoreSyncSubscriptions();
   _localPrefsUpdatedAt = 0;
+  _pendingNodes.clear();
 }

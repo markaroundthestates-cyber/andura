@@ -2474,6 +2474,12 @@ export const FLAGS = Object.freeze({
   // newest keeps its copy whole. Sync layer only → fp byte-identical without pinning.
   // Kill-switch: flip default false → legacy local-wins merge for those keys.
   sync_lww_learned_v1: { rollout: 1, default: true },
+  // sync_push_retry_v1 (2026-10-10, founder "am terminat sesiunea de mai bine de 1 ora")
+  // — Finish at 15:04:11, phone dark: the 3 s debounced push never left the frozen page
+  // and resuming only PULLED, so the session reached the cloud at 16:43 on a cold
+  // start. ON: writes that did not land stay pending (flat + wv2), every live pull sends
+  // them, and leaving the foreground sends them at once. Sync layer only. Kill: false.
+  sync_push_retry_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

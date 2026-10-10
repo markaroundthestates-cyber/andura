@@ -33,8 +33,8 @@
 // MIN_PULL_GAP_MS ago, so focus + interval + reconnect can't stack into a burst) /
 // already in flight.
 
-import { syncFromFirebase, getUserPath } from '../../firebase.js';
-import { hydrateStoresFromCloud } from './storeSync';
+import { syncFromFirebase, getUserPath, flushPendingPush } from '../../firebase.js';
+import { hydrateStoresFromCloud, flushPendingStorePushes } from './storeSync';
 import { isEnabled } from '../../util/featureFlags.js';
 import { logger } from '../../util/logger.js';
 
@@ -90,6 +90,12 @@ export async function livePullNow(reason: string): Promise<void> {
   try {
     await syncFromFirebase();
     await hydrateStoresFromCloud();
+    // sync_push_retry_v1 — then send what this device wrote but never landed (a
+    // session finished on a dead signal stayed local for over an hour).
+    if (isEnabled('sync_push_retry_v1')) {
+      await flushPendingPush();
+      await flushPendingStorePushes();
+    }
     logger.debug(`[LiveSync] pulled (${reason})`);
   } catch (err) {
     logger.warn('[LiveSync] pull failed (non-fatal):', err);
@@ -101,6 +107,21 @@ export async function livePullNow(reason: string): Promise<void> {
 function _onVisibilityChange(): void {
   if (typeof document === 'undefined') return;
   if (document.visibilityState === 'visible') void livePullNow('visible');
+  else void flushBeforeBackground();
+}
+
+/**
+ * sync_push_retry_v1 — the app is leaving the foreground (phone locked right after
+ * "Finish"): send every unsent write NOW. The 3 s push debounce would otherwise fire
+ * inside a frozen background page and hold the session on the phone.
+ */
+export async function flushBeforeBackground(): Promise<void> {
+  if (!isEnabled('sync_push_retry_v1') || !getUserPath() || _syncSuppressed()) return;
+  try {
+    await Promise.all([flushPendingPush(), flushPendingStorePushes(true)]);
+  } catch (err) {
+    logger.warn('[LiveSync] background flush failed (non-fatal):', err);
+  }
 }
 
 function _onOnline(): void {

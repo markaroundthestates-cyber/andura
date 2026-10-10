@@ -482,6 +482,22 @@ export async function clearFirebaseKeys(keys) {
   return { succeeded, total: keys.length };
 }
 
+// sync_push_retry_v1 (founder 2026-10-10: "am terminat sesiunea de mai bine de 1 ora"
+// and nothing reached the cloud) — a push fires once, 3 s after a write; when that one
+// request fails (gym signal, a suspended PWA) nothing retries until the next local
+// write or a cold start, and resuming the app only PULLS. Writes bump a version; a
+// successful push records the version it carried; liveSync flushes what is pending.
+let _dirtyVersion = 0;
+let _pushedVersion = 0;
+
+/** True when a local write has not reached the cloud yet. */
+export function hasPendingPush() { return _dirtyVersion > _pushedVersion; }
+
+/** Push again when a local write has not reached the cloud yet. */
+export async function flushPendingPush() {
+  return hasPendingPush() ? syncToFirebase() : true;
+}
+
 export async function syncToFirebase() {
   // C3-S-01 audit fix (REAUDIT3 LOW) — gate the push on the suppress flag, mirroring
   // syncFromFirebase below. The DB.set override (firebase.js:359) only blocks
@@ -527,7 +543,9 @@ export async function syncToFirebase() {
     // notificationPrefs — written by pushNotifications.ts / notificationPrefsSync.ts)
     // intact. A PUT here carried only SYNC_KEYS and DELETED those siblings on the
     // next ordinary log, killing push delivery; PATCH preserves them.
+    const carried = _dirtyVersion;
     const ok = await fbPatch(userPath, payload);
+    if (ok && carried > _pushedVersion) _pushedVersion = carried;
     return ok;
   } catch (e) { logger.warn('Firebase sync failed:', e); return false; }
 }
@@ -694,6 +712,7 @@ DB.set = function(key, val) {
     scheduleInvalidation();
   }
   if (SYNC_KEYS.includes(key) && !window._suppressFirebaseSync) {
+    _dirtyVersion++;
     if (_syncTimer) clearTimeout(_syncTimer);
     _syncTimer = setTimeout(syncToFirebase, 3000);
   }
