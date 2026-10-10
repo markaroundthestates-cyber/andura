@@ -619,6 +619,11 @@ export const FLAGS = Object.freeze({
   //   Wide-Grip Lat Pulldown 0 vs Lat Pulldown 12) becomes the twin he trains
   //   (dp/usedVariant). Rename only, history untouched. Pinned OFF in fp + sims.
   dp_used_variant_v1: { rollout: 1, default: true },
+  // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
+  //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
+  //   the parsed log + each lift's rows are memoized while logs / gym / flags are
+  //   unchanged (dp/logIdentity.matchedLogs). Same rows. Pinned OFF in fp + sims.
+  dp_read_memo_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

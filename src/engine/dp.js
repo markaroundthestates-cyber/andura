@@ -6,7 +6,7 @@ import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../const
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getPrevWeightGym, getNextWeightGym, getEquipmentType } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
-import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
+import { loggedRowMatcher, canonicalLoggedName, matchedLogs } from './dp/logIdentity.js';
 import { reconcileFloorUp, reconcileLadderStep } from './dp/ladderReconcile.js';
 import { subfloorDemoW } from './dp/demoFloorSubfloor.js';
 import { now as clockNow } from './clock.js';
@@ -506,12 +506,12 @@ export const DP = {
     DB.set('dp-cal-factors', factors);
   },
 
-  // Get last N logs for exercise
-  /**
+  /** Last N logs for exercise, newest first (dp_read_memo_v1: memoized in dp/logIdentity).
    * @param {string} ex
    * @param {number} [n]
    */
   getLogs(ex, n=10) {
+    const memo = isEnabled('dp_read_memo_v1') ? matchedLogs(ex) : null; if (memo) return memo.slice(0, n).map((l) => ({ ...l }));
     /** @type {Array<{ex?: string, w?: number, reps?: number | string, rpe?: number, ts?: number}>} */
     const logs = /** @type {any} */ (DB.get('logs')) || [];
     // ID-migration Phase 2: match rows by canonical identity (dp/logIdentity.js).

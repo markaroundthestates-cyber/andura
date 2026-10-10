@@ -21,6 +21,7 @@
 // reads (single DB.get) + quota-guarded writes (DB.set) mirroring saveLearnedStep.
 
 import { DB } from '../../db.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 export const GYMS_KEY = 'dp-gyms';
 
@@ -36,8 +37,23 @@ export function getGymsState() {
   return { activeId, gyms };
 }
 
+// dp_read_memo_v1 (2026-10-10) — every equivalence / rung lookup reads the active gym:
+// ~140k parses of the stored profile per plan on the founder's account. Parsed once
+// per stored value; callers only read it.
+let _activeRaw = /** @type {string|null|undefined} */ (undefined);
+let _activeMemo = /** @type {Gym|null} */ (null);
+
 /** The active gym, or null. @returns {Gym|null} */
 export function activeGym() {
+  if (isEnabled('dp_read_memo_v1')) {
+    let raw = null;
+    try { raw = typeof localStorage !== 'undefined' ? localStorage.getItem(GYMS_KEY) : null; } catch { raw = null; }
+    if (raw !== null && raw === _activeRaw) return _activeMemo;
+    _activeRaw = raw;
+    const { activeId, gyms } = getGymsState();
+    _activeMemo = activeId ? (gyms[activeId] || null) : null;
+    return _activeMemo;
+  }
   const { activeId, gyms } = getGymsState();
   return activeId ? (gyms[activeId] || null) : null;
 }

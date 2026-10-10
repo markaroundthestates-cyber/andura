@@ -136,3 +136,47 @@ export function canonicalizeNameKeyedMap(obj, combine) {
   }
   return out;
 }
+
+// dp_read_memo_v1 (founder 2026-10-10: "pana la cat e capul care chiar aduce
+// beneficii... daca ajung la 10000000 seturi si dureaza 3 ore"). One plan on his
+// account ran DP.getLogs 1453 times, each re-parsing the whole stored log (851 rows)
+// and re-resolving every row's name: ~1.5 s of a ~3 s compose on a PC. The parsed
+// log and each lift's matched rows are kept while the stored log, the gym profile
+// and the dev flags are unchanged. Same rows, newest first.
+let _memoRaw = /** @type {string|null} */ (null);
+let _memoGyms = /** @type {string|null} */ (null);
+let _memoFlags = /** @type {string|null} */ (null);
+/** @type {Array<{ex?: string, w?: number, ts?: number}>} */
+let _memoRows = [];
+/** @type {Map<string, Array<{ex?: string, w?: number, ts?: number}>>} */
+let _memoByEx = new Map();
+
+/** @param {string} k @returns {string|null} */
+function _raw(k) {
+  try { return typeof localStorage !== 'undefined' ? localStorage.getItem(k) : null; } catch { return null; }
+}
+
+/**
+ * Every stored row of `ex` (canonical identity) with a positive load, newest first.
+ * Memoized; callers must not mutate the rows. Null when nothing is stored in
+ * localStorage (the caller reads through DB as before).
+ * @param {string} ex @returns {ReadonlyArray<{ex?: string, w?: number, ts?: number}>|null}
+ */
+export function matchedLogs(ex) {
+  const raw = _raw('logs');
+  if (raw === null) return null;
+  const gyms = _raw('dp-gyms');
+  const flags = _raw('_devFlags');
+  if (raw !== _memoRaw || gyms !== _memoGyms || flags !== _memoFlags) {
+    _memoRaw = raw; _memoGyms = gyms; _memoFlags = flags; _memoByEx = new Map();
+    try { const p = JSON.parse(raw || 'null'); _memoRows = Array.isArray(p) ? p : []; } catch { _memoRows = []; }
+  }
+  let hit = _memoByEx.get(ex);
+  if (!hit) {
+    const matches = loggedRowMatcher(ex);
+    hit = _memoRows.filter((l) => matches(l) && Number.isFinite(l.w) && Number(l.w) > 0)
+      .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    _memoByEx.set(ex, hit);
+  }
+  return hit;
+}
