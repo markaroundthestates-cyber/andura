@@ -50,7 +50,7 @@ import { AaFrictionModal } from '../../../components/AaFrictionModal';
 import { AnomalyConfirmModal } from '../../../components/Workout/AnomalyConfirmModal';
 import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionDetect';
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
-import { sanityCheckSet } from '../../../../engine/dp/anomalyGuard.js';
+import { sanityCheckSet, ownLoadsForGuard } from '../../../../engine/dp/anomalyGuard.js';
 import type { SanityResult } from '../../../../engine/dp/anomalyGuard.js';
 import { recordExerciseSkip } from '../../../../engine/dp/exercisePain.js';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
@@ -1186,6 +1186,7 @@ export function Workout(): JSX.Element {
       w: currentExercise.isBodyweight ? 0 : kgInput,
       reps: repsInput,
       lastLoggedW: priorLogs[0]?.w ?? null,
+      ownLoads: ownLoadsForGuard(engineKeyForGuard),
       maxKg: (DP.MAX_KG as Record<string, number>)[engineKeyForGuard] ?? null,
       bwKg: Number(getCurrentWeightKg()) || null,
       sex: 'm',

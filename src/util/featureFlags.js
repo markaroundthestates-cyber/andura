@@ -599,6 +599,12 @@ export const FLAGS = Object.freeze({
   //   rack (a new Cable Lateral Raise read 17.5, no such pin on his Matrix). Library
   //   equipment gates it (machines, bands untouched). Pinned OFF in fp + sims.
   dp_gym_light_station_v1: { rollout: 1, default: true },
+  // dp_anomaly_own_history_v1 (2026-10-10, founder "de cateva multe sesiuni tot am
+  //   eroarea asta") — the fat-finger ceiling is a bodyweight physics bound, but stack
+  //   labels are not true load: his Reverse Pec Deck 50 (every session) read "~43, sure?"
+  //   on every set, and the same check silently kept those sets out of calibration. ON:
+  //   the ceiling never sits below a load he sets repeatedly. Pinned OFF in fp + sims.
+  dp_anomaly_own_history_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

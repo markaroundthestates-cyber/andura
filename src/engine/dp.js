@@ -27,7 +27,7 @@ import {
 } from './dp/nof1.js';
 import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, transferCompatibleLifts, samePatternTrainedSince } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
-import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
+import { sanityCheckSet, logOutlier, ownLoadsForGuard } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { manualOverrideTarget } from './dp/inSessionOverride.js';
@@ -2344,7 +2344,7 @@ export const DP = {
       // A CONFIRMED-real outlier (userConfirmed===true) flows through normally.
       const suspect = ctx.userConfirmed === true ? null : sanityCheckSet({
         ex, w: loggedKg, reps: loggedReps,
-        lastLoggedW: dpState.lastW || null,
+        lastLoggedW: dpState.lastW || null, ownLoads: ownLoadsForGuard(ex),
         maxKg: resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') }),
         bwKg: this._currentBodyweightKg(),
         sex: 'm',

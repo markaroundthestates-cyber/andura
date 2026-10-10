@@ -17,6 +17,8 @@
 // learns from a fat-finger even if it somehow lands in logs.
 
 import { ceilingE1RM } from './ceiling.js';
+// The callers' DB-reading accessor for sanityCheckSet's ownLoads (this module stays pure).
+export { ownLoadsForGuard } from './loggedRungs.js';
 
 // ── Daniel-tunable bounds (F4 §A · flag-for-Daniel §4) ───────────────────────
 // Conservative — they clip ONLY physically-absurd entries, never a strong-but-real
@@ -63,9 +65,11 @@ export const ANOMALY_BOUNDS = Object.freeze({
  * @param {number|null} [args.maxKg]  the exercise's flat MAX_KG cap, if mapped
  * @param {number|null} [args.bwKg]   bodyweight (kg) for the realistic ceiling
  * @param {string} [args.sex]         'm' | 'f' for the ceiling
+ * @param {number[]|null} [args.ownLoads] loads he sets again and again on this lift
+ *   (dp_anomaly_own_history_v1, caller-gated) — the ceiling never sits below them
  * @returns {SanityResult}
  */
-export function sanityCheckSet({ ex, w, reps, lastLoggedW, maxKg, bwKg, sex } = {}) {
+export function sanityCheckSet({ ex, w, reps, lastLoggedW, maxKg, bwKg, sex, ownLoads } = {}) {
   const ok = { ok: true, suspectKind: null, field: null, suggested: null, plausible: null };
 
   // ── REPS bounds (cheapest first) ───────────────────────────────────────────
@@ -111,6 +115,11 @@ export function sanityCheckSet({ ex, w, reps, lastLoggedW, maxKg, bwKg, sex } = 
     const mk = Number(maxKg);
     if (Number.isFinite(mk) && mk > 0) absCap = mk * ANOMALY_BOUNDS.MAXKG_RATIO;
   }
+  // A machine's stack labels are not true load: his Reverse Pec Deck reads 50 every
+  // session against a bodyweight ceiling of ~43, so each set asked "sure?" (founder
+  // 2026-10-10). A load he sets repeatedly is not a typo — the cap starts above it.
+  const ownTop = Array.isArray(ownLoads) && ownLoads.length ? Math.max(...ownLoads) : 0;
+  if (absCap > 0 && ownTop > 0) absCap = Math.max(absCap, ownTop * ANOMALY_BOUNDS.CEILING_RATIO);
   if (absCap > 0 && W > absCap) {
     // Suggest a /10 de-typo when that lands back under the cap (the common 950→95
     // / 9590→959 fat-finger); else no obvious correction.

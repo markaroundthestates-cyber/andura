@@ -159,6 +159,11 @@ export function usedLoads(ex) {
   return /** @type {number[]} */ (_usedCache.get(ex));
 }
 
+/** The fat-finger guard's view of his own loads (dp_anomaly_own_history_v1), else null. @param {string} ex @returns {number[]|null} */
+export function ownLoadsForGuard(ex) {
+  return isEnabled('dp_anomaly_own_history_v1') && typeof ex === 'string' ? usedLoads(ex) : null;
+}
+
 /**
  * The increment of his machine from his rungs: the modal adjacent gap when two gaps
  * agree, else the top gap (where a climb continues). PURE. @param {number[]} rungs

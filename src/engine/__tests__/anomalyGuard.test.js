@@ -105,3 +105,25 @@ describe('POISON TEST — an unconfirmed outlier never moves calibration (F4 §A
     expect(calFactor()).not.toBe(null);
   });
 });
+
+// Founder 2026-10-10 ("de cateva multe sesiuni tot am eroarea asta"): Reverse Pec Deck
+// 50 kg — what he sets every session on his Matrix stack — read "~43 kg, sure?" on
+// every set (the bodyweight ceiling, BW 88). Real values from his account.
+describe('sanityCheckSet — a load he sets repeatedly is not a typo (dp_anomaly_own_history_v1)', () => {
+  const base = { ex: 'Reverse Pec Deck', reps: 9, lastLoggedW: 50, bwKg: 88, sex: 'm' };
+
+  it('without his loads the bodyweight ceiling flags his ordinary 50 (the bug)', () => {
+    expect(sanityCheckSet({ ...base, w: 50 }).suspectKind).toBe('weight_ceiling');
+  });
+
+  it('his repeated loads lift the ceiling: 50 and the next pin 54 pass, a ×10 typo still trips', () => {
+    const ownLoads = [32, 41, 50, 54, 59];
+    expect(sanityCheckSet({ ...base, w: 50, ownLoads }).ok).toBe(true);
+    expect(sanityCheckSet({ ...base, w: 64, ownLoads }).ok).toBe(true);
+    expect(sanityCheckSet({ ...base, w: 500, ownLoads }).ok).toBe(false);
+  });
+
+  it('no ceiling to begin with → his loads never create one', () => {
+    expect(sanityCheckSet({ ex: 'Reverse Pec Deck', w: 90, reps: 9, ownLoads: [50] }).ok).toBe(true);
+  });
+});
