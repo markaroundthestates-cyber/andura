@@ -26,7 +26,7 @@ const EXPECTED_CARRY = ["Farmer's Walk DB", "Farmer's Walk Trap Bar"];
 
 describe('metricType — data coverage over the 143 CORE_AUTO', () => {
   it('there are exactly 143 CORE_AUTO exercises (scope guard)', () => {
-    expect(coreAutoNames).toHaveLength(143);
+    expect(coreAutoNames).toHaveLength(144); // + Adduction Machine (2026-10-10)
   });
 
   it('every CORE_AUTO resolves a VALID metric type (reps default or explicit)', () => {
@@ -76,7 +76,7 @@ describe('metricType — data coverage over the 143 CORE_AUTO', () => {
   it('counts: 135 reps / 6 time / 0 distance / 2 carry over the 143', () => {
     const counts = { reps: 0, time: 0, distance: 0, carry: 0 };
     for (const name of coreAutoNames) counts[getMetricType(name)] += 1;
-    expect(counts).toEqual({ reps: 135, time: 6, distance: 0, carry: 2 });
+    expect(counts).toEqual({ reps: 136, time: 6, distance: 0, carry: 2 }); // + Adduction Machine
   });
 });
 

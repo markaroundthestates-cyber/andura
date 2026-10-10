@@ -244,6 +244,7 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Glute-Ham Raise':       'machine_plates',
   'Reverse Hyper':         'machine_plates',
   'Hip Abduction Machine': 'machine_plates',
+  'Adduction Machine':     'machine_plates',
   'Captains Chair Leg Raise':'machine_plates',
   'Ab Wheel Rollout':      'machine_plates',
   'Plate Pinch Hold':      'machine_plates',

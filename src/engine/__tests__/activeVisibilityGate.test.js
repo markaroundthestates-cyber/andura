@@ -57,13 +57,13 @@ describe('ACTIVE visibility gate — single source of truth', () => {
     const coreAuto = Object.entries(EXERCISE_METADATA)
       .filter(([, m]) => m.status === 'CORE_AUTO').map(([n]) => n);
     expect(active.sort()).toEqual(coreAuto.sort());
-    expect(active.length).toBe(143);
+    expect(active.length).toBe(144); // + Adduction Machine (2026-10-10)
     expect(active).not.toContain('45-Degree Leg Press'); // folded into canonical `Leg Press`
     // The canonical leg press the engine anchors IS the 45deg sled identity.
     expect(EXERCISE_METADATA['Leg Press'].status).toBe('CORE_AUTO');
     expect(EXERCISE_METADATA['Leg Press'].nameRo).toBe('Presa de picioare la 45 grade');
-    // Full library untouched (reversibility): all 657 still present.
-    expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
+    // Full library untouched (reversibility): all 657 still present (+ Adduction Machine 2026-10-10).
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(658);
   });
 });
 

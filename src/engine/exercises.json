@@ -16248,6 +16248,47 @@
     "status": "CORE_AUTO",
     "id": "hip-abduction-machine"
   },
+  "Adduction Machine": {
+    "nameRo": "Adductie sold la aparat",
+    "nameEn": "Adduction Machine",
+    "equipment_type": "machine",
+    "equipment_alternatives": [
+      "Lateral Lunge",
+      "DB Sumo Squat"
+    ],
+    "force_demand": "medium",
+    "tier": 2,
+    "muscle_target_primary": "fese",
+    "muscle_target_secondary": [],
+    "skill_level": "beginner",
+    "fallback_cascade": [
+      {
+        "type": "easier_machine",
+        "exercise_id": "Wide-Stance Leg Press"
+      },
+      {
+        "type": "assisted_variant",
+        "exercise_id": "DB Sumo Squat"
+      },
+      {
+        "type": "muscle_group_compose",
+        "exercise_ids": [
+          "Lateral Lunge",
+          "DB Sumo Squat"
+        ]
+      },
+      {
+        "type": "bodyweight",
+        "exercise_id": "Copenhagen Plank"
+      },
+      {
+        "type": "light_variant",
+        "exercise_id": "Copenhagen Plank"
+      }
+    ],
+    "status": "CORE_AUTO",
+    "id": "adduction-machine"
+  },
   "Cable Hip Extension": {
     "nameRo": "Extensie sold la cablu",
     "nameEn": "Cable Hip Extension",

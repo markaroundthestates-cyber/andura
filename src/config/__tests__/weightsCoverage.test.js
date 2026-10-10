@@ -18,7 +18,7 @@ const coreAuto = Object.entries(lib)
 
 describe('weights — config coverage for the 143 CORE_AUTO', () => {
   it('there are 143 CORE_AUTO (scope guard)', () => {
-    expect(coreAuto).toHaveLength(143);
+    expect(coreAuto).toHaveLength(144); // + Adduction Machine (2026-10-10)
   });
 
   it('every CORE_AUTO is EXPLICITLY mapped (no silent bailib_stack default)', () => {

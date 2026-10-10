@@ -245,6 +245,10 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Wrist Curl Barbell Seated Palms-Up": 'B',
   // ── C-band (42) ──
   "21s Curl Barbell": 'C',
+  // 2026-10-10 library add (the "adductor MACHINE group" deferred from Wave 1). Filed
+  // under fese (hip, like Hip Abduction) for recovery/volume; C so the selector never
+  // lets it displace real glute work — he picks it himself, history then carries it.
+  "Adduction Machine": 'C',
   "Alternating Front Raise": 'C',
   "Band Pull-Apart": 'C',
   "Banded Clamshell": 'C',

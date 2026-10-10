@@ -2499,7 +2499,9 @@ describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomo
 
   // §14 Bundle 6.0.7 cumulative invariants final — Pre-Beta scope library 100% gate achieved
   it('Bundle 6.0.7 cumulative count = 657 exact (Pre-Beta scope library 100% gate achieved per LOCK 2 Daniel Gates strict)', () => {
-    expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
+    // 2026-10-10 +1: Adduction Machine (founder trains it; his sets were logged under a name
+  // the library did not know — no recovery, no volume, cold-start weights).
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(658);
   });
 
   it('Bundle 6.0.7 cumulative core canonical V1 ≥ 57 (was 0 baseline Bundle 6.0.6, 57 NEW Bundle 6.0.7)', () => {
@@ -2519,7 +2521,9 @@ describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomo
 describe('Schema Invariant §39-H1 + §39-H2 (ADR-ENGINE-MATH-LOCKED-VALUES §6-§7)', () => {
   // §39-H1 — Count + field shape invariant
   it('§39-H1 cumulative count exact 657 (Pre-Beta LOCK 2 invariant)', () => {
-    expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
+    // 2026-10-10 +1: Adduction Machine (founder trains it; his sets were logged under a name
+  // the library did not know — no recovery, no volume, cold-start weights).
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(658);
   });
 
   it('§39-H1 every entry has muscle_target_primary in 11 canonical RO enum', () => {
@@ -2581,6 +2585,6 @@ describe('Schema Invariant §39-H1 + §39-H2 (ADR-ENGINE-MATH-LOCKED-VALUES §6-
 
   it('§39-H2 631 Bundle 6.0.1-6.0.7 NEW entries all have fallback_cascade populated', () => {
     const populated = Object.values(EXERCISE_METADATA).filter(m => m.fallback_cascade);
-    expect(populated.length).toBe(631);
+    expect(populated.length).toBe(632); // + Adduction Machine (2026-10-10)
   });
 });

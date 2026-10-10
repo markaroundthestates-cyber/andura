@@ -107,8 +107,8 @@ describe('dp_daniel_tier_select_v1 — selection follows Daniel\'s expert tier l
     const unranked = coreAuto.filter((name) => !(name in EXERCISE_TIER_RANK));
     expect(
       coreAuto.length,
-      'expected the curated CORE_AUTO catalog to be 143 entries (SSOT 2026-06-09)',
-    ).toBe(143);
+      'expected the curated CORE_AUTO catalog to be 144 entries (SSOT 2026-06-09 + Adduction Machine 2026-10-10)',
+    ).toBe(144);
     expect(
       unranked,
       `CORE_AUTO entries with NO band (map gap — add them to EXERCISE_TIER_RANK): ${unranked.join(', ')}`,
