@@ -605,6 +605,20 @@ export const FLAGS = Object.freeze({
   //   on every set, and the same check silently kept those sets out of calibration. ON:
   //   the ceiling never sits below a load he sets repeatedly. Pinned OFF in fp + sims.
   dp_anomaly_own_history_v1: { rollout: 1, default: true },
+  // dp_swap_same_movement_v1 (2026-10-10, founder "daca da cable row si dau don't want
+  //   recomanda wide grip pulldown inainte de machine row, chest supported machine row")
+  //   — the swap list scored every same-MUSCLE lift as the same movement; 47/143 active
+  //   lifts pre-picked another movement. ON: the deep movement key, a different-equipment
+  //   twin may lead, station → station first, the same lift is never its own swap.
+  dp_swap_same_movement_v1: { rollout: 1, default: true },
+  // dp_same_lift_variants_v1 (2026-10-10) — Wide-Grip Lat Pulldown IS Lat Pulldown:
+  //   one history, never offered as each other's alternative. Pinned OFF in fp + sims.
+  dp_same_lift_variants_v1: { rollout: 1, default: true },
+  // dp_used_variant_v1 (2026-10-10, founder "eu le am M torture fly la aparat mereu")
+  //   — a planned library twin he never trains (Cable Fly 1 session vs Pec Deck 7;
+  //   Wide-Grip Lat Pulldown 0 vs Lat Pulldown 12) becomes the twin he trains
+  //   (dp/usedVariant). Rename only, history untouched. Pinned OFF in fp + sims.
+  dp_used_variant_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

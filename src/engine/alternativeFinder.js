@@ -12,6 +12,9 @@
 // NOT yet wired into sessionBuilder/scheduleAdapter/UI (later work-package).
 
 import { EXERCISE_METADATA, getValidAlternatives, isActiveExercise } from './exerciseLibrary.js';
+import { movementKey } from './sessionBuilder.js';
+import { canonicalLoggedName } from './dp/logIdentity.js';
+import { isEnabled } from '../util/featureFlags.js';
 
 // ── ACTIVE visibility gate (Daniel SSOT 2026-06-05) ─────────────────────────
 // Every alternative this module OFFERS must be ACTIVE (CORE_AUTO). The swap
@@ -361,6 +364,12 @@ function shoulderSubBucket(name) {
 // for every other muscle the muscle itself is the sub-movement (already coherent).
 function subMovementKey(name, meta) {
   if (meta && meta.muscle_target_primary === 'umeri') return `umeri:${shoulderSubBucket(name)}`;
+  // dp_swap_same_movement_v1 (founder 2026-10-10: Cable Row "don't want" → Wide-Grip
+  // Lat Pulldown before any machine row) — the muscle alone made every back lift "the
+  // same movement" (+100), so a pulldown outranked a row; 47 of 143 active lifts
+  // pre-picked another movement (Leg Curl → RDL, Leg Extension → back squat). The
+  // session builder's deep movement key separates row / pulldown / leg-curl / press.
+  if (meta && isEnabled('dp_swap_same_movement_v1')) return movementKey(name, meta, true);
   return meta ? meta.muscle_target_primary : 'unknown';
 }
 
@@ -400,6 +409,11 @@ function isNearDuplicate(nameA, nameB) {
   // (1) Identical residual movement, only hardware differs — e.g. "DB Lateral
   // Raise" vs "Cable Lateral Raise" (both {lateral,raise}). Pointless swap.
   if (jaccard >= 1) return true;
+  return isLiteralTwin(nameA, nameB);
+}
+
+/** Rule (2) of isNearDuplicate on its own. @param {string} nameA @param {string} nameB @returns {boolean} */
+function isLiteralTwin(nameA, nameB) {
   // (2) One FULL name is a literal multi-word sub-PHRASE of the other — e.g.
   // "Cable Fly" appears verbatim inside "Pec Deck / Cable Fly" (the busy
   // machine's name literally spells out its own twin). This is the exact
@@ -451,6 +465,11 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
   const muscleGroup = meta.muscle_target_primary;
   const origSub = subMovementKey(exerciseName, meta);
   const excluded = new Set([exerciseName, ...excludeNames, ...triedNames]);
+  const sameMove = isEnabled('dp_swap_same_movement_v1');
+  // The same lift under another library name (Wide-Grip Lat Pulldown for Lat
+  // Pulldown, a gym-declared twin station) is not an alternative to itself.
+  const ownIdentity = sameMove ? canonicalLoggedName(exerciseName) : null;
+  const isStation = (t) => t === 'cable' || t === 'machine';
 
   // DIVERSIFY MODALITY signals (heuristic 3): equipment types the user already
   // tried/skipped at this slot. A run of busy machine-skips (>=2 machine/cable
@@ -472,6 +491,7 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
     if (excluded.has(name)) continue;
     if (!offerable(name)) continue;
     if (m.muscle_target_primary !== muscleGroup) continue;
+    if (ownIdentity && canonicalLoggedName(name) === ownIdentity) continue;
     const sub = subMovementKey(name, m);
     const ubiquity = EQUIPMENT_UBIQUITY[m.equipment_type] ?? 2;
 
@@ -488,6 +508,9 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
     // (x2 → spread 2..10) so it never outranks a same-movement / same-stimulus
     // match (effectiveness FIRST per the founder).
     score += ubiquity * 2;
+    // A station lift swaps best onto another station (a cable row → a machine row:
+    // supported, constant tension), ahead of the free-weight ubiquity tie-break.
+    if (sameMove && isStation(meta.equipment_type) && isStation(m.equipment_type)) score += 8;
 
     // DIVERSIFY MODALITY (heuristic 3): demote an equipment_type already tried at
     // this slot; on a machine-poor pivot, boost free weights / demote stations.
@@ -521,8 +544,23 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
   // when the original itself is bodyweight, a bodyweight pre-pick is honest.
   // Fall back through these constraints in order so the pre-pick is never empty.
   const origIsBodyweight = meta.equipment_type === 'bodyweight';
+  // The near-duplicate bar keeps a pointless twin off the pre-pick: the same lift on
+  // the same kind of equipment, or a name that spells the other. The same movement
+  // on OTHER equipment (cable row → machine row) is the swap he asked for.
+  // A body-position word alone (Leg Curl / Seated Leg Curl) names another machine.
+  const POSITION = new Set(['seated', 'standing', 'lying', 'prone']);
+  const words = (n) => new Set(String(n).toLowerCase().replace(/[/()]/g, ' ').split(/\s+/).filter(Boolean));
+  const ownWords = words(exerciseName);
+  const positionOnly = (c) => {
+    const w = words(c.name);
+    const diff = [...w].filter((x) => !ownWords.has(x)).concat([...ownWords].filter((x) => !w.has(x)));
+    return diff.length > 0 && diff.every((x) => POSITION.has(x));
+  };
+  const twinOfOriginal = (c) => isNearDuplicate(exerciseName, c.name)
+    && (!sameMove || (!positionOnly(c)
+      && (c.equipmentType === meta.equipment_type || isLiteralTwin(exerciseName, c.name))));
   const prePickEligible = (c) =>
-    !isNearDuplicate(exerciseName, c.name) &&
+    !twinOfOriginal(c) &&
     !isContraindicated(c.name) &&
     (origIsBodyweight || !c.isBodyweight);
   const prePick =

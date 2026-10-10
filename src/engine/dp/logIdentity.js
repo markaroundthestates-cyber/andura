@@ -14,6 +14,13 @@ import { resolveCanonical } from '../exerciseAliases.js';
 import { gymEquivalentFor } from './gymProfile.js';
 import { isEnabled } from '../../util/featureFlags.js';
 
+// dp_same_lift_variants_v1 (founder 2026-10-10: "lat pulldown si wide grip lat
+// pulldown... sunt una si aceeasi") — library entries that are ONE lift (same machine,
+// same bar, a cosmetic grip label). Audit of the 143 active lifts: this is the only
+// pair; neutral grip / V-bar / close grip change the handle and stay their own.
+/** @type {Readonly<Record<string, string>>} */
+const SAME_LIFT = Object.freeze({ 'Wide-Grip Lat Pulldown': 'Lat Pulldown' });
+
 /**
  * The canonical identity of an exercise for READ purposes, with the ACTIVE gym's
  * equivalences applied first (dp_gym_exercise_equivalents_v1). A gym has ONE
@@ -29,6 +36,7 @@ import { isEnabled } from '../../util/featureFlags.js';
  */
 function canonicalIdentity(ex) {
   if (typeof ex !== 'string' || !ex) return null;
+  if (isEnabled('dp_same_lift_variants_v1') && SAME_LIFT[ex]) ex = SAME_LIFT[ex];
   const viaGym = isEnabled('dp_gym_exercise_equivalents_v1') ? gymEquivalentFor(ex) : null;
   // dp_read_alias_fold_v1 (founder live 2026-10-01: Hammer Curl rec 8 kg for three
   // months while he curled 12-14) — the log WRITE folds explicit aliases

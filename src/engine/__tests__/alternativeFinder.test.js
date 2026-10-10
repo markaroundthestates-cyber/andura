@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { findAlternatives, findRefusalPool, getFallbackCascade, buildSwapPickList } from '../alternativeFinder.js';
 import { getExerciseMetadata, EXERCISE_METADATA, isActiveExercise } from '../exerciseLibrary.js';
 
@@ -351,5 +351,35 @@ describe('buildSwapPickList (founder manual pick-list)', () => {
     const { items, muscleGroup } = buildSwapPickList('Totally Fake Exercise');
     expect(items).toEqual([]);
     expect(muscleGroup).toBe('unknown');
+  });
+});
+
+// Founder 2026-10-10: "daca da cable row si dau don't want recomanda wide grip pulldown
+// inainte de machine row, chest supported machine row (mid row)". The swap list scored
+// every back lift as the same movement; audit of the 143 active lifts: 47 pre-picked
+// another movement (Leg Curl → RDL, Leg Extension → back squat). dp_swap_same_movement_v1.
+describe('buildSwapPickList — the same movement first (dp_swap_same_movement_v1)', () => {
+  const flags = (o) => localStorage.setItem('_devFlags', JSON.stringify(o));
+  afterEach(() => localStorage.removeItem('_devFlags'));
+
+  it('Cable Row → a row on another station leads; no pulldown ahead of the rows', () => {
+    const { items } = buildSwapPickList('Cable Row');
+    expect(items[0].name).toBe('Chest-Supported Row');
+    const firstPulldown = items.findIndex((i) => /pulldown/i.test(i.name));
+    const lastRow = items.map((i) => /row/i.test(i.name)).lastIndexOf(true);
+    expect(firstPulldown === -1 || firstPulldown > lastRow).toBe(true);
+  });
+
+  it('Lat Pulldown never offers Wide-Grip Lat Pulldown — the same lift', () => {
+    expect(buildSwapPickList('Lat Pulldown').items.map((i) => i.name)).not.toContain('Wide-Grip Lat Pulldown');
+  });
+
+  it('Leg Curl → the seated machine, not a deadlift', () => {
+    expect(buildSwapPickList('Leg Curl').items[0].name).toBe('Seated Leg Curl');
+  });
+
+  it('flag OFF → the legacy muscle-only ranking (Cable Row pre-picks a pulldown)', () => {
+    flags({ dp_swap_same_movement_v1: false });
+    expect(buildSwapPickList('Cable Row').items[0].name).toMatch(/pulldown/i);
   });
 });
