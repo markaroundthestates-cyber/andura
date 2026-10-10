@@ -13,6 +13,7 @@ import { applyInitialPalette, PaletteSync } from './react/lib/paletteSync';
 import { useSettingsStore } from './react/stores/settingsStore';
 import { runReactBoot } from './react/lib/reactBoot';
 import { syncHtmlLang } from './i18n/index.js';
+import { isEnabled } from './util/featureFlags.js';
 import './styles/global.css';
 
 // Apply persisted theme synchronously pre-mount to prevent FOUC flash.
@@ -108,6 +109,17 @@ const preloadCriticalChunks = (): void => {
   // Splash = first-paint pe /, Auth = next-likely pentru anon users
   void import('./react/routes/screens/Splash');
   void import('./react/routes/screens/Auth');
+  // route_prefetch_v1 (founder 2026-10-10: "inclusiv la schimbarea de pagini") — the
+  // tabs and the workout flow are lazy chunks evaluated on the first tap; warm them
+  // while the app is idle so the first switch is instant.
+  if (isEnabled('route_prefetch_v1')) {
+    void import('./react/routes/screens/antrenor/Antrenor');
+    void import('./react/routes/screens/progres/Progres');
+    void import('./react/routes/screens/istoric/Istoric');
+    void import('./react/routes/screens/cont/Cont');
+    void import('./react/routes/screens/antrenor/WorkoutPreview');
+    void import('./react/routes/screens/antrenor/Workout');
+  }
 };
 if ('requestIdleCallback' in window) {
   window.requestIdleCallback(preloadCriticalChunks, { timeout: 2000 });

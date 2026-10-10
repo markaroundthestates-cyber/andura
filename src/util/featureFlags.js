@@ -2487,6 +2487,10 @@ export const FLAGS = Object.freeze({
   // same day, < 15 min; any write → recompose. UI layer, not on the fp sim path.
   // Kill-switch: false → every read recomposes (legacy).
   plan_cache_v1: { rollout: 1, default: true },
+  // route_prefetch_v1 (2026-10-10, founder "inclusiv la schimbarea de pagini") — warm
+  // the tab + workout-flow lazy chunks at idle after mount (main.tsx, next to the
+  // Splash/Auth preload) so the first tap on a tab is instant. Kill-switch: false.
+  route_prefetch_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
