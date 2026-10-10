@@ -23,6 +23,8 @@ beforeEach(() => {
   // target/entry assertions). The debugLog suite removes this key explicitly to
   // assert the absent→ON default.
   localStorage.setItem('andura-behavior-collect', 'false');
+  // plan_cache_v1 — a plan cached by a previous test never answers this one.
+  (globalThis as { __anduraResetPlanCache?: () => void }).__anduraResetPlanCache?.();
 });
 
 afterEach(() => {

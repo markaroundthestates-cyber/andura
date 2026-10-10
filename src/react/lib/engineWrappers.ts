@@ -67,6 +67,7 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
 import { useAerobicStore } from '../stores/aerobicStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
+import { cachedPlan } from './planCache';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
 // baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
 import {
@@ -355,7 +356,7 @@ export async function getTodayWorkout(
     // "Different group" ephemeral override (ScheduleOverride "Alta grupa") threaded
     // through. Default {} → byte-identical to the prior no-arg behavior for every
     // other consumer (Antrenor / Workout / PostRpe / SessionPill / coachDirector).
-    const planned = await composePlannedWorkoutToday(new Date(), options);
+    const planned = await cachedPlan(`today|${JSON.stringify(options)}`, () => composePlannedWorkoutToday(new Date(), options));
     if (planned === null) return null;
     return applyMmiCapToWorkout(planned);
   } catch (e) {
@@ -384,7 +385,7 @@ export async function getTodayWorkout(
  */
 export async function getWorkoutForDay(dayIdx: number): Promise<PlannedWorkoutOutput | null> {
   try {
-    const planned = await composePlannedWorkoutToday(dateForWeekdayIndex(dayIdx));
+    const planned = await cachedPlan(`day|${dayIdx}`, () => composePlannedWorkoutToday(dateForWeekdayIndex(dayIdx)));
     if (planned === null) return null;
     return applyMmiCapToWorkout(planned);
   } catch (e) {

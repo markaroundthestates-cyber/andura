@@ -2480,6 +2480,13 @@ export const FLAGS = Object.freeze({
   // start. ON: writes that did not land stay pending (flat + wv2), every live pull sends
   // them, and leaving the foreground sends them at once. Sync layer only. Kill: false.
   sync_push_retry_v1: { rollout: 1, default: true },
+  // plan_cache_v1 (2026-10-10, founder "verifica andura pe unde gandeste la pagini...
+  // cache"; "mecanism de refresh... sa nu arate date eronate") — every surface showing
+  // the plan recomposed it (~1.5 s each on his account). ON: react/lib/planCache keeps
+  // a plan while the fingerprint of ALL stored data + the session hints is unchanged,
+  // same day, < 15 min; any write → recompose. UI layer, not on the fp sim path.
+  // Kill-switch: false → every read recomposes (legacy).
+  plan_cache_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
