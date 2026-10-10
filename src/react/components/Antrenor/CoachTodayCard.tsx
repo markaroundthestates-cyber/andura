@@ -374,7 +374,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   };
 
   const handleOverride = (): void => {
-    navigate(gotoPath('schedule-override'));
+    navigate(gotoPath('schedule-override'), { state: { scheduledSessionType: workout?.sessionType } });
   };
 
   // B4 — honest "de ce planul de azi" trace. decisionTrace is already built +

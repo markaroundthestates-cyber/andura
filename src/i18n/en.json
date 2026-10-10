@@ -667,6 +667,7 @@
       "differentMuscleDescription": "Change today's target"
     },
     "pickGroupHeading": "Which group today?",
+    "loadingGroups": "Finding the freshest groups...",
     "groupRecommended": "freshest"
   },
   "energyCheck": {

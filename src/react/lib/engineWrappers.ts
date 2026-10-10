@@ -780,13 +780,16 @@ const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach lin
  */
 export async function getAlternativeClusterOptions(
   now: Date = new Date(),
+  scheduledHint?: string,
 ): Promise<Array<{ cluster: string; label: string; recommended: boolean }>> {
   try {
     // Today's SCHEDULED cluster comes from the engine's own answer (sessionType),
     // NOT a second derivation here — the split is focus/rebalance/carryover-aware
-    // and duplicating it would drift. Rest day / no plan → offer all six.
-    const planned = await getTodayWorkout();
-    const sessionType = typeof planned?.sessionType === 'string' ? planned.sessionType : '';
+    // and duplicating it would drift. Rest day / no plan → offer all six. A caller
+    // already holding today's plan passes its sessionType: the full compose takes
+    // seconds on a long history (founder's phone, 2026-10-10).
+    const planned = scheduledHint === undefined ? await getTodayWorkout() : null;
+    const sessionType = scheduledHint ?? (typeof planned?.sessionType === 'string' ? planned.sessionType : '');
     const scheduled = sessionType.toLowerCase();
     const logs = flattenSessionsToRecoveryLogs(useWorkoutStore.getState().sessionsHistory);
     const recoveryState = logs.length > 0 ? getRecoveryByGroup(logs, undefined, now.getTime()) : {};

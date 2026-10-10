@@ -131,8 +131,9 @@ describe('ScheduleOverride — intensityMod mapping flow', () => {
   // "Alta grupa" carries overrideKind=different-muscle (intensityMod stays normal);
   // WorkoutPreview consumes overrideKind to request a real alternative session from
   // the engine — it is NOT a dead label anymore.
-  it('Alta grupa → overrideKind=different-muscle (drives the engine alternative)', () => {
+  it('Alta grupa → overrideKind=different-muscle (drives the engine alternative)', async () => {
     renderOverride();
+    await waitFor(() => expect(screen.getByRole('button', { name: /Alta grupa/i })).not.toHaveAttribute('aria-expanded'));
     fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
     const probe = screen.getByTestId('probe');
     expect(probe.textContent).toContain('"intensityMod":"normal"');
@@ -184,9 +185,42 @@ describe('ScheduleOverride — group picker (founder 2026-08-28)', () => {
 
   it('no alternatives (rest day / engine throw) → legacy navigation, no dead row', async () => {
     renderOverride(); // default mock → []
-    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByRole('button', { name: /Alta grupa/i })).not.toHaveAttribute('aria-expanded'));
     fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
     expect(screen.getByTestId('probe').textContent).toContain('"overrideKind":"different-muscle"');
+  });
+});
+
+// Founder 2026-10-10 ("ma duce direct la antrenament sa dau confirm... nu pot selecta
+// altceva"): on his phone the ranked list took seconds (it recomposed today's plan), and
+// a tap before it arrived went straight to the engine's pick. A tap now waits for it.
+describe('ScheduleOverride — group list still loading (founder 2026-10-10)', () => {
+  const OPTS = [
+    { cluster: 'push', label: 'Push', recommended: true },
+    { cluster: 'legs', label: 'Picioare', recommended: false },
+  ];
+
+  it('a tap before the list arrives opens the picker, never picks for him', async () => {
+    let resolve: (v: typeof OPTS) => void = () => {};
+    vi.mocked(getAlternativeClusterOptions).mockReturnValue(new Promise((r) => { resolve = r; }));
+    renderOverride();
+    fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
+    expect(screen.queryByTestId('probe')).toBeNull();
+    expect(screen.getByTestId('override-group-loading')).toBeInTheDocument();
+    resolve(OPTS);
+    expect(await screen.findByTestId('override-group-legs')).toBeInTheDocument();
+    expect(screen.queryByTestId('override-group-loading')).toBeNull();
+  });
+
+  it("the plan's own session type rides in, so the list skips a recompose", async () => {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/app/antrenor/schedule-override', state: { scheduledSessionType: 'UPPER' } }]}>
+        <Routes>
+          <Route path="/app/antrenor/schedule-override" element={<ScheduleOverride />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalledWith(undefined, 'UPPER'));
   });
 });
 

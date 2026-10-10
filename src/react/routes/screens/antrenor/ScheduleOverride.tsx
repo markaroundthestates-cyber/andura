@@ -31,7 +31,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { getAlternativeClusterOptions } from '../../../lib/engineWrappers';
@@ -72,17 +72,27 @@ export function ScheduleOverride(): JSX.Element {
     ReadonlyArray<{ cluster: string; label: string; recommended: boolean }>
   >([]);
   const [groupsOpen, setGroupsOpen] = useState(false);
+  // Founder 2026-10-10 ("ma duce direct la antrenament sa dau confirm, nu pot selecta
+  // altceva"): on his phone the list arrived seconds after the screen, and a tap
+  // before it went with the engine's pick. Until it settles the row opens the picker
+  // (loading); the plan's own sessionType rides in so the list skips a recompose.
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const location = useLocation();
+  const hint = (location.state as { scheduledSessionType?: unknown } | null)?.scheduledSessionType;
+  const scheduledHint = typeof hint === 'string' ? hint : undefined;
 
   useEffect(() => {
     let cancelled = false;
-    getAlternativeClusterOptions()
-      .then((opts) => { if (!cancelled) setGroupOptions(opts); })
-      .catch(() => { if (!cancelled) setGroupOptions([]); });
+    getAlternativeClusterOptions(undefined, scheduledHint)
+      .then((opts) => { if (!cancelled) { setGroupOptions(opts); setGroupsLoaded(true); } })
+      .catch(() => { if (!cancelled) { setGroupOptions([]); setGroupsLoaded(true); } });
     return () => { cancelled = true; };
-  }, []);
+  }, [scheduledHint]);
+
+  const hasGroupPicker = !groupsLoaded || groupOptions.length > 0;
 
   function handleSelect(kind: OverrideKind): void {
-    if (kind === 'different-muscle' && groupOptions.length > 0) {
+    if (kind === 'different-muscle' && hasGroupPicker) {
       setGroupsOpen((open) => !open);
       return;
     }
@@ -120,14 +130,14 @@ export function ScheduleOverride(): JSX.Element {
       <div className="flex flex-col gap-3">
         {OVERRIDE_OPTIONS.map((opt) => {
           const isGroupRow = opt.kind === 'different-muscle';
-          const expanded = isGroupRow && groupsOpen && groupOptions.length > 0;
+          const expanded = isGroupRow && groupsOpen && hasGroupPicker;
           return (
             <div key={opt.kind} className="flex flex-col gap-2">
               <button
                 type="button"
                 onClick={() => handleSelect(opt.kind)}
                 data-override-kind={opt.kind}
-                {...(isGroupRow && groupOptions.length > 0
+                {...(isGroupRow && hasGroupPicker
                   ? { 'aria-expanded': expanded }
                   : {})}
                 className="pulse-card flex flex-col items-start gap-1 p-4 hover:bg-paper transition text-left"
@@ -140,6 +150,11 @@ export function ScheduleOverride(): JSX.Element {
                   <p className="text-xs uppercase tracking-wide font-semibold text-ink2">
                     {t('scheduleOverride.pickGroupHeading')}
                   </p>
+                  {!groupsLoaded && (
+                    <p className="text-sm text-ink2" data-testid="override-group-loading">
+                      {t('scheduleOverride.loadingGroups')}
+                    </p>
+                  )}
                   {groupOptions.map((g) => (
                     <button
                       key={g.cluster}
