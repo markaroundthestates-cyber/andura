@@ -11,7 +11,7 @@
 
 import { resolveExerciseName } from '../exerciseLibrary.js';
 import { resolveCanonical } from '../exerciseAliases.js';
-import { gymEquivalentFor } from './gymProfile.js';
+import { gymEquivalentFor, activeGym } from './gymProfile.js';
 import { isEnabled } from '../../util/featureFlags.js';
 
 // dp_same_lift_variants_v1 (founder 2026-10-10: "lat pulldown si wide grip lat
@@ -36,6 +36,29 @@ const SAME_LIFT = Object.freeze({ 'Wide-Grip Lat Pulldown': 'Lat Pulldown' });
  */
 function canonicalIdentity(ex) {
   if (typeof ex !== 'string' || !ex) return null;
+  // dp_read_memo_v1 — resolved thousands of times per plan (every stored row, every
+  // transfer / deload scan), each re-reading the flags + the gym profile: kept per
+  // name while the dev flags and the active gym's equivalences are the same.
+  const flags = ['dp_read_memo_v1', 'dp_same_lift_variants_v1', 'dp_gym_exercise_equivalents_v1', 'dp_read_alias_fold_v1', 'dp_library_chains_v1']
+    .map((f) => (isEnabled(f) ? '1' : '0')).join('');
+  const eq = activeGym()?.equivalents ?? null;
+  if (flags !== _idFlags || eq !== _idEq) {
+    _idFlags = flags; _idEq = eq; _idMemo = new Map(); _idOn = flags[0] === '1';
+  }
+  if (!_idOn) return resolveIdentity(ex);
+  let c = _idMemo.get(ex);
+  if (c === undefined) { c = resolveIdentity(ex); _idMemo.set(ex, c); }
+  return c;
+}
+
+let _idFlags = /** @type {string|null|undefined} */ (undefined);
+let _idEq = /** @type {unknown} */ (undefined);
+let _idOn = false;
+/** @type {Map<string, string|null>} */
+let _idMemo = new Map();
+
+/** @param {string} ex @returns {string|null} */
+function resolveIdentity(ex) {
   if (isEnabled('dp_same_lift_variants_v1') && SAME_LIFT[ex]) ex = SAME_LIFT[ex];
   const viaGym = isEnabled('dp_gym_exercise_equivalents_v1') ? gymEquivalentFor(ex) : null;
   // dp_read_alias_fold_v1 (founder live 2026-10-01: Hammer Curl rec 8 kg for three
@@ -146,6 +169,7 @@ export function canonicalizeNameKeyedMap(obj, combine) {
 let _memoRaw = /** @type {string|null} */ (null);
 let _memoGyms = /** @type {string|null} */ (null);
 let _memoFlags = /** @type {string|null} */ (null);
+let _memoIdGen = /** @type {Map<string, string|null>|null} */ (null);
 /** @type {Array<{ex?: string, w?: number, ts?: number}>} */
 let _memoRows = [];
 /** @type {Map<string, Array<{ex?: string, w?: number, ts?: number}>>} */
@@ -167,8 +191,9 @@ export function matchedLogs(ex) {
   if (raw === null) return null;
   const gyms = _raw('dp-gyms');
   const flags = _raw('_devFlags');
-  if (raw !== _memoRaw || gyms !== _memoGyms || flags !== _memoFlags) {
-    _memoRaw = raw; _memoGyms = gyms; _memoFlags = flags; _memoByEx = new Map();
+  canonicalIdentity('Lat Pulldown'); // refreshes the identity memo generation
+  if (raw !== _memoRaw || gyms !== _memoGyms || flags !== _memoFlags || _memoIdGen !== _idMemo) {
+    _memoRaw = raw; _memoGyms = gyms; _memoFlags = flags; _memoIdGen = _idMemo; _memoByEx = new Map();
     try { const p = JSON.parse(raw || 'null'); _memoRows = Array.isArray(p) ? p : []; } catch { _memoRows = []; }
   }
   let hit = _memoByEx.get(ex);
@@ -179,4 +204,31 @@ export function matchedLogs(ex) {
     _memoByEx.set(ex, hit);
   }
   return hit;
+}
+
+let _namesKey = /** @type {string|null} */ (null);
+let _namesIdMemo = /** @type {Map<string, string|null>|null} */ (null);
+let _names = /** @type {string[]} */ ([]);
+
+/**
+ * Canonical names of every lift with a positive logged load (dp_read_memo_v1) — the
+ * transfer / return-deload scans asked for it per exercise, each re-parsing the log.
+ * Memoized while the stored log and the name resolution are unchanged; null when
+ * nothing is stored in localStorage (the caller reads through DB). A fresh copy.
+ * @returns {string[]|null}
+ */
+export function loggedExerciseNames() {
+  const raw = _raw('logs');
+  if (raw === null) return null;
+  canonicalIdentity('Lat Pulldown'); // refreshes the identity memo generation
+  if (raw !== _namesKey || _namesIdMemo !== _idMemo) {
+    _namesKey = raw; _namesIdMemo = _idMemo;
+    /** @type {Set<string>} */
+    const names = new Set();
+    let rows = [];
+    try { const p = JSON.parse(raw); rows = Array.isArray(p) ? p : []; } catch { rows = []; }
+    for (const l of rows) { if (l && l.ex && l.w) names.add(canonicalLoggedName(l.ex)); }
+    _names = [...names];
+  }
+  return [..._names];
 }

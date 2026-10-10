@@ -27,6 +27,7 @@
 // dp_temperament_v1 (default OFF) → byte-identical legacy.
 
 import { DB } from '../../db.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 export const TEMPERAMENT_KEY = 'dp-temperament';
 
@@ -65,6 +66,18 @@ function _ratingFromRpe(rpe) {
 function _getAll() {
   const raw = /** @type {any} */ (DB.get(TEMPERAMENT_KEY));
   return (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+}
+
+// dp_read_memo_v1 — the bias lookup ran ~2300 times per plan, each re-parsing the
+// stored map: a read-only view parsed once per stored value (writers keep _getAll).
+let _readRaw = /** @type {string|null|undefined} */ (undefined);
+let _readAll = /** @type {Record<string, {bias:number, n:number}>} */ ({});
+function _getAllRead() {
+  let raw = null;
+  try { raw = typeof localStorage !== 'undefined' ? localStorage.getItem(TEMPERAMENT_KEY) : null; } catch { raw = null; }
+  if (raw === null || !isEnabled('dp_read_memo_v1')) return _getAll();
+  if (raw !== _readRaw) { _readRaw = raw; _readAll = _getAll(); }
+  return _readAll;
 }
 
 const clampBias = (b) => Math.max(-BIAS_CLAMP, Math.min(BIAS_CLAMP, b));
@@ -158,7 +171,7 @@ export function saveTemperament(key, state) {
  * @returns {number} clamped RIR bias, 0 when none trusted
  */
 export function temperamentBias(engineName) {
-  const all = _getAll();
+  const all = _getAllRead();
   const perEx = engineName ? all[engineName] : null;
   if (perEx && Number.isFinite(perEx.bias) && Number(perEx.n) >= MIN_SETS) {
     return clampBias(perEx.bias);

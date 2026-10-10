@@ -6,7 +6,7 @@ import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../const
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getPrevWeightGym, getNextWeightGym, getEquipmentType } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
-import { loggedRowMatcher, canonicalLoggedName, matchedLogs } from './dp/logIdentity.js';
+import { loggedRowMatcher, canonicalLoggedName, matchedLogs, loggedExerciseNames } from './dp/logIdentity.js';
 import { reconcileFloorUp, reconcileLadderStep } from './dp/ladderReconcile.js';
 import { subfloorDemoW } from './dp/demoFloorSubfloor.js';
 import { now as clockNow } from './clock.js';
@@ -1127,9 +1127,9 @@ export const DP = {
   // muscle-match last resort in getTransferSources). Reads the `logs` key once.
   /** @returns {string[]} */
   _loggedExerciseNames() {
+    const memo = isEnabled('dp_read_memo_v1') ? loggedExerciseNames() : null; if (memo) return memo;
     const logs = /** @type {Array<{ex?: string, w?: number}>} */ (DB.get('logs')) || [];
-    const names = new Set();
-    // ID-migration Phase 2: collapse aliases to canonical (dp/logIdentity.js).
+    const names = new Set(); // ID-migration Phase 2: aliases collapse to canonical (dp/logIdentity.js).
     for (const l of logs) { if (l && l.ex && l.w) names.add(canonicalLoggedName(l.ex)); }
     return [...names];
   },
