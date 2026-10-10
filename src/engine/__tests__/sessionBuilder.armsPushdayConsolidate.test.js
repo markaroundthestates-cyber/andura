@@ -22,8 +22,13 @@
 // eval-grid + backMaintenanceFloor gates use). The flag-under-test is toggled per arm via
 // localStorage._devFlags; the rest sit at registry brain-on defaults. READ-ONLY on src/.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { world, resetWorld } from '../../../tests/engine/full-path-sim/fp-config.js';
+
+// Same heavy full-path composer as tricepsSinglePush: the THIN-chest ON-vs-OFF pass ran
+// 20 s on the CI runner (10/10 2026, 4068beb9) and timed out at the 10 s default while
+// passing locally. Deterministic logic, needs headroom. File-scoped 45s timeout.
+vi.setConfig({ testTimeout: 45000, hookTimeout: 45000 });
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { DEV_FLAGS_KEY, FLAGS } from '../../util/featureFlags.js';
 import { SCHEDULE_STORE_KEY } from '../schedule/scheduleAdapter/constants.js';
