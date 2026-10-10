@@ -39,13 +39,11 @@ function canonicalIdentity(ex) {
   // dp_read_memo_v1 — resolved thousands of times per plan (every stored row, every
   // transfer / deload scan), each re-reading the flags + the gym profile: kept per
   // name while the dev flags and the active gym's equivalences are the same.
-  const flags = ['dp_read_memo_v1', 'dp_same_lift_variants_v1', 'dp_gym_exercise_equivalents_v1', 'dp_read_alias_fold_v1', 'dp_library_chains_v1']
+  if (!isEnabled('dp_read_memo_v1')) return resolveIdentity(ex);
+  const flags = ['dp_same_lift_variants_v1', 'dp_gym_exercise_equivalents_v1', 'dp_read_alias_fold_v1', 'dp_library_chains_v1']
     .map((f) => (isEnabled(f) ? '1' : '0')).join('');
   const eq = activeGym()?.equivalents ?? null;
-  if (flags !== _idFlags || eq !== _idEq) {
-    _idFlags = flags; _idEq = eq; _idMemo = new Map(); _idOn = flags[0] === '1';
-  }
-  if (!_idOn) return resolveIdentity(ex);
+  if (flags !== _idFlags || eq !== _idEq) { _idFlags = flags; _idEq = eq; _idMemo = new Map(); }
   let c = _idMemo.get(ex);
   if (c === undefined) { c = resolveIdentity(ex); _idMemo.set(ex, c); }
   return c;
@@ -53,7 +51,6 @@ function canonicalIdentity(ex) {
 
 let _idFlags = /** @type {string|null|undefined} */ (undefined);
 let _idEq = /** @type {unknown} */ (undefined);
-let _idOn = false;
 /** @type {Map<string, string|null>} */
 let _idMemo = new Map();
 

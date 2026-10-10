@@ -2539,17 +2539,27 @@ export function resolveUserId() {
  *
  * @returns {Object<string, boolean>|null}
  */
+// Every isEnabled() reads the dev overrides; with an override set (tests, sims, a
+// tester's device) that was one JSON.parse per flag check — tens of thousands per
+// plan (2026-10-10 perf pass). Parsed once per stored string; callers only read it.
+let _devRaw = /** @type {string|null|undefined} */ (undefined);
+let _devParsed = /** @type {Record<string, unknown>|null} */ (null);
+
 export function readDevFlags() {
   let raw;
   try { raw = localStorage.getItem(DEV_FLAGS_KEY); }
   catch { return null; }
   if (!raw) return null;
+  if (raw === _devRaw) return _devParsed;
+  _devRaw = raw;
+  _devParsed = null;
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
       logger.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not a plain object — ignoring`);
       return null;
     }
+    _devParsed = parsed;
     return parsed;
   } catch {
     logger.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not valid JSON — ignoring`);
