@@ -274,6 +274,35 @@ describe('WorkoutPreview — duration + volume estimates (C3 engine baseline)', 
     expect(useWorkoutStore.getState().sessionContext?.userIntensity).toBe('plus');
   });
 
+  // Founder 2026-10-14 ("mai repede sa imi spuna cinstit"): a picked budget longer
+  // than the session is not padded with volume — the preview says so.
+  it('time budget longer than the session → honest line, no padding', async () => {
+    useWorkoutStore.getState().setSessionTimeBudgetMin(60);
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 35, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-budget-honest')).toHaveTextContent(/60 min.*~35/),
+    );
+    useWorkoutStore.getState().setSessionTimeBudgetMin(null);
+  });
+
+  it('budget the session fills (or none) → no honest line', async () => {
+    useWorkoutStore.getState().setSessionTimeBudgetMin(30);
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 29, volumeKg: 12450 }),
+    );
+    const first = renderPreview();
+    await waitFor(() => expect(screen.getByTestId('preview-duration').textContent).toMatch(/29/));
+    expect(screen.queryByTestId('preview-budget-honest')).toBeNull();
+    first.unmount();
+    useWorkoutStore.getState().setSessionTimeBudgetMin(null);
+    renderPreview();
+    await waitFor(() => expect(screen.getByTestId('preview-duration').textContent).toMatch(/29/));
+    expect(screen.queryByTestId('preview-budget-honest')).toBeNull();
+  });
+
   it('volume formatted cu space separator (ro-RO)', async () => {
     vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
       makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),

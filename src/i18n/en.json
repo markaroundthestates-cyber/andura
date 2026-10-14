@@ -599,6 +599,7 @@
       "todaysSessionKicker": "Today's session",
       "fallbackTitle": "Push (chest and shoulders)",
       "exercisesCount": "{n} exercises",
+      "budgetHonest": "You have {budget} min; today's session needs ~{n}. Andura doesn't pad it with extra volume.",
       "intensityBanner": {
         "ariaLabel": "Session intensity",
         "plus": "Coach is bumping intensity +15%. Heavier by one dumbbell, 1 rep extra.",

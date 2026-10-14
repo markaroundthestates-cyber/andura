@@ -139,6 +139,7 @@ export function WorkoutPreview(): JSX.Element {
   // here. Read STORE-FIRST; fall back to location.state for the legacy override
   // entry points (schedule-override / pain-button still push state directly).
   const sessionEnergy = useWorkoutStore((s) => s.sessionEnergy);
+  const timeBudgetMin = useWorkoutStore((s) => s.sessionTimeBudgetMin);
   const {
     intensityMod: stateIntensityMod,
     overrideKind,
@@ -337,6 +338,14 @@ export function WorkoutPreview(): JSX.Element {
             {formatVolume(volume)} kg
           </span>
         </div>
+        )}
+        {/* Founder 2026-10-14 ("mai repede sa imi spuna cinstit"): a budget longer than
+            the session is not padded with volume (volume follows recovery + phase) —
+            say so instead of silently ignoring the answer. */}
+        {!hasNoPlan && !loading && timeBudgetMin !== null && duration < timeBudgetMin - 5 && (
+          <p className="text-sm text-ink2 mt-2" data-testid="preview-budget-honest">
+            {t('workout.preview.budgetHonest', { budget: timeBudgetMin, n: duration })}
+          </p>
         )}
       </div>
       {/* Intensity banner — Pulse tinted card with a Zap glyph (mockup

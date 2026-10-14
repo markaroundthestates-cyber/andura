@@ -599,6 +599,7 @@
       "todaysSessionKicker": "Sesiunea de azi",
       "fallbackTitle": "Push (piept si umeri)",
       "exercisesCount": "{n} exercitii",
+      "budgetHonest": "Ai {budget} min; azi iti ajung ~{n}. Andura nu umple timpul cu volum in plus.",
       "intensityBanner": {
         "ariaLabel": "Intensitate sesiune",
         "plus": "Coach urca intensitatea +15%. Mai grele cu o haltera, 1 rep in plus.",
