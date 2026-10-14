@@ -133,14 +133,24 @@ export function musclesForExercise(ex) {
   if (!ex) return null;
   const curated = /** @type {Record<string, {primary: string[], secondary: string[]}>} */ (EXERCISE_MUSCLES)[ex];
   if (curated) return curated;
-  if (_derivedMusclesCache.has(ex)) return _derivedMusclesCache.get(ex) ?? null;
+  const rearDeltFix = isEnabled('dp_rear_delt_no_back_load_v1');
+  const cacheKey = rearDeltFix ? `rd|${ex}` : ex;
+  if (_derivedMusclesCache.has(cacheKey)) return _derivedMusclesCache.get(cacheKey) ?? null;
   /** @type {{primary: string[], secondary: string[]} | null} */
   let out = null;
   const meta = getExerciseMetadata(ex);
   const primaryGroup = meta && typeof meta.muscle_target_primary === 'string' ? meta.muscle_target_primary : null;
   if (primaryGroup) {
     const primary = headsForGroup(primaryGroup, ex);
-    const secondaryGroups = Array.isArray(meta.muscle_target_secondary) ? meta.muscle_target_secondary : [];
+    // Rear-delt isolation (reverse pec deck / face pull / rear-delt fly): its 'spate'
+    // secondary is the scapular work the primary rear_delt_trap head already carries —
+    // the curated 'Rear Delt Fly' / 'Face Pulls' load no lat / mid_trap. Derived, the
+    // 'spate' fall-through counted a reverse fly as a row on lat + mid_trap (founder
+    // 2026-10-14: back read unrecovered 33/35 days; Monday's RPD alone ~14 lat).
+    const rearDeltIso = rearDeltFix && primaryGroup === 'umeri'
+      && /rear|reverse|face pull|pull-apart|pull apart/.test(ex.toLowerCase());
+    const secondaryGroups = (Array.isArray(meta.muscle_target_secondary) ? meta.muscle_target_secondary : [])
+      .filter((g) => !(rearDeltIso && g === 'spate'));
     const secondary = [...new Set(secondaryGroups.flatMap((g) => headsForGroup(String(g), ex)))]
       .filter((h) => !primary.includes(h));
     // A primary group with NO modelled recovery head (today: 'antebrate' — forearms
@@ -153,7 +163,7 @@ export function musclesForExercise(ex) {
     // no secondary) still resolves to null: it loads no modelled recovery head.
     out = (primary.length || secondary.length) ? { primary, secondary } : null;
   }
-  _derivedMusclesCache.set(ex, out);
+  _derivedMusclesCache.set(cacheKey, out);
   return out;
 }
 

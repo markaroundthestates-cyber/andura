@@ -619,6 +619,12 @@ export const FLAGS = Object.freeze({
   //   Wide-Grip Lat Pulldown 0 vs Lat Pulldown 12) becomes the twin he trains
   //   (dp/usedVariant). Rename only, history untouched. Pinned OFF in fp + sims.
   dp_used_variant_v1: { rollout: 1, default: true },
+  // dp_rear_delt_no_back_load_v1 (2026-10-14, founder "ieri am avut doar 4 exercitii...
+  //   vreau sa fie intentional") — library-derived rear-delt isolation (Reverse Pec
+  //   Deck, Face Pull, Rear Delt Fly...) loaded lat + mid_trap as a row would; the
+  //   curated twins load neither. Monday's RPD kept his back "unrecovered" for
+  //   Tuesday's pull day (back cut 33/35 days). Pinned OFF in fp + sims.
+  dp_rear_delt_no_back_load_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

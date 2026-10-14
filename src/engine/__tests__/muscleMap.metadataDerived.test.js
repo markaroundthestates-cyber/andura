@@ -95,3 +95,45 @@ describe("QA-F9 — decay calibrated on the founder's real history", () => {
     expect(later['picioare-quads']).toBe('recovered');
   });
 });
+
+// Founder 2026-10-14 ("ieri am avut doar 4 exercitii... vreau sa fie intentional"):
+// Monday's Reverse Pec Deck loaded lat + mid_trap like a row, so Tuesday's pull day
+// read the back "unrecovered" and cut it (back cut on 12 of 13 back days in his
+// Sep-Oct replay; 7 with the fix, the rest the day after a pull session).
+describe('dp_rear_delt_no_back_load_v1 — rear-delt isolation is not back work', () => {
+  const withFlag = (on, fn) => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rear_delt_no_back_load_v1: on }));
+    try { return fn(); } finally { localStorage.removeItem('_devFlags'); }
+  };
+
+  it('Reverse Pec Deck / Face Pull / DB Rear Delt Fly load no lat or mid_trap (like the curated twins)', () => {
+    withFlag(true, () => {
+      for (const ex of ['Reverse Pec Deck', 'Face Pull', 'DB Rear Delt Fly', 'Band Pull-Apart']) {
+        const m = musclesForExercise(ex);
+        expect(m?.primary).toEqual(expect.arrayContaining(['delt_rear']));
+        expect([...(m?.primary ?? []), ...(m?.secondary ?? [])]).not.toEqual(expect.arrayContaining(['lat']));
+        expect(m?.secondary ?? []).not.toContain('mid_trap');
+      }
+      expect(EXERCISE_MUSCLES['Rear Delt Fly'].secondary).toEqual([]);
+    });
+  });
+
+  it('real back work and other umeri+spate lifts keep their back heads', () => {
+    withFlag(true, () => {
+      expect(musclesForExercise('Chest-Supported Row')?.primary).toEqual(expect.arrayContaining(['lat', 'mid_trap']));
+      expect(musclesForExercise('Y Raise')?.secondary ?? []).toEqual(expect.arrayContaining(['lat', 'mid_trap']));
+    });
+  });
+
+  it('a pec-deck day the evening before no longer makes the back read loaded', () => {
+    const now = Date.UTC(2026, 9, 13, 5, 30);
+    const logs = [1, 2, 3].map((i) => ({ ex: 'Reverse Pec Deck', w: 50, rpe: 7.5, ts: now - 16 * H - i * 180000 }));
+    expect(withFlag(false, () => getRecoveryByGroup(logs, undefined, now).spate)).not.toBe('recovered');
+    expect(withFlag(true, () => getRecoveryByGroup(logs, undefined, now).spate)).toBe('recovered');
+  });
+
+  it('flag off → the previous derivation exactly (cache keyed by the flag)', () => {
+    const off = withFlag(false, () => musclesForExercise('Reverse Pec Deck'));
+    expect(off?.secondary).toEqual(expect.arrayContaining(['lat', 'mid_trap']));
+  });
+});
