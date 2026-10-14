@@ -201,3 +201,49 @@ describe('workoutStore in-session structural decisions persist (cycle15)', () =>
     expect(s.performedExercises[0]).toEqual({ id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' });
   });
 });
+
+// ── "Alta grupa" plan options ride the session (founder 2026-10-14) ───────────
+// The picked group reached the preview only; Workout re-derived the scheduled
+// plan ("am zis ca vreau picioare si a inceput antrenamentul de umeri piept").
+// The options persist with the in-progress session (a reload / pause resumes the
+// SAME plan the logged sets are index-aligned to) and clear on teardown.
+describe('workoutStore sessionPlanOptions lifecycle', () => {
+  const LEGS = { differentMuscle: true, differentMuscleCluster: 'legs' };
+  async function rehydrateWith(state: Record<string, unknown>) {
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state, version: 0 }));
+    vi.resetModules();
+    const mod = await import('../../stores/workoutStore');
+    return mod.useWorkoutStore.getState();
+  }
+
+  it('persists with the live session; finish and discard clear it', () => {
+    const store = useWorkoutStore.getState();
+    store.setSessionPlanOptions(LEGS);
+    store.startSession(444);
+    expect(persistedState().sessionPlanOptions).toEqual(LEGS);
+    store.finishSession({ title: 'Picioare', meta: '', ts: 555 });
+    expect(useWorkoutStore.getState().sessionPlanOptions).toBeNull();
+    store.setSessionPlanOptions(LEGS);
+    store.startSession(666);
+    store.discardSession();
+    expect(useWorkoutStore.getState().sessionPlanOptions).toBeNull();
+  });
+
+  it('a fresh reload resumes on the picked plan', async () => {
+    const s = await rehydrateWith({
+      sessionStart: Date.now() - 20 * 60 * 1000, phase: 'logging', sessionPlanOptions: LEGS,
+    });
+    expect(s.sessionPlanOptions).toEqual(LEGS);
+  });
+
+  it('a stale (>6h) reset drops it — unless a pause survives to resume', async () => {
+    const stale = Date.now() - 7 * 60 * 60 * 1000;
+    const gone = await rehydrateWith({ sessionStart: stale, phase: 'logging', sessionPlanOptions: LEGS });
+    expect(gone.sessionPlanOptions).toBeNull();
+    const kept = await rehydrateWith({
+      sessionStart: stale, phase: 'logging', sessionPlanOptions: LEGS,
+      pausedSnapshot: { title: 'Picioare', meta: 'ex 2', exIdx: 1, setIdx: 0, phase: 'logging', history: {}, sessionStart: stale },
+    });
+    expect(kept.sessionPlanOptions).toEqual(LEGS);
+  });
+});

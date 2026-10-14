@@ -96,7 +96,7 @@ export function SessionPill(): JSX.Element | null {
   useEffect(() => {
     if (!pillWillRender) return;
     let cancelled = false;
-    getTodayWorkout().then((p) => {
+    getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {}).then((p) => {
       if (!cancelled) setPlanned(p);
     });
     return () => { cancelled = true; };

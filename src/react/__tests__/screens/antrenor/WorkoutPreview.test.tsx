@@ -44,6 +44,7 @@ function renderPreview(
     cause?: string;
     painContext?: { region: string; intensity: 1 | 2 | 3 };
     overrideKind?: 'easier' | 'harder' | 'different-muscle';
+    differentMuscleCluster?: string;
   }
 ) {
   return render(
@@ -293,6 +294,25 @@ describe('WorkoutPreview — navigation', () => {
       region: 'umar-stang',
       intensity: 3,
     });
+  });
+
+  // Founder 2026-10-14 ("am zis ca vreau picioare si a inceput antrenamentul de
+  // umeri piept"): the group picked on "Alta grupa" must ride into the session —
+  // Workout re-derives its plan with the SAME options the preview composed with.
+  it('Start pe "Alta grupa" salveaza grupa aleasa pentru sesiune', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockClear();
+    renderPreview({ overrideKind: 'different-muscle', differentMuscleCluster: 'legs' });
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
+    const stored = useWorkoutStore.getState().sessionPlanOptions;
+    expect(stored).toEqual({ differentMuscle: true, differentMuscleCluster: 'legs' });
+    await waitFor(() => expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith(stored));
+  });
+
+  it('Start fara override → sesiunea pe planul programat (fara grupa veche)', () => {
+    useWorkoutStore.getState().setSessionPlanOptions({ differentMuscle: true, differentMuscleCluster: 'legs' });
+    renderPreview({ intensityMod: 'normal' });
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
+    expect(useWorkoutStore.getState().sessionPlanOptions).toBeNull();
   });
 });
 

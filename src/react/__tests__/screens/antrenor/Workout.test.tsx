@@ -144,6 +144,7 @@ function resetStore(): void {
     pendingAdvance: false,
     lastRating: null,
     pausedSnapshot: null,
+    sessionPlanOptions: null,
     lastSession: null,
     streak: 0,
     sessionContext: null,
@@ -345,6 +346,28 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
     useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
     await renderWorkoutAndWait();
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+  });
+});
+
+// Founder 2026-10-14 ("am zis ca vreau picioare si a inceput antrenamentul de umeri
+// piept") — the session runs on the plan its "Alta grupa" pick composed, not the
+// scheduled one.
+describe('Workout — plan from the started session', async () => {
+  beforeEach(() => {
+    resetStore();
+    vi.mocked(getTodayWorkout).mockClear();
+  });
+
+  it('"Alta grupa" pick → the plan is derived with the same options', async () => {
+    const legs = { differentMuscle: true, differentMuscleCluster: 'legs' };
+    useWorkoutStore.getState().setSessionPlanOptions(legs);
+    await renderWorkoutAndWait();
+    expect(getTodayWorkout).toHaveBeenCalledWith(legs);
+  });
+
+  it('no pick → the scheduled plan', async () => {
+    await renderWorkoutAndWait();
+    expect(getTodayWorkout).toHaveBeenCalledWith({});
   });
 });
 

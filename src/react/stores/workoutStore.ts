@@ -55,6 +55,7 @@ export type {
   SessionEnergy,
   SessionPainContext,
   SessionContext,
+  SessionPlanOptions,
   ExerciseHistoryEntry,
   PRData,
   PausedSession,
@@ -131,6 +132,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       streak: 0,
       lastStreakDate: null,
       sessionContext: null,
+      sessionPlanOptions: null,
       sessionEnergy: null,
       sessionTimeBudgetMin: null,
       refusalTriedByEx: {},
@@ -232,6 +234,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prData: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionPlanOptions: null,
           sessionEnergy: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
@@ -274,6 +277,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             setIdx: 0,
             history: {},
             sessionContext: null,
+            sessionPlanOptions: null,
             sessionEnergy: null,
             sessionTimeBudgetMin: null,
             refusalTriedByEx: {},
@@ -513,6 +517,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // setat fix inainte); cleared la session teardown (finish/discard/reset)
       // ca sa NU se scurga la sesiunea urmatoare (intrare directa Antrenor).
       setSessionContext: (ctx) => set({ sessionContext: ctx }),
+      setSessionPlanOptions: (opts) => set({ sessionPlanOptions: opts }),
 
       // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — record the energy
       // self-report (energyLevel + intensityMod [+ cause]) on EnergyCheck/
@@ -556,6 +561,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           lastRating: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionPlanOptions: null,
           sessionEnergy: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
@@ -616,6 +622,8 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         restEndsAt: state.restEndsAt,
         restInitialSec: state.restInitialSec,
         pendingAdvance: state.pendingAdvance,
+        // The plan the in-progress (or paused) session was composed with.
+        sessionPlanOptions: state.sessionPlanOptions,
       }) as Partial<WorkoutState & WorkoutActions>,
       // APP-LIFECYCLE-01 — discard a STALE in-progress session on rehydrate so a
       // workout abandoned hours ago doesn't resurrect a ghost "live session" pill.
@@ -646,6 +654,8 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // once the in-progress fields above reset).
           merged.droppedExercises = {};
           merged.performedExercises = {};
+          // A surviving pause still resumes on the plan it was composed with.
+          if (merged.pausedSnapshot === null) merged.sessionPlanOptions = null;
         }
         return merged;
       },

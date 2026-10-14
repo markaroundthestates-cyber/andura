@@ -182,7 +182,8 @@ export function Workout(): JSX.Element {
   const [warmupSets, setWarmupSets] = useState<ReadonlyArray<WarmupStep>>([]);
   useEffect(() => {
     let cancelled = false;
-    getTodayWorkout().then((planned) => {
+    // The plan this session was started on ("Alta grupa" pick rides in the store).
+    getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {}).then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
         setWarmupSets(planned?.warmup?.warmupSets ?? []);

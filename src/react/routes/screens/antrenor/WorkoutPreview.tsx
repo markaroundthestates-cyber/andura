@@ -18,7 +18,7 @@
 //   - mockup andura-clasic.html#L913-985 screen-workout-preview
 
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Clock, Layers, TrendingUp, Flame, Check, Zap } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
@@ -30,6 +30,7 @@ import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggre
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import type { SessionPlanOptions } from '../../../stores/workoutStore';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
@@ -131,6 +132,7 @@ export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
+  const setSessionPlanOptions = useWorkoutStore((s) => s.setSessionPlanOptions);
   // #69 pre-workout reframe — the energy self-report now lives in the workoutStore
   // sessionEnergy slice (EnergyCheck/EnergyCause write it). The new flow returns
   // to the hub before Start, so location.state no longer carries intensityMod
@@ -151,6 +153,16 @@ export function WorkoutPreview(): JSX.Element {
   const busyCoarseTypes = equipmentContext?.busyCoarseTypes ?? [];
   // "Different group" override → ask the engine for the alternative session.
   const wantDifferentMuscle = overrideKind === 'different-muscle';
+  // ONE options object for the preview compose AND the started session (Start
+  // stores it) — Workout re-derives the plan with it, so it gets this exact plan.
+  const planOptions = useMemo<SessionPlanOptions | null>(() => (wantDifferentMuscle
+    ? {
+        differentMuscle: true,
+        ...(typeof differentMuscleCluster === 'string' && differentMuscleCluster.length > 0
+          ? { differentMuscleCluster }
+          : {}),
+      }
+    : null), [wantDifferentMuscle, differentMuscleCluster]);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
   // while pipeline pending; preview still renders cu hardcoded fallback values
@@ -173,16 +185,7 @@ export function WorkoutPreview(): JSX.Element {
     let cancelled = false;
     setLoading(true);
     setError(false);
-    getTodayWorkout(
-      wantDifferentMuscle
-        ? {
-            differentMuscle: true,
-            ...(typeof differentMuscleCluster === 'string' && differentMuscleCluster.length > 0
-              ? { differentMuscleCluster }
-              : {}),
-          }
-        : {},
-    )
+    getTodayWorkout(planOptions ?? {})
       .then((w) => {
         if (!cancelled) {
           setWorkout(w);
@@ -196,7 +199,7 @@ export function WorkoutPreview(): JSX.Element {
         }
       });
     return () => { cancelled = true; };
-  }, [wantDifferentMuscle, reloadKey]);
+  }, [planOptions, reloadKey]);
   // i18n bridge — same engine fallback sentinel handling as CoachTodayCard.
   // scheduleAdapterAggregate seeds workoutTitle with the non-localized sentinel
   // ENGINE_WORKOUT_TITLE_FALLBACK when the plan has no real title; treat it (and
@@ -253,6 +256,7 @@ export function WorkoutPreview(): JSX.Element {
     // (location.state se pierde la navigate fara state + la refresh). Workout.tsx
     // aplica modifierul la target-uri ca adaptarea afisata aici sa fie reala.
     setSessionContext({ intensityMod, painContext: painContext ?? null });
+    setSessionPlanOptions(planOptions);
     navigate(gotoPath('workout'));
   }
 

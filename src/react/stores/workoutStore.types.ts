@@ -40,6 +40,14 @@ export interface SessionContext {
   painContext: SessionPainContext | null;
 }
 
+// The "Alta grupa" pick the started session was composed with — the same options
+// object WorkoutPreview passed to getTodayWorkout, so every in-session re-derive
+// (Workout mount / resume, SessionPill, PostRpe) gets the SAME plan back.
+export interface SessionPlanOptions {
+  differentMuscle?: boolean;
+  differentMuscleCluster?: string;
+}
+
 export interface ExerciseHistoryEntry {
   // For LOADED exercises: the external kg the user lifted.
   // For BODYWEIGHT exercises: the EFFECTIVE load (bodyweight x fraction +
@@ -273,6 +281,12 @@ export interface WorkoutState {
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
   sessionContext: SessionContext | null;
+  // Founder 2026-10-14 ("am zis ca vreau picioare si a inceput antrenamentul de
+  // umeri piept"): the override reached the preview only — Workout re-derived the
+  // scheduled plan. Set at Start, PERSISTED (a reload / pause must resume the same
+  // plan the logged sets are index-aligned to), cleared on session teardown.
+  // null = the scheduled plan.
+  sessionPlanOptions: SessionPlanOptions | null;
   // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — the energy self-report
   // (energyLevel + intensityMod) recorded on EnergyCheck. Survives the
   // EnergyCheck → main → Start → time-screen → workout-preview round-trip that
@@ -427,6 +441,7 @@ export interface WorkoutActions {
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).
   setSessionContext: (ctx: SessionContext | null) => void;
+  setSessionPlanOptions: (opts: SessionPlanOptions | null) => void;
   // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — record the energy
   // self-report on EnergyCheck/EnergyCause so it survives the round-trip back to
   // the hub before Start. null clears it. WorkoutPreview reads sessionEnergy

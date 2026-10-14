@@ -153,7 +153,7 @@ export function PostRpe(): JSX.Element {
     // about which muscles) + the real logged sets; exercise names degrade to the
     // honest 'Exercitiu N' fallback below. Only a session with NOTHING logged is
     // rejected (nothing to save) — that is the legitimate empty case.
-    const planned = await getTodayWorkout();
+    const planned = await getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {});
     if (setsDone === 0) {
       submittingRef.current = false; // nothing persisted — allow a retry
       toast.show({
