@@ -236,6 +236,32 @@ describe('workoutStore sessionPlanOptions lifecycle', () => {
     expect(s.sessionPlanOptions).toEqual(LEGS);
   });
 
+  it('time budget + intensity/pain picks persist with the live session', async () => {
+    const store = useWorkoutStore.getState();
+    store.setSessionTimeBudgetMin(35);
+    store.setSessionContext({ intensityMod: 'minus', painContext: null, userIntensity: 'minus' });
+    store.startSession(777);
+    const ps = persistedState();
+    expect(ps.sessionTimeBudgetMin).toBe(35);
+    expect(ps.sessionContext).toEqual({ intensityMod: 'minus', painContext: null, userIntensity: 'minus' });
+    const s = await rehydrateWith({
+      sessionStart: Date.now() - 10 * 60 * 1000, phase: 'logging',
+      sessionTimeBudgetMin: 35, sessionContext: { intensityMod: 'minus', painContext: { region: 'umar', intensity: 2 } },
+    });
+    expect(s.sessionTimeBudgetMin).toBe(35);
+    expect(s.sessionContext?.painContext).toEqual({ region: 'umar', intensity: 2 });
+  });
+
+  it('with no session in flight or paused, leftover picks are dropped on load', async () => {
+    const s = await rehydrateWith({
+      sessionStart: null, pausedSnapshot: null, phase: 'idle',
+      sessionPlanOptions: LEGS, sessionTimeBudgetMin: 35, sessionContext: { intensityMod: 'plus', painContext: null },
+    });
+    expect(s.sessionPlanOptions).toBeNull();
+    expect(s.sessionTimeBudgetMin).toBeNull();
+    expect(s.sessionContext).toBeNull();
+  });
+
   it('a stale (>6h) reset drops it — unless a pause survives to resume', async () => {
     const stale = Date.now() - 7 * 60 * 60 * 1000;
     const gone = await rehydrateWith({ sessionStart: stale, phase: 'logging', sessionPlanOptions: LEGS });

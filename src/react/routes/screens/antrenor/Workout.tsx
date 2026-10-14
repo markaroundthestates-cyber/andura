@@ -287,10 +287,12 @@ export function Workout(): JSX.Element {
   // the engine baseline ONLY when it carries pain (the pre-session intensityMod
   // path still uses sessionContext too, identical end-state — this is honest).
   // 'minus' wins as the conservative pick (we never STACK; max-magnitude rule).
+  // The explicit "Mai usor / Mai greu azi" pick replaces the engine baseline (one
+  // mod, never stacked); pain still wins as the conservative pick.
   const intensityMod =
     sessionContext?.painContext !== null && sessionContext?.painContext !== undefined
       ? 'minus'
-      : engineIntensityMod;
+      : sessionContext?.userIntensity ?? engineIntensityMod;
   // For a BODYWEIGHT exercise, targetKg is the ADDED weight (default 0). The
   // deload ±% modifier applies to EXTERNAL load — scaling a 0-added bodyweight
   // target does nothing, and we don't want to inflate/deflate a small added

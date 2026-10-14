@@ -339,6 +339,20 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
+  // Founder 2026-10-14 audit — the explicit "Mai usor / Mai greu azi" pick applies
+  // (it used to stop at the preview banner).
+  it('"Mai usor azi" → target kg -20% even with engine normal (22.5 → 18 → 20)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null, userIntensity: 'minus' });
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg');
+  });
+
+  it('"Mai greu azi" → target kg +15% even with engine normal (22.5 → 25)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null, userIntensity: 'plus' });
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg');
+  });
+
   it('self-report sessionContext NU mai multiplica weight (anti double-count)', async () => {
     // Self-report minus, engine normal → weight stays baseline (no stacking).
     // The self-report now feeds the engine VIA readiness (C2), not a direct

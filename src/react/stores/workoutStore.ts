@@ -576,7 +576,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // finishSession (would abort PostRpe before streak/navigate → lost session).
       storage: createJSONStorage(() => quotaSafeLocalStorage),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
-      // streak + lastStreakDate (NU sessionContext/refusalTriedByEx runtime-only).
+      // streak + lastStreakDate (NU refusalTriedByEx/sessionEnergy runtime-only).
       // Phase 4 task_21 adds history pentru Istoric tab persistent browse.
       // U-05: lastStreakDate persistat ca day-boundary sa supravietuiasca reload.
       //
@@ -587,8 +587,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // mobil, crash tab, OS kill PWA). Acum reload-ul REIA sesiunea: la mount
       // Workout.tsx vede getCurrentMode === 'active' (sessionStart != null) si NU
       // re-porneste — continua exact de unde a ramas cu seturile logate intacte.
-      // sessionContext/refusalTriedByEx raman runtime-only (hint-uri de adaptare,
-      // NU date introduse de user — pierderea lor la reload nu pierde seturi).
+      // refusalTriedByEx/sessionEnergy raman runtime-only (hint-uri, pierderea lor
+      // la reload nu schimba planul sau greutatile). Alegerile care le schimba
+      // (sessionContext / sessionTimeBudgetMin / sessionPlanOptions) se persista.
       partialize: (state) => ({
         pausedSnapshot: state.pausedSnapshot,
         lastSession: state.lastSession,
@@ -611,8 +612,8 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         // them a mid-session reload (1) resurrects a DROPPED exercise as pending
         // (the advance skip-loop no longer skips it) and (2) reverts a SWAPPED slot
         // to the original plan while the substitute's sets live under that slot —
-        // mixing engine keys on continued logging. refusalTriedByEx/sessionContext
-        // stay runtime-only (adaptation hints, not user decisions).
+        // mixing engine keys on continued logging. refusalTriedByEx stays
+        // runtime-only (an adaptation hint, not a user decision).
         droppedExercises: state.droppedExercises,
         performedExercises: state.performedExercises,
         // Live rest countdown — persisted so a reload / re-mount mid-rest
@@ -622,8 +623,11 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         restEndsAt: state.restEndsAt,
         restInitialSec: state.restInitialSec,
         pendingAdvance: state.pendingAdvance,
-        // The plan the in-progress (or paused) session was composed with.
+        // The plan the in-progress (or paused) session was composed with, and the
+        // user's picks that shape it (time budget) or its loads (intensity / pain).
         sessionPlanOptions: state.sessionPlanOptions,
+        sessionTimeBudgetMin: state.sessionTimeBudgetMin,
+        sessionContext: state.sessionContext,
       }) as Partial<WorkoutState & WorkoutActions>,
       // APP-LIFECYCLE-01 — discard a STALE in-progress session on rehydrate so a
       // workout abandoned hours ago doesn't resurrect a ghost "live session" pill.
@@ -654,8 +658,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // once the in-progress fields above reset).
           merged.droppedExercises = {};
           merged.performedExercises = {};
-          // A surviving pause still resumes on the plan it was composed with.
-          if (merged.pausedSnapshot === null) merged.sessionPlanOptions = null;
+        }
+        // The session picks belong to a session in flight or paused — with neither
+        // they are leftovers (a pause still resumes on the plan it was started on).
+        if (merged.sessionStart === null && merged.pausedSnapshot === null) {
+          merged.sessionPlanOptions = null;
+          merged.sessionTimeBudgetMin = null;
+          merged.sessionContext = null;
         }
         return merged;
       },

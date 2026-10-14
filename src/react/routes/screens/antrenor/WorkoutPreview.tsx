@@ -224,7 +224,11 @@ export function WorkoutPreview(): JSX.Element {
   // self-report multiplier no longer stacks on the prescription (the self-report
   // feeds the engine VIA readiness, C2); stacking it here double-counted.
   // Magnitudes (-/+) unchanged (separate Daniel UX call).
-  const engineIntensityMod: IntensityMod = workout?.intensityMod ?? 'normal';
+  // An explicit "Mai usor / Mai greu azi" pick IS the prescription (founder
+  // 2026-10-14 audit: it only moved the banner, the loads stayed the engine's).
+  const userIntensity: 'minus' | 'plus' | undefined =
+    overrideKind === 'easier' ? 'minus' : overrideKind === 'harder' ? 'plus' : undefined;
+  const engineIntensityMod: IntensityMod = userIntensity ?? workout?.intensityMod ?? 'normal';
   const banner = bannerFor(intensityMod);
   const baseDuration = workout?.estimatedDuration ?? durationFor('normal');
   const baseVolume = workout?.volumeKg ?? volumeFor('normal');
@@ -255,7 +259,7 @@ export function WorkoutPreview(): JSX.Element {
     // U-03 (HIGH) — persist session intensity/pain in store inainte de navigate
     // (location.state se pierde la navigate fara state + la refresh). Workout.tsx
     // aplica modifierul la target-uri ca adaptarea afisata aici sa fie reala.
-    setSessionContext({ intensityMod, painContext: painContext ?? null });
+    setSessionContext({ intensityMod, painContext: painContext ?? null, ...(userIntensity ? { userIntensity } : {}) });
     setSessionPlanOptions(planOptions);
     navigate(gotoPath('workout'));
   }

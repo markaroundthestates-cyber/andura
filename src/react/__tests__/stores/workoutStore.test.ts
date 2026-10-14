@@ -1115,7 +1115,7 @@ describe('workoutStore — persist middleware partialize', () => {
 
   // 08.063 — sessionStart now PERSISTS so a mid-workout reload resumes the live
   // session (previously runtime-only → all logged sets lost on accidental
-  // reload). sessionContext/refusalTriedByEx remain runtime-only (see below).
+  // reload). refusalTriedByEx remains runtime-only; sessionContext persists (see below).
   it('persist write CONTAINS sessionStart (live-session resume 08.063)', async () => {
     const ts = Date.now();
     useWorkoutStore.getState().startSession(ts);
@@ -1191,12 +1191,15 @@ describe('workoutStore — sessionContext (U-03)', () => {
     expect(useWorkoutStore.getState().sessionContext).toBeNull();
   });
 
-  it('sessionContext NU e persistat (runtime-only)', async () => {
+  // 2026-10-14 — persisted with the session: a reload mid-workout used to drop a
+  // pain / "Mai usor" pick (loads back to normal). Leftovers with no session in
+  // flight are dropped on load (workoutStore.resumeReload.test.ts).
+  it('sessionContext e persistat (reload-ul nu pierde durerea / "Mai usor")', async () => {
     useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
     await new Promise((r) => setTimeout(r, 20));
     const raw = localStorage.getItem('wv2-workout-store');
     const parsed = JSON.parse(raw!);
-    expect(parsed.state.sessionContext).toBeUndefined();
+    expect(parsed.state.sessionContext).toEqual({ intensityMod: 'minus', painContext: null });
   });
 });
 

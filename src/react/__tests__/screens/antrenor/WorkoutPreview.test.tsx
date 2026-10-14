@@ -248,6 +248,32 @@ describe('WorkoutPreview — duration + volume estimates (C3 engine baseline)', 
     );
   });
 
+  // Founder 2026-10-14 audit — "Mai usor / Mai greu azi" moved the banner only; the
+  // explicit pick IS the prescription now (the energy self-report above still is not).
+  it('"Mai usor azi" → duration ~35 even when the engine baseline is normal', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview({ overrideKind: 'easier', intensityMod: 'minus' });
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/35/),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
+    expect(useWorkoutStore.getState().sessionContext?.userIntensity).toBe('minus');
+  });
+
+  it('"Mai greu azi" → duration ~60 + the pick rides into the session', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview({ overrideKind: 'harder', intensityMod: 'plus' });
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/60/),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
+    expect(useWorkoutStore.getState().sessionContext?.userIntensity).toBe('plus');
+  });
+
   it('volume formatted cu space separator (ro-RO)', async () => {
     vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
       makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),

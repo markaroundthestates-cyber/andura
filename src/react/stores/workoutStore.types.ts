@@ -19,7 +19,7 @@ export type EnergyLight = 'green' | 'yellow' | 'red';
 // write it, WorkoutPreview reads it (store-first, location.state fallback for the
 // legacy override entry points — schedule-override/pain still push state directly).
 // Cleared on session teardown (finish/discard/reset) so it never leaks to the next
-// session — same lifecycle as sessionContext/sessionTimeBudgetMin.
+// session (runtime-only; sessionContext/sessionTimeBudgetMin persist with the session).
 export type EnergyLevelSelfReport = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
 
 export interface SessionEnergy {
@@ -38,6 +38,10 @@ export interface SessionPainContext {
 export interface SessionContext {
   intensityMod: SessionIntensityMod;
   painContext: SessionPainContext | null;
+  // The user's explicit "Mai usor / Mai greu azi" pick (ScheduleOverride). Unlike
+  // the EnergyCheck self-report (which reaches the engine via readiness), nothing
+  // else carries it — Workout applies it over the engine baseline.
+  userIntensity?: 'minus' | 'plus';
 }
 
 // The "Alta grupa" pick the started session was composed with — the same options
@@ -277,9 +281,10 @@ export interface WorkoutState {
   // urmatoare = +1, gap > 1 zi = reset la 1. Fara asta "streak" era doar
   // numar total sesiuni (2 sesiuni/zi = "2 zile consecutive" minciuna).
   lastStreakDate: string | null;
-  // U-03 (HIGH) — runtime-only session intensity/pain context (NU persistat).
-  // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
-  // WorkoutPreview.handleStart din location.state inainte de navigate workout.
+  // U-03 (HIGH) — session intensity/pain context. null = sesiune fara adaptare
+  // (intrare directa Antrenor → workout). Set de WorkoutPreview.handleStart din
+  // location.state inainte de navigate workout. Persisted with the live / paused
+  // session (2026-10-14: a reload must not drop a pain or "Mai usor" pick).
   sessionContext: SessionContext | null;
   // Founder 2026-10-14 ("am zis ca vreau picioare si a inceput antrenamentul de
   // umeri piept"): the override reached the preview only — Workout re-derived the
@@ -299,9 +304,10 @@ export interface WorkoutState {
   // derived cap is used unchanged (byte-identical to the prior behavior). When
   // set, composePlannedWorkoutToday SHRINKS the effective cap to fit (it never
   // EXTENDS past the persona cap — safety: user time only ever tightens it).
-  // Runtime-only (NOT persisted), like sessionContext — a per-session hint, not
-  // user-entered training data; cleared on session teardown so it never leaks
-  // to the next session.
+  // Persisted with the live / paused session (2026-10-14: the trim can drop a
+  // MIDDLE exercise, so a reload that lost the budget re-derived a different plan
+  // than the one the logged sets are index-aligned to); cleared on session
+  // teardown so it never leaks to the next session.
   sessionTimeBudgetMin: number | null;
   // Tombstones — the `ts` of every logged session the user explicitly DELETED
   // from Istoric (mislogged workout, Daniel's wife). Plain removal from
