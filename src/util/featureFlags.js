@@ -636,6 +636,16 @@ export const FLAGS = Object.freeze({
   //   shows (skinfold > US-Navy) when one exists, else the Deurenberg estimate as
   //   before. His: 17.1% Navy, was 23.8% BMI-only. Pinned OFF in fp + sims.
   dp_bf_measured_v1: { rollout: 1, default: true },
+  // dp_transfer_compound_guard_v1 (2026-10-23) — cold-start transfer: a leg isolation
+  //   (extension / curl) never seeds a compound (Leg Extension 93 → Smith Reverse Lunge
+  //   86 kg), a one-leg lift takes ~0.55 of a two-leg source, and a dumbbell target
+  //   seeded through the pattern layer keeps its per-hand unit (Walking Lunge 40 kg per
+  //   hand). Pinned OFF in fp + sims.
+  dp_transfer_compound_guard_v1: { rollout: 1, default: true },
+  // dp_glute_drive_hip_thrust_v1 (2026-10-23) — a hip-thrust refusal or back injury also
+  //   excludes the Glute Drive machine (a branded hip thrust that keys by its name, so the
+  //   token match missed it — his friend's legs day got one). Pinned OFF in fp + sims.
+  dp_glute_drive_hip_thrust_v1: { rollout: 1, default: true },
   // sync_exclusions_lww_v1 (2026-10-23, founder "baga-i in exclude tu toate
   //   exercitiile care nu ar putea sa le faca") — the per-exercise exclusion list
   //   ("Nu pot face asta" / "Aparat lipsa") was device-local: lost on a phone switch

@@ -30,6 +30,7 @@
 
 import { DB } from '../db.js';
 import { PAIN_REGION_GROUP_MAP } from './muscleRecoveryConstants.js';
+import { isEnabled } from '../util/featureFlags.js';
 
 const PAIN_CDL_KEY = 'pain-cdl';
 const MS_DAY = 86400000;
@@ -283,6 +284,12 @@ export function isExcludedMovement(name, movementToken, excl) {
   // The `dip` token is the bare token (caught below). Only when the SHOULDER_IMPINGE
   // sentinel is present (dp_shoulder_safe_v1).
   if (excl.tokens.has(SHOULDER_IMPINGE_SENTINEL) && SHOULDER_IMPINGE_NAME_RE.test(lower)) {
+    return true;
+  }
+  // dp_glute_drive_hip_thrust_v1 — the Glute Drive machine IS a hip thrust under a
+  // brand name (keys `name:glute drive machine`), so a hip-thrust refusal / back injury
+  // missed it (founder 2026-10-23: his friend refuses hip thrust; the plan gave Glute Drive).
+  if (excl.tokens.has('hip-thrust') && /glute drive/.test(lower) && isEnabled('dp_glute_drive_hip_thrust_v1')) {
     return true;
   }
   if (!excl.tokens.has(movementToken)) return false;

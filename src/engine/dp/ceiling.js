@@ -134,7 +134,7 @@ export function isTransferCompatible(targetPattern, srcPattern) {
 // only between variants of one movement (same last name word: BB Shrug ↔ DB Shrug,
 // Machine ↔ Cable Pullover).
 /** @param {string} n @returns {string} */
-const movementRoot = (n) => String(n).toLowerCase().replace(/[^a-z ]/g, ' ').trim().split(/s+/).pop() ?? '';
+const movementRoot = (n) => String(n).toLowerCase().replace(/[^a-z ]/g, ' ').trim().split(/\s+/).pop() ?? '';
 
 /**
  * Whether lift `src` may seed lift `target`'s cold-start load (classifies both). PURE
@@ -170,6 +170,10 @@ export function transferCompatibleLifts(target, src) {
   if (tp === 'generic' && sp === 'generic' && isEnabled('dp_transfer_generic_wall_v1')) {
     return movementRoot(target) === movementRoot(src);
   }
+  // dp_transfer_compound_guard_v1 — a machine isolation (leg extension / curl) never
+  // seeds a compound, nor a compound an isolation: their loads share no scale (founder
+  // 2026-10-23: Leg Extension 93 seeded a Smith Reverse Lunge at 86 kg).
+  if (isEnabled('dp_transfer_compound_guard_v1') && (tp === 'legiso') !== (sp === 'legiso')) return false;
   return isTransferCompatible(tp, sp);
 }
 

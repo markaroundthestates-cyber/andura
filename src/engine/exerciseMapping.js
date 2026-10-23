@@ -208,10 +208,19 @@ const PATTERN_CONVERSION = /** @type {Record<string, number>} */ ({
  * @param {(name:string)=>(string|null|undefined)} [getPattern] classifyPattern accessor
  * @returns {number}
  */
+// dp_transfer_compound_guard_v1 (founder 2026-10-23: his friend's plan seeded a Smith
+// Reverse Lunge at 86 kg and a Walking Lunge at 40 kg per hand). A ONE-leg lift seeded
+// from a two-leg one carries ~half the load, and the pattern layer below dropped the
+// per-hand unit a dumbbell target needs (only the reducing direction is applied).
+const UNILATERAL_RE = /lunge|split squat|step-?up|single-leg|pistol/i;
+const UNILATERAL_SHARE = 0.55;
+
 export function getSimilarityMultiplier(target, source, getEquipType, getPattern) {
   const ratios = /** @type {Record<string, number>} */ (SIMILARITY_RATIO);
   const curated = ratios[target + '_' + source];
   if (typeof curated === 'number') return curated; // (1) curated pair wins
+  const guard = isEnabled('dp_transfer_compound_guard_v1');
+  const oneLeg = guard && UNILATERAL_RE.test(target) && !UNILATERAL_RE.test(source) ? UNILATERAL_SHARE : 1;
   // (2) movement-pattern conversion layer (intra-family mechanical skew, e.g.
   // leg press ≫ squat) — wins over the equipment layer (knows the movement, not
   // just the hardware). Only fires for a cross-pattern pair with a listed ratio.
@@ -220,7 +229,12 @@ export function getSimilarityMultiplier(target, source, getEquipType, getPattern
     const sPat = getPattern(source);
     if (tPat && sPat && tPat !== sPat) {
       const pconv = PATTERN_CONVERSION[tPat + '_' + sPat];
-      if (typeof pconv === 'number') return pconv;
+      if (typeof pconv === 'number') {
+        const unit = guard && typeof getEquipType === 'function'
+          ? EQUIP_CONVERSION[getEquipType(target) + '_' + getEquipType(source)] ?? 1
+          : 1;
+        return pconv * oneLeg * Math.min(1, unit);
+      }
     }
   }
   // (3) equipment-type conversion layer (cross-equipment only).
@@ -228,12 +242,12 @@ export function getSimilarityMultiplier(target, source, getEquipType, getPattern
     const tEq = getEquipType(target);
     const sEq = getEquipType(source);
     if (tEq && sEq && tEq !== sEq) {
-      if (tEq === 'barbell' && sEq === 'machine' && !/smith/i.test(source) && isEnabled('dp_machine_to_free_discount_v1')) return MACHINE_TO_BARBELL;
+      if (tEq === 'barbell' && sEq === 'machine' && !/smith/i.test(source) && isEnabled('dp_machine_to_free_discount_v1')) return MACHINE_TO_BARBELL * oneLeg;
       const conv = EQUIP_CONVERSION[tEq + '_' + sEq];
-      if (typeof conv === 'number') return conv;
+      if (typeof conv === 'number') return conv * oneLeg;
     }
   }
-  return ratios['default'] || 0.9; // (4) legacy default
+  return (ratios['default'] || 0.9) * oneLeg; // (4) legacy default
 }
 
 // ══ F3 #4 — ordered transfer-source resolution (cross-exercise cold-start) ════
