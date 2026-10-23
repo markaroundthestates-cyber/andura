@@ -15,6 +15,7 @@ import { EXERCISE_METADATA, getValidAlternatives, isActiveExercise } from './exe
 import { movementKey } from './sessionBuilder.js';
 import { canonicalLoggedName } from './dp/logIdentity.js';
 import { isEnabled } from '../util/featureFlags.js';
+import { recentSessionsByName } from './dp/usedVariant.js';
 
 // ── ACTIVE visibility gate (Daniel SSOT 2026-06-05) ─────────────────────────
 // Every alternative this module OFFERS must be ACTIVE (CORE_AUTO). The swap
@@ -470,6 +471,17 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
   // Pulldown, a gym-declared twin station) is not an alternative to itself.
   const ownIdentity = sameMove ? canonicalLoggedName(exerciseName) : null;
   const isStation = (t) => t === 'cable' || t === 'machine';
+  // dp_swap_history_variety_v1 (founder 2026-10-23: "daca dau don't want la squats nu
+  // apare recomended leg press... nici cu rdl nu sunt convins"): a lift he trains
+  // (>= 2 sessions in 60 days) outranks a variant he never does — his known load, his
+  // gym — when it is a real substitute (same force demand, or the library's own
+  // alternative for this lift: RDL → Leg Curl), never an isolation standing in for a
+  // press. Same-movement still breaks the tie between two lifts he does.
+  const historyVariety = isEnabled('dp_swap_history_variety_v1');
+  const trained = historyVariety ? recentSessionsByName() : new Map();
+  const oneToOne = new Set(meta.equipment_alternatives ?? []);
+  const curatedOrder = [...oneToOne,
+    ...(meta.fallback_cascade ?? []).flatMap((c) => (c.exercise_id ? [c.exercise_id] : c.exercise_ids ?? []))];
 
   // DIVERSIFY MODALITY signals (heuristic 3): equipment types the user already
   // tried/skipped at this slot. A run of busy machine-skips (>=2 machine/cable
@@ -522,6 +534,7 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
 
     // CONTRAINDICATED (heuristic 5): defensive — rank any such movement last.
     if (isContraindicated(name)) score -= 1000;
+    if ((trained.get(name) ?? 0) >= 2 && (m.force_demand === meta.force_demand || oneToOne.has(name))) score += 200;
 
     pool.push({
       name,
@@ -602,6 +615,31 @@ export function buildSwapPickList(exerciseName, excludeNames = [], triedNames = 
       if (result.length > MAX_ROWS) result.length = MAX_ROWS;
     }
   }
+
+  // dp_swap_history_variety_v1 — "Nu vreau" can mean the MOVEMENT, not the equipment:
+  // the list always carries the library's own other-movement alternative for this lift
+  // (back squat → Leg Press, RDL → Leg Curl); with none curated, the best other
+  // movement (a station first) when the rows are all one. It goes AFTER the same-
+  // movement rows (10-10: a Cable Row refusal keeps its machine rows ahead of a pulldown).
+  const otherMove = (c) => c.sub !== origSub && !c.isBodyweight && !isContraindicated(c.name);
+  const curatedOther = historyVariety
+    ? curatedOrder.map((n) => ordered.find((c) => c.name === n)).find((c) => c && otherMove(c))
+    : undefined;
+  const fallbackOther = historyVariety && !result.some((c) => c.sub !== origSub)
+    ? ordered.find((c) => otherMove(c) && isStation(c.equipmentType)) ?? ordered.find(otherMove)
+    : undefined;
+  const other = curatedOther ?? fallbackOther;
+  if (other && !result.includes(other)) {
+    // Before the bodyweight fallback row; the lowest same-movement row makes room.
+    const bw = result.findIndex((c) => c.isBodyweight);
+    result.splice(bw > 0 ? bw : result.length, 0, other);
+    if (result.length > MAX_ROWS) {
+      const drop = result.findLastIndex((c, i) => i > 0 && c !== other && !c.isBodyweight);
+      if (drop > 0) result.splice(drop, 1);
+      else result.length = MAX_ROWS;
+    }
+  }
+
 
   const items = result.map((c) => ({
     name: c.name,

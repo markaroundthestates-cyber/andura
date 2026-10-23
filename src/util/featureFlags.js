@@ -625,6 +625,12 @@ export const FLAGS = Object.freeze({
   //   curated twins load neither. Monday's RPD kept his back "unrecovered" for
   //   Tuesday's pull day (back cut 33/35 days). Pinned OFF in fp + sims.
   dp_rear_delt_no_back_load_v1: { rollout: 1, default: true },
+  // dp_swap_history_variety_v1 (2026-10-23, founder "daca dau don't want la squats nu
+  //   apare recomended leg press... nici cu rdl nu sunt convins") — the swap list was
+  //   five squats for a squat (Front / Goblet / Bulgarian / Smith / bodyweight) and five
+  //   hinges for an RDL. A lift he trains (>= 2 sessions / 60 days) now leads, and the
+  //   list always carries another movement for the muscle. Pinned OFF in fp + sims.
+  dp_swap_history_variety_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

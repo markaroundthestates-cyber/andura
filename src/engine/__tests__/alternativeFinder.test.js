@@ -366,7 +366,8 @@ describe('buildSwapPickList — the same movement first (dp_swap_same_movement_v
     const { items } = buildSwapPickList('Cable Row');
     expect(items[0].name).toBe('Chest-Supported Row');
     const firstPulldown = items.findIndex((i) => /pulldown/i.test(i.name));
-    const lastRow = items.map((i) => /row/i.test(i.name)).lastIndexOf(true);
+    // The bodyweight fallback row (Inverted Row) always sits last — not a station row.
+    const lastRow = items.map((i) => /row/i.test(i.name) && !i.isBodyweight).lastIndexOf(true);
     expect(firstPulldown === -1 || firstPulldown > lastRow).toBe(true);
   });
 
@@ -381,5 +382,43 @@ describe('buildSwapPickList — the same movement first (dp_swap_same_movement_v
   it('flag OFF → the legacy muscle-only ranking (Cable Row pre-picks a pulldown)', () => {
     flags({ dp_swap_same_movement_v1: false });
     expect(buildSwapPickList('Cable Row').items[0].name).toMatch(/pulldown/i);
+  });
+});
+
+// Founder 2026-10-23: "daca dau don't want la squats nu apare recomended leg press...
+// nici cu rdl nu sunt convins". His real history: Leg Press / Leg Curl / Chest-Supported
+// Row >= 2 sessions in 60 days; Front Squat / Trap Bar Deadlift never.
+describe('buildSwapPickList — his lifts lead, another movement is always there (dp_swap_history_variety_v1)', () => {
+  const H = 86_400_000;
+  const NOW = Date.UTC(2026, 9, 23, 6);
+  const seed = (names) => {
+    const logs = [];
+    names.forEach((ex, i) => [3, 10, 17].forEach((d) => logs.push({ ex, w: 50, reps: 8, date: `2026-10-${23 - d}`, ts: NOW - d * H - i })));
+    localStorage.setItem('logs', JSON.stringify(logs));
+  };
+  afterEach(() => { localStorage.removeItem('logs'); localStorage.removeItem('_devFlags'); });
+
+  it('back squat → Leg Press pre-picked for him; RDL → Leg Curl', () => {
+    seed(['Leg Press', 'Leg Curl', 'Chest-Supported Row', 'DB Lateral Raise']);
+    expect(buildSwapPickList('Barbell Back Squat (High Bar)').items[0].name).toBe('Leg Press');
+    expect(buildSwapPickList('Romanian Deadlift').items[0].name).toBe('Leg Curl');
+    expect(buildSwapPickList('Cable Row').items[0].name).toBe('Chest-Supported Row');
+  });
+
+  it('a lift he trains never stands in for a press unless it is a real substitute', () => {
+    seed(['DB Lateral Raise', 'Reverse Pec Deck']);
+    const first = buildSwapPickList('Machine Shoulder Press').items[0].name;
+    expect(['DB Lateral Raise', 'Reverse Pec Deck']).not.toContain(first);
+  });
+
+  it('no history: the list still carries the other movement (Leg Press / Leg Curl)', () => {
+    expect(buildSwapPickList('Barbell Back Squat (High Bar)').items.map((i) => i.name)).toContain('Leg Press');
+    expect(buildSwapPickList('Romanian Deadlift').items.map((i) => i.name)).toContain('Leg Curl');
+  });
+
+  it('flag off → the previous list (no Leg Press for a squat)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_swap_history_variety_v1: false }));
+    seed(['Leg Press']);
+    expect(buildSwapPickList('Barbell Back Squat (High Bar)').items.map((i) => i.name)).not.toContain('Leg Press');
   });
 });

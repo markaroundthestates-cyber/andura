@@ -38,6 +38,13 @@ import {
   getMissingEquipment,
   isEquipmentMissingExercise,
 } from '../../engine/schedule/scheduleAdapter.js';
+import {
+  buildExclusionTokens,
+  contraindicatedGroupsFromPainCdl,
+  isExcludedMovement,
+} from '../../engine/movementExclusion.js';
+import { isEnabled } from '../../util/featureFlags.js';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { buildSwappedExercise } from './scheduleAdapterAggregate';
 import type { PlannedExercise } from './engineWrappers';
@@ -270,6 +277,18 @@ export interface SwapPickList {
   muscleGroup: string;
 }
 
+/** The user's refusals + pain contraindications, as the planner builds them; null when none. */
+function swapExclusions(): ReturnType<typeof buildExclusionTokens> | null {
+  const refused = useOnboardingStore.getState().data?.refusedPatterns;
+  const refusedPatterns = Array.isArray(refused) ? refused : [];
+  const injuryGroups = contraindicatedGroupsFromPainCdl(Date.now());
+  if (refusedPatterns.length === 0 && injuryGroups.length === 0) return null;
+  return buildExclusionTokens(injuryGroups, refusedPatterns, {
+    kneeSafeQuads: isEnabled('dp_knee_safe_quads_v1'),
+    shoulderSafe: isEnabled('dp_shoulder_safe_v1'),
+  });
+}
+
 /**
  * Build the manual swap PICK-LIST for the current exercise (founder redesign).
  * Wraps the engine buildSwapPickList ranking into renderable PlannedExercise
@@ -315,7 +334,17 @@ export function resolveSwapPickList(
   // the pool (the muscle has ONLY equipment-missing candidates), keep the
   // unfiltered list rather than strand the user with no row.
   const offerable = items.filter((it) => !isEquipmentMissingExercise(it.name));
-  const usable = offerable.length > 0 ? offerable : items;
+  const usableAny = offerable.length > 0 ? offerable : items;
+  // The planner's hard exclusion (getDailyWorkout #81) applies to the swap too: a
+  // refused pattern (onboarding refusedPatterns) or a pain-contraindicated movement is
+  // never offered (founder 2026-10-23 — his friend refuses squat / deadlift / hip
+  // thrust for his back; "Nu vreau" on Leg Press offered a squat). No last-option
+  // fallback: the refusal is explicit, an empty list falls to skip.
+  const excl = swapExclusions();
+  const usable = excl
+    ? usableAny.filter((it) => !isExcludedMovement(it.name, movementKey(it.name, getExerciseMetadata(it.name)).split('::')[1] ?? '', excl))
+    : usableAny;
+  if (usable.length === 0) return { rows: [], originalName, muscleGroup: '' };
 
   const rows: SwapPickRow[] = usable.map((it) => ({
     exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere', prescribedSets),

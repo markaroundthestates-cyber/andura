@@ -48,7 +48,7 @@ export function usedVariantTwins(name) {
 }
 
 /** Distinct session days per logged name in the window. @returns {Map<string, number>} */
-function recentSessionsByName() {
+export function recentSessionsByName() {
   const logs = /** @type {Array<{ex?: string, ts?: number, date?: string}>|null} */ (DB.get('logs'));
   /** @type {Map<string, Set<string>>} */
   const days = new Map();

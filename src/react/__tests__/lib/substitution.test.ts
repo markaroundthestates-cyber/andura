@@ -16,6 +16,8 @@ import {
 import { movementKey } from '../../../engine/sessionBuilder.js';
 import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
 import { setMissingEquipmentExercises } from '../../../engine/schedule/scheduleAdapter.js';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { isExcludedMovement, buildExclusionTokens } from '../../../engine/movementExclusion.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
 beforeEach(() => {
@@ -378,5 +380,28 @@ describe('a swap keeps the slot prescribed set count', () => {
     const out = recomposeWithBusyTypes(plan, ['barbell']);
     expect(out[0]!.sets).toBe(2);
     expect(out[1]!.sets).toBe(5);
+  });
+});
+
+// Founder 2026-10-23: his friend refuses squat / deadlift / hip thrust for his back.
+// The planner already hard-excludes refused patterns; the swap list did not.
+describe('resolveSwapPickList — refused patterns are never offered', () => {
+  const REFUSED = ['squat', 'deadlift', 'hip-thrust'];
+  const tok = (n: string) => movementKey(n, getExerciseMetadata(n)).split('::')[1] ?? '';
+  const excl = buildExclusionTokens([], REFUSED);
+
+  it('Leg Press / Leg Curl swaps carry no squat, deadlift or hip thrust', () => {
+    useOnboardingStore.setState({ data: { ...useOnboardingStore.getState().data, refusedPatterns: REFUSED } });
+    for (const ex of ['Leg Press', 'Leg Curl', 'Leg Extension']) {
+      const { rows } = resolveSwapPickList(ex, 0);
+      expect(rows.length).toBeGreaterThan(0);
+      for (const r of rows) expect(isExcludedMovement(r.engineName, tok(r.engineName), excl)).toBe(false);
+    }
+    useOnboardingStore.setState({ data: { ...useOnboardingStore.getState().data, refusedPatterns: [] } });
+  });
+
+  it('no refusals → the squats stay in the list', () => {
+    const { rows } = resolveSwapPickList('Leg Press', 0);
+    expect(rows.some((r) => isExcludedMovement(r.engineName, tok(r.engineName), excl))).toBe(true);
   });
 });
