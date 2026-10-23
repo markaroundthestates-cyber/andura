@@ -28,6 +28,7 @@ import { Pill } from '../pulse/Pill';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
 import { formatKg } from '../../lib/format';
+import { sessionDisplayTitle } from '../../lib/sessionTitle';
 import { t } from '../../../i18n/index.js';
 
 export interface SessionRow {
@@ -42,7 +43,8 @@ export interface SessionRow {
   volumeKg?: number;
   // Per-exercise breakdown (Phase 5 task_03) — sursa pentru rating derivat +
   // detectie PR pe card. Absent pe sesiuni legacy → fara chip/trofeu.
-  exercises?: Array<{ sets: Array<{ rating: SessionRating; isPR?: boolean }> }>;
+  // engineName / exerciseName — the group in a generic title ("Workout - Legs").
+  exercises?: Array<{ engineName?: string; exerciseName?: string; sets: Array<{ rating: SessionRating; isPR?: boolean }> }>;
 }
 
 interface VirtualSessionListProps {
@@ -125,7 +127,7 @@ function SessionCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-display text-[15.5px] font-semibold text-ink truncate">
-                {session.title}
+                {sessionDisplayTitle(session)}
               </span>
               {hasPR && (
                 <Trophy

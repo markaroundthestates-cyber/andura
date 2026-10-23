@@ -18,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, History, Trash2 } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
+import { sessionDisplayTitle } from '../../../lib/sessionTitle';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t, getCurrentLocale } from '../../../../i18n/index.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
@@ -168,7 +169,7 @@ export function IstoricDetail(): JSX.Element {
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="font-display text-2xl font-bold text-ink">{session.title}</h1>
+        <h1 className="font-display text-2xl font-bold text-ink">{sessionDisplayTitle(session)}</h1>
       </header>
 
       <div className="pulse-card p-4 mb-4">
