@@ -258,3 +258,56 @@ describe('firebase — learned engine state is last-learned-wins', () => {
     expect(lastPatch()['_lww_dp-recovery-constants']).toBeUndefined();
   });
 });
+
+// Founder 2026-10-23: "baga-i in exclude tu toate exercitiile care nu ar putea sa le
+// faca" (his friend's back). The per-exercise exclusion list was device-local: lost on
+// a phone switch, unreachable from another device. sync_exclusions_lww_v1.
+describe('firebase — the per-exercise exclusion list syncs (sync_exclusions_lww_v1)', () => {
+  const KEY = 'wv2-equipment-missing-exercises';
+  let fetchMock;
+  const remote = (doc) => fetchMock.mockResolvedValue(new Response(JSON.stringify(doc), { status: 200 }));
+  const lastPatch = () => JSON.parse(fetchMock.mock.calls[fetchMock.mock.calls.length - 1][1].body);
+
+  beforeEach(() => {
+    localStorage.clear();
+    _seedAuth();
+    fetchMock = vi.fn().mockResolvedValue(new Response('null', { status: 200 }));
+    globalThis.fetch = fetchMock;
+    delete window._suppressFirebaseSync;
+  });
+  afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); localStorage.clear(); });
+
+  it('an exclusion made on this device is pushed with its stamp', async () => {
+    const { setMissingEquipmentExercises } = await import('../engine/schedule/scheduleAdapter/equipmentMemoryStorage.js');
+    setMissingEquipmentExercises(['Cable Row', 'Barbell Row']);
+    await syncToFirebase();
+    const body = lastPatch();
+    expect(body[KEY]).toEqual(['Cable Row', 'Barbell Row']);
+    expect(body[`_lww_${KEY}`]).toEqual({ ts: expect.any(Number), v: ['Cable Row', 'Barbell Row'] });
+  });
+
+  it('a list written elsewhere reaches this phone; a pre-sync local list is kept (union)', async () => {
+    _legacyLocal(KEY, ['Leg Curl']);
+    remote({ [`_lww_${KEY}`]: { ts: T_SERVER, v: ['Cable Row', 'Glute-Ham Raise'] } });
+    await syncFromFirebase();
+    expect([...DB.get(KEY)].sort()).toEqual(['Cable Row', 'Glute-Ham Raise', 'Leg Curl']);
+  });
+
+  it('an un-exclude made here after the remote write sticks (last write wins)', async () => {
+    vi.setSystemTime(new Date(T_SERVER + 60_000));
+    DB.set(KEY, ['Cable Row']); // "Il pun la loc" on Glute-Ham Raise, stamped later
+    vi.useRealTimers();
+    remote({ [`_lww_${KEY}`]: { ts: T_SERVER, v: ['Cable Row', 'Glute-Ham Raise'] } });
+    await syncFromFirebase();
+    expect(DB.get(KEY)).toEqual(['Cable Row']);
+  });
+
+  it('a newer remote list replaces a stamped local one (no union once synced)', async () => {
+    vi.setSystemTime(new Date(T_SERVER - 60_000));
+    DB.set(KEY, ['Cable Row', 'Glute-Ham Raise']);
+    vi.useRealTimers();
+    remote({ [`_lww_${KEY}`]: { ts: T_SERVER, v: ['Cable Row'] } });
+    await syncFromFirebase();
+    expect(DB.get(KEY)).toEqual(['Cable Row']);
+  });
+});

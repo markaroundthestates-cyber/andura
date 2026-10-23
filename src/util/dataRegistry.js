@@ -19,6 +19,9 @@ export const USER_DATA_KEYS = [
   'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament',
   'dp-fatigue-curve', 'dp-learned-volume', 'dp-pivot-prompts',
   'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'dp-gyms', 'tombstones',
+  // the user's per-exercise exclusions ("Nu pot face asta" / "Aparat lipsa"), synced
+  // last-write-wins from 2026-10-23 (sync_exclusions_lww_v1).
+  'wv2-equipment-missing-exercises',
   // sync-lww-ts — per-key write stamps for the last-write-wins settings
   // (firebase.js LWW_SYNC_KEYS); a stale stamp after a start-over would block the
   // fresh cloud value, so it resets with the data it stamps.
@@ -166,6 +169,7 @@ export const SYNC_CLASSIFICATION = Object.freeze({
   'dp-nof1-experiment': 'mutable',
   'dp-behavior-tuning': 'mutable',
   'dp-gyms': 'mutable',
+  'wv2-equipment-missing-exercises': 'mutable',
 });
 
 // Returns all currently-stored keys that match a DYNAMIC_KEY_PREFIXES entry

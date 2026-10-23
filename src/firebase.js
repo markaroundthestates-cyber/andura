@@ -118,6 +118,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-nof1-preference', // dp-nof1-preference — F6c #34 per-exercise N-of-1 kept preference (object engineName -> {arm:'volume'|'intensity',decidedTs,slopeA,slopeB}); name-keyed object-merge sync (in NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
   'dp-nof1-experiment', // dp-nof1-experiment — F6c #34 single in-flight experiment state (fixed-key object {exercise,arm,sessionsInArm,slopeArmA}); only ONE lift at a time; exercise NAME lives in a VALUE field (Firebase-safe — NOT a key), so NOT name-keyed; per-UID, durable
   'dp-behavior-tuning', // dp-behavior-tuning — #59 D107 behavioral-log distillation → per-user tuning (fixed-key object {ratingRirOffset:{offset,n}}); a GLOBAL per-user rating-semantic offset (NOT name-keyed, like dp-pivot-prompts); object-merge sync, learned per-UID, durable across sessions/devices
+  'wv2-equipment-missing-exercises', // wv2-equipment-missing-exercises — the user's per-exercise exclusions ("Nu pot face asta" in the library / "Aparat lipsa"): string[] of EN canonical names. Was device-local (founder 2026-10-23: lost on a phone switch, and the exclusions set for his friend's back could not reach his phone); last-write-wins sync (LWW_SYNC_KEYS, sync_exclusions_lww_v1), per-UID, durable
   'dp-gyms', // dp-gyms — per-gym curated equipment stacks ("Sala mea" 2026-07-02): {activeId, gyms:{[id]:{id,name,stacks:{[equipType]:number[]}}}}. Fixed-shape object; ids are gym_<ts> + equipType tokens (Firebase-safe → NOT name-keyed, like dp-pivot-prompts) — except the nested per-gym `equivalents` name map, encoded by _toCloud; last-write-wins sync (LWW_SYNC_KEYS), per-UID, durable across sessions/devices
 ];
 
@@ -260,14 +261,20 @@ function _fromCloud(k, v) {
 // opened last — a second device of the founder's pushed its old copy over the phone's.
 // Learners build on what the device pulled at boot, so the last device to learn is right.
 export const LWW_LEARNED_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-recovery-constants', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament', 'dp-fatigue-curve', 'dp-learned-volume', 'dp-behavior-tuning']);
-export const LWW_SYNC_KEYS = Object.freeze(['phase-override', 'phase-change-date', 'dp-gyms', ...LWW_LEARNED_KEYS]);
+// The user's exclusion list is a SETTING (an un-exclude must stick), so it is last-
+// write-wins too — but a device's list that predates the sync (never stamped) is
+// unioned on the first adopt, not replaced (sync_exclusions_lww_v1, 2026-10-23).
+const LWW_UNION_FIRST_KEYS = Object.freeze(['wv2-equipment-missing-exercises']);
+export const LWW_SYNC_KEYS = Object.freeze(['phase-override', 'phase-change-date', 'dp-gyms', ...LWW_UNION_FIRST_KEYS, ...LWW_LEARNED_KEYS]);
 export const LWW_CLOUD_NODES = Object.freeze(LWW_SYNC_KEYS.map((k) => `_lww_${fbKey(k)}`));
 const LWW_TS_KEY = 'sync-lww-ts';
 let _lwwPulling = false;
 
 /** @param {string} k */
 function _lwwActive(k) {
-  return LWW_SYNC_KEYS.includes(k) && (!LWW_LEARNED_KEYS.includes(k) || isEnabled('sync_lww_learned_v1'));
+  return LWW_SYNC_KEYS.includes(k)
+    && (!LWW_LEARNED_KEYS.includes(k) || isEnabled('sync_lww_learned_v1'))
+    && (!LWW_UNION_FIRST_KEYS.includes(k) || isEnabled('sync_exclusions_lww_v1'));
 }
 
 /** @returns {Record<string, number>} */
@@ -598,7 +605,12 @@ export async function syncFromFirebase() {
         if (li >= 0) {
           const r = remote[LWW_CLOUD_NODES[li]];
           if (r && typeof r === 'object' && typeof r.ts === 'number' && r.ts > (stamps[k] || 0)) {
-            DB.set(k, r.v == null ? null : _fromCloud(k, r.v));
+            let v = r.v == null ? null : _fromCloud(k, r.v);
+            const own = DB.get(k);
+            if (LWW_UNION_FIRST_KEYS.includes(k) && typeof stamps[k] !== 'number' && Array.isArray(own) && Array.isArray(v)) {
+              v = [...new Set([...own, ...v])];
+            }
+            DB.set(k, v);
             stamps[k] = r.ts;
             return;
           }

@@ -29,6 +29,7 @@
 // wv2 layer on a full data reset. Reversible: removeMissingEquipmentExercise (the
 // Account list's remove action) makes the exercise available again.
 
+import { DB } from '../../../db.js';
 import { canonicalLoggedName } from '../../dp/logIdentity.js';
 
 export const EQUIPMENT_MISSING_EXERCISES_KEY = 'wv2-equipment-missing-exercises';
@@ -64,7 +65,9 @@ export function setMissingEquipmentExercises(list) {
   const safe = Array.isArray(list)
     ? [...new Set(list.filter(e => typeof e === 'string' && e.length > 0).map(canonicalLoggedName))]
     : [];
-  try { localStorage.setItem(EQUIPMENT_MISSING_EXERCISES_KEY, JSON.stringify(safe)); } catch { /* noop */ }
+  // Through DB.set (same JSON under the same key): the sync wrapper stamps the edit
+  // and schedules the push, so an exclusion or an un-exclude reaches every device.
+  try { DB.set(EQUIPMENT_MISSING_EXERCISES_KEY, safe); } catch { /* noop */ }
 }
 
 /**

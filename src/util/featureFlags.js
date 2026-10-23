@@ -636,6 +636,12 @@ export const FLAGS = Object.freeze({
   //   shows (skinfold > US-Navy) when one exists, else the Deurenberg estimate as
   //   before. His: 17.1% Navy, was 23.8% BMI-only. Pinned OFF in fp + sims.
   dp_bf_measured_v1: { rollout: 1, default: true },
+  // sync_exclusions_lww_v1 (2026-10-23, founder "baga-i in exclude tu toate
+  //   exercitiile care nu ar putea sa le faca") — the per-exercise exclusion list
+  //   ("Nu pot face asta" / "Aparat lipsa") was device-local: lost on a phone switch
+  //   and unreachable from another device. Now synced last-write-wins (an un-exclude
+  //   sticks); a pre-sync local list is unioned on the first adopt. Sync flag, not pinned.
+  sync_exclusions_lww_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are
