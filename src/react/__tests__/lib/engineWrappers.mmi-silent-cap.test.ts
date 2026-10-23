@@ -78,6 +78,18 @@ beforeEach(() => {
   localStorage.clear();
 });
 
+// Calendar-rot guard (2026-10-23): the fixed dates below rotted as the real clock
+// moved ('2025-10-15' was ~7 months on 2026-05-23, 12+ by October → another bucket).
+// Anchor each pause RELATIVE to today; the tests assert the bucket math, not a date.
+const daysAgoIso = (days: number): string => {
+  const d = new Date(Date.now() - days * 86_400_000);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const MONTHS_AGO_4 = daysAgoIso(122);
+const MONTHS_AGO_7 = daysAgoIso(213);
+const MONTHS_AGO_18 = daysAgoIso(548);
+const MONTHS_AGO_25 = daysAgoIso(762);
+
 // Pause months calc: days / 30.44. Buckets via days delta from today.
 // Use historic dates well past threshold to avoid jsdom Date.now drift edge cases.
 // 7 luni  → 2025-10-15 (>= 213 days from 2026-05-23)
@@ -94,7 +106,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
   // incoming rec already at/below the MMI weight is left UNCHANGED (min wins).
   it('pauseMonths < 6 → NO cap (baseline preserved)', () => {
     seedDb({
-      lastSessionDate: '2026-01-21', // ~4 luni pause
+      lastSessionDate: MONTHS_AGO_4, // ~4 luni pause
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 100 }]);
@@ -104,7 +116,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('pauseMonths 7 (6-12 bucket) → caps an over-aggressive 240 DOWN to 200', () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // ~7 luni pause
+      lastSessionDate: MONTHS_AGO_7, // ~7 luni pause
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
       // No mmi-state → silent auto-opt-in (userChoice synthesized 'accepted')
     });
@@ -117,7 +129,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('pauseMonths 7 — incoming already BELOW the MMI return → UNCHANGED (cap never raises)', () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // ~7 luni pause
+      lastSessionDate: MONTHS_AGO_7, // ~7 luni pause
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     // DP's safer return-deload (100) is below the MMI 200 → min keeps 100.
@@ -128,7 +140,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('pauseMonths 18 (12-24 bucket) → caps 240 DOWN to 150 (0.70x + 1.10x boost)', () => {
     seedDb({
-      lastSessionDate: '2024-11-21', // ~18 luni
+      lastSessionDate: MONTHS_AGO_18, // ~18 luni
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 240 }]);
@@ -139,7 +151,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('pauseMonths 25 (24+ bucket) → caps 240 DOWN to 120 (0.60x, no boost)', () => {
     seedDb({
-      lastSessionDate: '2024-04-22', // ~25 luni
+      lastSessionDate: MONTHS_AGO_25, // ~25 luni
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 240 }]);
@@ -150,7 +162,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('userChoice="refused" → baseline preserved (anti-paternalism §32.3)', () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // 7 luni pause (would cap if not refused)
+      lastSessionDate: MONTHS_AGO_7, // 7 luni pause (would cap if not refused)
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
       mmiState: { userChoice: 'refused' },
     });
@@ -161,7 +173,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('no pr-records → baseline preserved (no fabricated peak)', () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // 7 luni pause
+      lastSessionDate: MONTHS_AGO_7, // 7 luni pause
       prRecords: [], // empty
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 240 }]);
@@ -181,7 +193,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('exercise without pr-record entry → baseline preserved per-exercise', () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // 7 luni pause
+      lastSessionDate: MONTHS_AGO_7, // 7 luni pause
       prRecords: [{ ex: 'Leg Press', kg: 200 }], // ONLY Leg Press has peak
     });
     const workout = makeWorkout([
@@ -195,7 +207,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('preserves PlannedExercise non-kg fields (id, name, sets, reps, restSec)', () => {
     seedDb({
-      lastSessionDate: '2025-10-15',
+      lastSessionDate: MONTHS_AGO_7,
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 240 }]);
@@ -209,7 +221,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 
   it('preserves PlannedWorkoutOutput top-level fields (title, count, etc)', () => {
     seedDb({
-      lastSessionDate: '2025-10-15',
+      lastSessionDate: MONTHS_AGO_7,
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout = makeWorkout([{ name: 'Leg Press', targetKg: 240 }]);
@@ -226,7 +238,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
     // ex.name missed the peak → MMI cap dead for every RO returnee. Now keyed on
     // ex.engineName (EN canonical) → the peak resolves + the cap bites.
     seedDb({
-      lastSessionDate: '2024-04-22', // ~25 luni → 0.60x bucket
+      lastSessionDate: MONTHS_AGO_25, // ~25 luni → 0.60x bucket
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     const workout: PlannedWorkoutOutput = {
@@ -243,7 +255,7 @@ describe('applyMmiCapToWorkout — silent auto-cap by bucket (TRUE CAP, option c
 describe('getTodayWorkout — MMI cap wired post-pipeline', () => {
   it('returning user 7 luni pause → over-aggressive rec capped DOWN via getTodayWorkout', async () => {
     seedDb({
-      lastSessionDate: '2025-10-15',
+      lastSessionDate: MONTHS_AGO_7,
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     vi.mocked(composePlannedWorkoutToday).mockResolvedValueOnce(
@@ -266,7 +278,7 @@ describe('getTodayWorkout — MMI cap wired post-pipeline', () => {
 
   it('rest day (pipeline returns null) → returns null (no MMI applied)', async () => {
     seedDb({
-      lastSessionDate: '2025-10-15',
+      lastSessionDate: MONTHS_AGO_7,
       prRecords: [{ ex: 'Leg Press', kg: 200 }],
     });
     vi.mocked(composePlannedWorkoutToday).mockResolvedValueOnce(null);
@@ -284,7 +296,7 @@ describe('getTodayWorkout — MMI cap wired post-pipeline', () => {
 
   it('Maria 65 persona long pause 25 luni → 0.60x cap lowers an over-aggressive rec', async () => {
     seedDb({
-      lastSessionDate: '2024-04-22', // ~25 luni
+      lastSessionDate: MONTHS_AGO_25, // ~25 luni
       prRecords: [{ ex: 'Leg Press', kg: 100 }], // Maria conservative peak
     });
     vi.mocked(composePlannedWorkoutToday).mockResolvedValueOnce(
@@ -297,7 +309,7 @@ describe('getTodayWorkout — MMI cap wired post-pipeline', () => {
 
   it('Marius post-pause 7 luni — DP deload BELOW the MMI return → unchanged (cap never raises)', async () => {
     seedDb({
-      lastSessionDate: '2025-10-15', // ~7 luni
+      lastSessionDate: MONTHS_AGO_7, // ~7 luni
       prRecords: [{ ex: 'Leg Press', kg: 240 }], // Marius performant peak
     });
     vi.mocked(composePlannedWorkoutToday).mockResolvedValueOnce(
