@@ -283,3 +283,43 @@ describe('ObiectivCard — RO no-diacritics rule (D-LEGACY-064)', () => {
     expect(text).not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
   });
 });
+
+// Founder 2026-10-23: "80 kg pana la 11/01/2026... imi da unrealistic, e si normal...
+// cand trece data vreau sa nu mai apara... formatul de data dd/mm/yyyy". His real
+// numbers: 86.5 kg now, target 80. Dates are relative to the real clock.
+describe('ObiectivCard — deadline shown day-first; "unrealistic" ends with the deadline', () => {
+  const isoIn = (days: number) => {
+    const d = new Date(Date.now() + days * 86_400_000);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const dmy = (iso: string) => iso.split('-').reverse().join('/');
+
+  it('shows the stored deadline as dd/mm/yyyy (the native picker stays on top)', () => {
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 80, month: '2026-11-01' });
+    renderCard();
+    expect(screen.getByTestId('obiectiv-target-month-display').textContent).toBe('01/11/2026');
+    expect((screen.getByTestId('obiectiv-target-month-input') as HTMLInputElement).value).toBe('2026-11-01');
+  });
+
+  it('a deadline 9 days out is unrealistic, its realistic date day-first', () => {
+    useProgresStore.getState().addWeightEntry({ kg: 86.5, date: isoIn(0) });
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 80, month: isoIn(9) });
+    renderCard();
+    expect(screen.getByTestId('obiectiv-rate-warning').textContent).toMatch(/\d{2}\/\d{2}\/\d{4}/);
+  });
+
+  it('once the deadline has passed, no "unrealistic" warning or reframe', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation(() => true);
+    useOnboardingStore.setState({
+      data: { age: 36, sex: 'm', goal: 'slabire', frequency: '4', experience: 'intermediar', weight: 88, height: 181 },
+      completed: true, completedAt: Date.now(),
+    });
+    useProgresStore.getState().addWeightEntry({ kg: 86.5, date: isoIn(0) });
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 80, month: isoIn(-1) });
+    renderCard();
+    expect(screen.queryByTestId('obiectiv-rate-warning')).toBeNull();
+    expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
+    expect(screen.getByTestId('obiectiv-target-month-display').textContent).toBe(dmy(isoIn(-1)));
+    vi.restoreAllMocks();
+  });
+});

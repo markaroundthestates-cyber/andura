@@ -26,6 +26,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
 import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK, daysUntilTarget } from '../../lib/targetSafety';
+import { formatDateDMY } from '../../lib/format';
 import { dangerousFloorWeightKg, estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
 import { evaluateGoalRealism } from '../../../engine/goalRealism.js';
 import { isEnabled } from '../../../util/featureFlags.js';
@@ -219,13 +220,27 @@ export function ObiectivCard(): JSX.Element {
         </label>
         <label className="flex items-center justify-between px-4 py-3">
           <span className="text-sm text-ink">{t('obiectiv.targetMonthLabel')}</span>
-          <input
-            type="date"
-            value={deadlineInputValue}
-            onChange={(e) => handleDeadlineChange(e.target.value)}
-            data-testid="obiectiv-target-month-input"
-            className="w-36 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-[13px]"
-          />
+          {/* Founder 2026-10-23: the native picker renders in the phone's locale
+              (en-US → mm/dd/yyyy) and no attribute changes that. Show dd/mm/yyyy
+              ourselves; the real <input> sits transparent on top so a tap still
+              opens the native picker. */}
+          <span className="relative w-36">
+            <span
+              aria-hidden="true"
+              data-testid="obiectiv-target-month-display"
+              className="block w-full px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-[13px]"
+            >
+              {deadlineInputValue ? formatDateDMY(deadlineInputValue) : '—'}
+            </span>
+            <input
+              type="date"
+              value={deadlineInputValue}
+              onChange={(e) => handleDeadlineChange(e.target.value)}
+              onClick={(e) => { try { e.currentTarget.showPicker?.(); } catch { /* not a user gesture / unsupported */ } }}
+              data-testid="obiectiv-target-month-input"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </span>
         </label>
       </div>
       {clampedFromKg !== null && (
@@ -263,7 +278,7 @@ export function ObiectivCard(): JSX.Element {
                 : 'obiectiv.unsafeDirectionGain',
             ),
             cap: String(MAX_SAFE_KG_PER_WEEK),
-            safeDate: rateVerdict.safeDeadlineDate,
+            safeDate: formatDateDMY(rateVerdict.safeDeadlineDate),
           })}
         </p>
       )}

@@ -36,3 +36,12 @@ export function formatMMSS(seconds: number): string {
 export function formatKg(kg: number): string {
   return kg.toLocaleString('ro-RO').replace(/\./g, ' ').replace(/,/g, '.');
 }
+
+/**
+ * "YYYY-MM-DD" → "DD/MM/YYYY" (founder 2026-10-23: dates read day-first, never the
+ * en-US month-first the native date picker shows). Anything else passes through.
+ */
+export function formatDateDMY(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+}
