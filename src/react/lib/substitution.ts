@@ -29,7 +29,8 @@ import {
   getFallbackCascade,
 } from '../../engine/alternativeFinder.js';
 import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
-import { movementKey } from '../../engine/sessionBuilder.js';
+import { movementKey, needsNoStation } from '../../engine/sessionBuilder.js';
+import { useWorkoutStore } from '../stores/workoutStore';
 import {
   availableCoarseTypes,
   COARSE_EQUIPMENT_TYPES,
@@ -344,9 +345,13 @@ export function resolveSwapPickList(
   const usable = excl
     ? usableAny.filter((it) => !isExcludedMovement(it.name, movementKey(it.name, getExerciseMetadata(it.name)).split('::')[1] ?? '', excl))
     : usableAny;
-  if (usable.length === 0) return { rows: [], originalName, muscleGroup: '' };
+  // A no-gym day (TimeBudget "Fara aparate"): only what needs nothing is offered.
+  const fits = useWorkoutStore.getState().sessionBodyweightOnly && isEnabled('dp_vacation_no_station_v1')
+    ? usable.filter((it) => needsNoStation(it.name))
+    : usable;
+  if (fits.length === 0) return { rows: [], originalName, muscleGroup: '' };
 
-  const rows: SwapPickRow[] = usable.map((it) => ({
+  const rows: SwapPickRow[] = fits.map((it) => ({
     exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere', prescribedSets),
     engineName: it.name,
     displayName: toExerciseDisplay(it.name).name,

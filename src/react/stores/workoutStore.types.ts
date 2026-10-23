@@ -311,6 +311,9 @@ export interface WorkoutState {
   // than the one the logged sets are index-aligned to); cleared on session
   // teardown so it never leaks to the next session.
   sessionTimeBudgetMin: number | null;
+  // Vacation / no-gym pick for today's session (TimeBudget step) — only exercises
+  // that need no bar, bench or machine. Cleared with the time budget.
+  sessionBodyweightOnly: boolean;
   // Tombstones — the `ts` of every logged session the user explicitly DELETED
   // from Istoric (mislogged workout, Daniel's wife). Plain removal from
   // sessionsHistory is not enough: the cloud sync merges by UNION (mergeArrayUnion
@@ -459,6 +462,7 @@ export interface WorkoutActions {
   // clears the limit (back to persona-derived cap). composePlannedWorkoutToday
   // reads it to SHRINK the effective time cap (never extends it).
   setSessionTimeBudgetMin: (min: number | null) => void;
+  setSessionBodyweightOnly: (on: boolean) => void;
   // U-05 (HIGH) — day-boundary streak. `now` injectabil (default Date.now())
   // pentru determinism test. Aceeasi zi = no-op, ziua urmatoare = +1, gap > 1
   // zi (sau primul streak) = reset la 1.

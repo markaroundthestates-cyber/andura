@@ -47,6 +47,20 @@ function clusterGroupsOrdered(cluster) {
 // Coarse equipment types (library equipment_type). bodyweight is ALWAYS allowed
 // (needs no gym equipment) so it is never gated by the missing-equipment filter.
 const ALWAYS_AVAILABLE_EQUIPMENT = 'bodyweight';
+// dp_vacation_no_station_v1 (founder 2026-10-23, "de sunt in concediu... light session
+// de bodyweight") — "bodyweight" in the library also covers lifts that need a STATION
+// (pull-up bar, dip bars, hyperextension bench, a foot anchor). A no-gym day (hotel,
+// home) has a floor, a wall, a chair and a table: ctx.equipment.noStation drops the
+// station lifts and opens the tier-3 bodyweight basics (squat, glute bridge, calf
+// raise, plank) a gym day leaves to machines. Marker rides in the available set.
+const NO_STATION = '__no_station__';
+// Every CORE_AUTO back lift needs a bar, so a no-gym day had no pulling at all: these
+// plain floor / table / chair staples join the auto pool on such a day only.
+const NO_STATION_EXTRAS = new Set([
+  'Inverted Row Table Low', 'Superman', 'Prone Y Raise', 'Prone T Raise',
+  'Single-Leg RDL Bodyweight', 'Wall Sit Static', 'Slider Hamstring Curl', 'Bench Dip',
+]);
+const NEEDS_STATION_RE = /pull-up|chin-up|hanging|dead hang|toes-to-bar|bar hang|inverted row bar|parallel bars|^dip\b|^weighted|band-assisted|hyperextension|reverse hyper|glute-ham|nordic|razor curl|inverse curl|towel hang|garhammer|windshield|dragon flag|muscle-up/i;
 
 // Known engine names that exist as library keys AND carry user PR history
 // (DP records key on these EN names). Anchoring prefers them when valid for the
@@ -859,9 +873,16 @@ function skillRankOf(meta) {
  * @param {{equipment_type?: string}} meta
  * @param {Set<string>} available
  */
-function equipmentOk(meta, available) {
+/** A lift a no-gym day can do: bodyweight and no bar / bench / anchor station. */
+export function needsNoStation(name) {
+  return getExerciseMetadata(name)?.equipment_type === ALWAYS_AVAILABLE_EQUIPMENT && !NEEDS_STATION_RE.test(String(name));
+}
+
+function equipmentOk(meta, available, name = '') {
   const type = meta?.equipment_type ?? '';
-  if (type === ALWAYS_AVAILABLE_EQUIPMENT) return true;
+  if (type === ALWAYS_AVAILABLE_EQUIPMENT) {
+    return !(available.has(NO_STATION) && NEEDS_STATION_RE.test(name));
+  }
   return available.has(type);
 }
 
@@ -960,7 +981,7 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
     if (meta.muscle_target_primary !== group) continue;
     if (meta.tier > maxTier) continue;
     if (skillRankOf(meta) > maxSkill) continue; // capability gate: never above skill ceiling
-    if (!equipmentOk(meta, available)) continue;
+    if (!equipmentOk(meta, available, name)) continue;
     // PR continuity wins: an exercise the user has actually logged stays offered
     // regardless of status (don't yank a lift out from under an existing user).
     // dp_daniel_tier_select_v1 — when ON, ALSO admit Daniel's S/A picks that are
@@ -969,7 +990,8 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
     if (
       isActiveMeta(meta) ||
       prNames.has(name) ||
-      (danielTierSelect && TIER_SELECTABLE_SA.has(name))
+      (danielTierSelect && TIER_SELECTABLE_SA.has(name)) ||
+      (available.has(NO_STATION) && NO_STATION_EXTRAS.has(name))
     ) {
       core.push({ name, meta });
     }
@@ -993,7 +1015,7 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
       if (!subMeta || subMeta.muscle_target_primary !== group) continue;
       if (subMeta.tier > maxTier) continue;
       if (skillRankOf(subMeta) > maxSkill) continue;
-      if (!equipmentOk(subMeta, available)) continue;
+      if (!equipmentOk(subMeta, available, sub)) continue;
       if (core.some((e) => e.name === sub)) {
         // The substitute is ALREADY offered for this group → the pinned exercise is
         // redundant; remove it so it can't be selected (the substitute covers the
@@ -1714,8 +1736,9 @@ export function buildSession(cluster, ctx) {
   // distributes never exceeds it (a high-frequency novice's budget otherwise sizes the
   // session at SESSION_SIZE before the cap trims). OFF → sessionSize === sessionSizeRaw.
   const sessionSize = Math.min(sessionSizeRaw, effectiveCap);
-  const available = new Set(ctx?.equipment?.available ?? []);
-  const maxTier = tierCeiling(ctx?.profileTier);
+  const noStation = ctx?.equipment?.noStation === true;
+  const available = new Set([...(ctx?.equipment?.available ?? []), ...(noStation ? [NO_STATION] : [])]);
+  const maxTier = noStation ? 3 : tierCeiling(ctx?.profileTier);
   const maxSkill = skillCeiling(ctx?.profileTier);
   const prNames = new Set(ctx?.prNames ?? []);
   const seed = hashString(String(ctx?.seed ?? ''));

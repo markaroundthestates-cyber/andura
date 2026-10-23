@@ -23,6 +23,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { t } from '../../../../i18n/index.js';
+import { isEnabled } from '../../../../util/featureFlags.js';
 
 // Optional pre-session TIME budget chips. Skippable per ADR 025 — leaving
 // "No limit" (null, the default) keeps the persona-derived session byte-identical.
@@ -34,6 +35,9 @@ export function TimeBudget(): JSX.Element {
   const navigate = useNavigate();
   const sessionTimeBudgetMin = useWorkoutStore((s) => s.sessionTimeBudgetMin);
   const setSessionTimeBudgetMin = useWorkoutStore((s) => s.setSessionTimeBudgetMin);
+  const bodyweightOnly = useWorkoutStore((s) => s.sessionBodyweightOnly);
+  const setBodyweightOnly = useWorkoutStore((s) => s.setSessionBodyweightOnly);
+  const showWhere = isEnabled('dp_vacation_no_station_v1');
 
   function handleContinue(): void {
     // sessionTimeBudgetMin is already committed to the store on each chip tap, so
@@ -95,6 +99,36 @@ export function TimeBudget(): JSX.Element {
             {t('energyCheck.timeBudget.noLimit')}
           </button>
         </div>
+        {/* Vacation / home (founder 2026-10-23 "de sunt in concediu... light session
+            de bodyweight"): today only — nothing to switch back when the trip ends. */}
+        {showWhere && (
+          <>
+            <h3 className="text-base font-semibold text-ink mt-8 mb-3">{t('timeBudget.where.label')}</h3>
+            <div className="flex flex-wrap gap-2" data-testid="where-chips">
+              {([false, true] as const).map((noGym) => (
+                <button
+                  key={String(noGym)}
+                  type="button"
+                  onClick={() => setBodyweightOnly(noGym)}
+                  data-testid={noGym ? 'where-chip-nogym' : 'where-chip-gym'}
+                  data-selected={bodyweightOnly === noGym}
+                  aria-pressed={bodyweightOnly === noGym}
+                  className="rounded-full px-4 py-2 text-sm font-semibold border transition"
+                  style={
+                  bodyweightOnly === noGym
+                    ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
+                    : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
+                }
+                >
+                  {t(noGym ? 'timeBudget.where.noGym' : 'timeBudget.where.gym')}
+                </button>
+              ))}
+            </div>
+            {bodyweightOnly && (
+              <p className="text-sm text-ink2 mt-3" data-testid="where-nogym-hint">{t('timeBudget.where.noGymHint')}</p>
+            )}
+          </>
+        )}
         {/* CTA-FOLD FIX (2026-06-12, founder live phone) — dropped the `flex-1`
             spacer that pinned Continue to the bottom of the min-h-screen column
             (long dead gap below the time chips). The button now flows directly

@@ -651,6 +651,8 @@ export function buildUserStateForPipeline(): {
       ...(Array.isArray(onboardingData.equipmentProfile) && onboardingData.equipmentProfile.length > 0
         ? { equipmentProfile: onboardingData.equipmentProfile }
         : {}),
+      // Today's "Fara aparate" pick (TimeBudget step) — vacation / home session.
+      ...(useWorkoutStore.getState().sessionBodyweightOnly ? { bodyweightOnly: true } : {}),
       // Degrade safe-absent: only set when the estimate/timeline is real.
       ...(bfPct !== undefined ? { bfPct } : {}),
       trainingWeeks,

@@ -150,8 +150,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     ? userState.user.equipmentProfile.filter((t) => typeof t === 'string' && t.length > 0)
     : [];
   const missingUserIds = getMissingEquipment();
-  const availableCoarse =
-    profile.length > 0
+  // dp_vacation_no_station_v1 — the user picked "Fara aparate" for TODAY (vacation,
+  // home): floor/wall/chair only, whatever the profile or the gym says.
+  const noStation = userState?.user?.bodyweightOnly === true && isEnabled('dp_vacation_no_station_v1');
+  const availableCoarse = noStation
+    ? ['bodyweight']
+    : profile.length > 0
       ? [...new Set([...profile, 'bodyweight'])] // bodyweight always performable
       : availableCoarseTypes(missingUserIds);
 
@@ -1024,7 +1028,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   })();
 
   const sessionCtx = {
-    equipment: { available: availableCoarse },
+    equipment: { available: availableCoarse, ...(noStation ? { noStation: true } : {}) },
     weakGroups,
     profileTier: userState?.profileTier ?? null,
     // W-Split GAP 4 — SENIOR / COLD-START per-session VOLUME CAP (dp_split_rebalance_v1,

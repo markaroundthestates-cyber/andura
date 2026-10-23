@@ -710,7 +710,13 @@
     }
   },
   "timeBudget": {
-    "subtitle": "Alege o durata, sau lasa Fara limita — coach-ul potriveste sesiunea."
+    "subtitle": "Alege o durata, sau lasa Fara limita — coach-ul potriveste sesiunea.",
+    "where": {
+      "label": "Unde te antrenezi azi?",
+      "gym": "La sala",
+      "noGym": "Fara aparate",
+      "noGymHint": "Podea, perete, un scaun, o masa: altceva nu-ti trebuie. Sesiune mai usoara; greutatile de la sala raman neatinse."
+    }
   },
   "readinessVerdict": {
     "label": "Forma",

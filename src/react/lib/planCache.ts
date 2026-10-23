@@ -41,7 +41,7 @@ export function planFingerprint(): string | null {
     return null;
   }
   const w = useWorkoutStore.getState();
-  return `${h >>> 0}|${w.sessionTimeBudgetMin ?? ''}|${w.lastRating ?? ''}`;
+  return `${h >>> 0}|${w.sessionTimeBudgetMin ?? ''}|${w.lastRating ?? ''}|${w.sessionBodyweightOnly ? 'bw' : ''}`;
 }
 
 function _localDay(d: Date): string {

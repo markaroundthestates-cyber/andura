@@ -710,7 +710,13 @@
     }
   },
   "timeBudget": {
-    "subtitle": "Pick a length, or leave No limit — the coach fits the session to it."
+    "subtitle": "Pick a length, or leave No limit — the coach fits the session to it.",
+    "where": {
+      "label": "Where are you training today?",
+      "gym": "At the gym",
+      "noGym": "No equipment",
+      "noGymHint": "Floor, wall, a chair, a table: nothing else needed. A lighter session; your gym weights stay as they are."
+    }
   },
   "readinessVerdict": {
     "label": "Readiness",
