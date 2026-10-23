@@ -147,8 +147,7 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
 import { getCurrentWeightKg } from './userTdee';
-import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
-import { estimateBF_skinfold3 } from '../../engine/skinfoldBF.js';
+import { measuredBfPercent } from './bodyComp';
 import { estimateBfDeurenbergCapped } from '../../engine/bodyComposition.js';
 
 /** Orizont default proiectie — 28 zile (~4 saptamani), per Daniel verbatim. */
@@ -214,41 +213,9 @@ export function deriveCurrentBfPct(): number | null {
   // exista in istoric. Same source of truth pentru ambele formulare.
   const latest = latestBodyMeasurements(bodyData);
 
-  // §progress-v2 — Tier 0.5 (MAI ACURAT) — skinfold J-P 3-site cand caliper
-  // (mm). Engine alege site-urile dupa sex; necesita varsta. Prioritate peste
-  // US Navy cand produce o valoare.
-  {
-    const sfArgs: {
-      sex?: string;
-      age?: number;
-      chest_mm?: number;
-      abdomen_mm?: number;
-      thigh_mm?: number;
-      triceps_mm?: number;
-      suprailiac_mm?: number;
-    } = {};
-    if (sex) sfArgs.sex = sex;
-    if (age) sfArgs.age = age;
-    if (latest.chestSkinfoldMm !== undefined) sfArgs.chest_mm = latest.chestSkinfoldMm;
-    if (latest.abdomenSkinfoldMm !== undefined) sfArgs.abdomen_mm = latest.abdomenSkinfoldMm;
-    if (latest.thighSkinfoldMm !== undefined) sfArgs.thigh_mm = latest.thighSkinfoldMm;
-    if (latest.tricepsSkinfoldMm !== undefined) sfArgs.triceps_mm = latest.tricepsSkinfoldMm;
-    if (latest.suprailiacSkinfoldMm !== undefined) sfArgs.suprailiac_mm = latest.suprailiacSkinfoldMm;
-    const skinfold = estimateBF_skinfold3(sfArgs);
-    if (skinfold != null) return skinfold;
-  }
-
-  // Tier 1 (ACURAT) — US-Navy cand exista masuratori (neck + waist).
-  if (latest.neckCm !== undefined && latest.waistCm !== undefined) {
-    const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
-    if (sex) args.sex = sex;
-    if (height) args.height_cm = height;
-    args.neck_cm = latest.neckCm;
-    args.waist_cm = latest.waistCm;
-    if (latest.hipsCm !== undefined) args.hip_cm = latest.hipsCm;
-    const navy = estimateBF_USNavy(args);
-    if (navy != null) return navy;
-  }
+  // Tier 0.5 skinfold → Tier 1 US-Navy: one measured source shared with the engine.
+  const measured = measuredBfPercent({ sex, height, age, latest });
+  if (measured != null) return measured;
 
   // Tier 2 (ESTIMAT) — Deurenberg cu cap high-BMI (smoke 2026-05-28 #1).
   // Cap-ul `min(raw, BMI×0.85)` la BMI>=27 reduce supraestimarea cunoscuta a

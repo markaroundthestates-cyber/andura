@@ -573,3 +573,32 @@ describe('buildUserStateForPipeline — FIX #3 weeksElapsed advances periodizati
     expect(Number(vol5.chest)).toBeGreaterThan(Number(vol0.chest));
   });
 });
+
+// Founder 2026-10-23: "sa te asiguri ca bf dat de aplicatie nu e doar informativ".
+// The Progres strip showed his Navy 17.1% (waist 90.5 / neck 42 / 181 cm) while the
+// engine planned on a BMI-only Deurenberg 23.8% (86.5 kg, 36 y). dp_bf_measured_v1.
+describe('buildUserStateForPipeline — bfPct is the MEASURED value the strip shows', () => {
+  const withMeasured = (on: boolean) =>
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_bf_measured_v1: on }));
+
+  it('neck + waist logged → the engine reads his Navy 17.1%, not BMI-only 23.8%', async () => {
+    const { useProgresStore } = await import('../../stores/progresStore');
+    seedOnboarding({ age: 36, sex: 'm', weight: 86.5, height: 181 });
+    useProgresStore.setState({ bodyData: [], weightLog: [] });
+    useProgresStore.getState().addBodyDataEntry({ date: '2026-10-03', neckCm: 42, waistCm: 90.5 });
+    withMeasured(true);
+    expect(buildUserStateForPipeline().user.bfPct as number).toBeCloseTo(0.171, 3);
+    withMeasured(false);
+    expect(buildUserStateForPipeline().user.bfPct as number).toBeGreaterThan(0.2);
+    localStorage.removeItem('_devFlags');
+  });
+
+  it('no measurements → the Deurenberg estimate as before', async () => {
+    const { useProgresStore } = await import('../../stores/progresStore');
+    seedOnboarding({ age: 36, sex: 'm', weight: 86.5, height: 181 });
+    useProgresStore.setState({ bodyData: [], weightLog: [] });
+    withMeasured(true);
+    expect(buildUserStateForPipeline().user.bfPct as number).toBeGreaterThan(0.2);
+    localStorage.removeItem('_devFlags');
+  });
+});

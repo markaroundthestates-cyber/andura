@@ -10,6 +10,9 @@
 // re-exporting estimateBfFraction → public API unchanged.
 
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
+import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
+import { estimateBF_skinfold3 } from '../../engine/skinfoldBF.js';
+import type { LatestBodyMeasurements } from '../stores/progresStore';
 
 /**
  * Estimate body-fat as a FRACTION (0.0-1.0) from BMI/age/sex via Deurenberg
@@ -42,4 +45,44 @@ export function estimateBfFraction(input: {
   if (bfPercent == null) return undefined;
   const fraction = bfPercent / 100; // percent → FRACTION (engine thresholds are fractional)
   return Math.min(0.6, Math.max(0.03, fraction));
+}
+
+/**
+ * The MEASURED body-fat percent (0-100) — skinfold J-P 3-site when calipers are
+ * logged, else US-Navy from neck + waist (+hips for women); null when neither.
+ * One source for the Progres strip (deriveCurrentBfPct) and the engine
+ * (dp_bf_measured_v1): founder 2026-10-23 — the strip read Navy 17.1% while the
+ * engine planned on a BMI-only Deurenberg 23.8%.
+ */
+export function measuredBfPercent(p: {
+  sex?: string | null;
+  height?: number | null;
+  age?: number | null;
+  latest: LatestBodyMeasurements;
+}): number | null {
+  const { sex, height, age, latest } = p;
+  const sfArgs: {
+    sex?: string; age?: number; chest_mm?: number; abdomen_mm?: number;
+    thigh_mm?: number; triceps_mm?: number; suprailiac_mm?: number;
+  } = {};
+  if (sex) sfArgs.sex = sex;
+  if (age) sfArgs.age = age;
+  if (latest.chestSkinfoldMm !== undefined) sfArgs.chest_mm = latest.chestSkinfoldMm;
+  if (latest.abdomenSkinfoldMm !== undefined) sfArgs.abdomen_mm = latest.abdomenSkinfoldMm;
+  if (latest.thighSkinfoldMm !== undefined) sfArgs.thigh_mm = latest.thighSkinfoldMm;
+  if (latest.tricepsSkinfoldMm !== undefined) sfArgs.triceps_mm = latest.tricepsSkinfoldMm;
+  if (latest.suprailiacSkinfoldMm !== undefined) sfArgs.suprailiac_mm = latest.suprailiacSkinfoldMm;
+  const skinfold = estimateBF_skinfold3(sfArgs);
+  if (skinfold != null) return skinfold;
+  if (latest.neckCm !== undefined && latest.waistCm !== undefined) {
+    const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
+    if (sex) args.sex = sex;
+    if (height) args.height_cm = height;
+    args.neck_cm = latest.neckCm;
+    args.waist_cm = latest.waistCm;
+    if (latest.hipsCm !== undefined) args.hip_cm = latest.hipsCm;
+    const navy = estimateBF_USNavy(args);
+    if (navy != null) return navy;
+  }
+  return null;
 }

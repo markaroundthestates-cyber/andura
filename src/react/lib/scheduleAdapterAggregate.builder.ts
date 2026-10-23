@@ -19,7 +19,8 @@ import { getWeekStartIso, primaryEmphasizedGroup } from '../../engine/schedule/s
 import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
-import { estimateBfFraction } from './bodyComp';
+import { estimateBfFraction, measuredBfPercent } from './bodyComp';
+import { useProgresStore, latestBodyMeasurements } from '../stores/progresStore';
 import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
 import { classifyPerformanceDip } from '../../engine/dp/dipClassifier.js';
 import { computeACWR } from '../../engine/muscleRecovery.js';
@@ -454,12 +455,25 @@ export function buildUserStateForPipeline(): {
   const todayEnergyEmoji = readTodayEnergyEmoji();
   // bfPct as a FRACTION (Deurenberg) — engine thresholds are fractional; a raw
   // percent would false-positive every user (CRITICAL trap, fact 10).
-  const bfPct = estimateBfFraction({
-    weight: currentWeightKg,
-    height: onboardingData.height,
-    age: onboardingData.age,
-    sex: onboardingData.sex,
-  });
+  // dp_bf_measured_v1 — a MEASURED BF (calipers / tape, the value the Progres strip
+  // shows) beats the BMI-only Deurenberg the engine used to read (founder 2026-10-23:
+  // strip 17.1% Navy vs engine 23.8%; post-weight-loss muscle reads as fat by BMI).
+  const measuredPct = isEnabled('dp_bf_measured_v1')
+    ? measuredBfPercent({
+        sex: onboardingData.sex,
+        height: onboardingData.height,
+        age: onboardingData.age,
+        latest: latestBodyMeasurements(useProgresStore.getState().bodyData ?? []),
+      })
+    : null;
+  const bfPct = measuredPct != null
+    ? Math.min(0.6, Math.max(0.03, measuredPct / 100))
+    : estimateBfFraction({
+        weight: currentWeightKg,
+        height: onboardingData.height,
+        age: onboardingData.age,
+        sex: onboardingData.sex,
+      });
   // trainingWeeks from the first-session date (0 when no sessions — a brand-new
   // user IS a newbie). Feeds templates.isNewbieEffect (<=12 weeks).
   const trainingWeeks =
