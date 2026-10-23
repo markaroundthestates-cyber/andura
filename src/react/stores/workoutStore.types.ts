@@ -206,6 +206,8 @@ export interface LastSessionSummary {
   // the DOWN→deload stamping on this flag so only a user-reported red counts.
   // Optional + only written when the fix flag is ON → flag OFF byte-identical.
   energyUserReported?: boolean;
+  // Training partner's name when this session came from them (partner.ts).
+  fromPartner?: string;
 }
 
 // ── Logs writeback shim (CRIT #2 shape-check audit chat 5) ─────────────────
@@ -461,6 +463,13 @@ export interface WorkoutActions {
   // pentru determinism test. Aceeasi zi = no-op, ziua urmatoare = +1, gap > 1
   // zi (sau primul streak) = reset la 1.
   incrementStreak: (now?: number) => void;
+  /**
+   * Add a session the training partner logged (partner.ts acceptPartnerSession).
+   * Same durable writes as finishSession (per-set logs + history + streak) WITHOUT
+   * touching an in-progress session. No-op when that ts is already in history or
+   * was deleted (tombstone).
+   */
+  importSession: (summary: LastSessionSummary) => void;
   resetStreak: () => void;
   /**
    * Swap the exercise at `exIdx` for an alternative (moat substitution — WP-5

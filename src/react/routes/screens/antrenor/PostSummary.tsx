@@ -53,6 +53,7 @@ import { useCountUp } from '../../../hooks/useCountUp';
 import { ConfettiBurst } from '../../../components/ConfettiBurst';
 import { Ripple } from '../../../components/Ripple';
 import { Kicker } from '../../../components/pulse/Kicker';
+import { SendToPartnerButton } from '../../../components/SendToPartnerButton';
 import type { SessionRating } from './PostRpe';
 
 // Taxonomy bridge: workoutStore.lastRating ('usoara/normala/grea') →
@@ -492,6 +493,7 @@ export function PostSummary(): JSX.Element {
         style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
         data-testid="summary-finish-footer"
       >
+        {lastSession && <SendToPartnerButton session={lastSession} className="mb-2" />}
         <button
           type="button"
           onClick={handleFinish}

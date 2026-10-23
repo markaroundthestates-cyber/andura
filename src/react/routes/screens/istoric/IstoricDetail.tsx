@@ -20,6 +20,7 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
 import { sessionDisplayTitle } from '../../../lib/sessionTitle';
 import { Kicker } from '../../../components/pulse/Kicker';
+import { SendToPartnerButton } from '../../../components/SendToPartnerButton';
 import { t, getCurrentLocale } from '../../../../i18n/index.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
 
@@ -183,6 +184,11 @@ export function IstoricDetail(): JSX.Element {
         <p className="text-sm text-ink2 mt-2" data-testid="istoric-detail-meta">
           {session.meta}
         </p>
+        {session.fromPartner && (
+          <p className="text-sm text-ink2 mt-1" data-testid="istoric-detail-from-partner">
+            {t('partner.history.with', { name: session.fromPartner })}
+          </p>
+        )}
       </div>
 
       {(session.sets !== undefined || session.durationMin !== undefined || session.volumeKg !== undefined) && (
@@ -373,6 +379,8 @@ export function IstoricDetail(): JSX.Element {
           {t('istoric.detail.legacyFallback')}
         </p>
       )}
+
+      <SendToPartnerButton session={session} className="mt-8" />
 
       {/* Delete this session (mislogged workout) — two-tap inline confirm. */}
       <div className="mt-8" data-testid="istoric-detail-delete">

@@ -51,6 +51,8 @@ export type GotoScreen =
   | 'cont-noutati'
   // Sala mea — per-gym curated equipment stacks (2026-07-02).
   | 'cont-sala-mea'
+  // Partener de antrenament — pair two accounts, send sessions (2026-10-23).
+  | 'cont-partener'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
   // §B002 D047 Stage 3 — Avansat section drill-downs
@@ -123,6 +125,7 @@ export function gotoPath(screen: GotoScreen): string {
   if (screen === 'cont-ajutor-despre') return '/app/cont/ajutor-despre';
   if (screen === 'cont-noutati') return '/app/cont/noutati';
   if (screen === 'cont-sala-mea') return '/app/cont/sala-mea';
+  if (screen === 'cont-partener') return '/app/cont/partener';
 
   // Phase 6 Cont sub-screens (task_09-17, nested sub /app/cont)
   if (

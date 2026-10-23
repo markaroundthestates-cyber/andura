@@ -8,7 +8,7 @@
 // Suspense boundary ready pentru incremental migration).
 
 import type { JSX, RefObject } from 'react';
-import { Suspense, useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from '../components/BottomNav';
 import { SessionPill } from '../components/SessionPill';
@@ -24,6 +24,10 @@ import { AuroraBackground } from '../components/pulse/AuroraBackground';
 import { useCoachStore } from '../stores/coachStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { t } from '../../i18n/index.js';
+import { isEnabled } from '../../util/featureFlags.js';
+
+// Training partner — the inbox sheet + its network code load in their own chunk.
+const PartnerInbox = lazy(() => import('../components/PartnerInbox'));
 
 // S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
 // BottomNav so Gigel doesn't accidentally exit mid-set. Pause/exit only via
@@ -134,6 +138,11 @@ export function Layout(): JSX.Element {
       </div>
       <SessionPill />
       {!inSession && <BottomNav />}
+      {!inSession && isEnabled('partner_sync_v1') && (
+        <Suspense fallback={null}>
+          <PartnerInbox />
+        </Suspense>
+      )}
       <ToastViewport />
       <MedicalDisclaimerModal
         open={!acceptedDisclaimer}

@@ -1627,7 +1627,8 @@
       "dateleMele": "Datele mele",
       "confidentialitateTermeni": "Confidentialitate si termeni",
       "ajutorDespre": "Ajutor si despre",
-      "noutati": "Noutati"
+      "noutati": "Noutati",
+      "partener": "Partener de antrenament"
     },
     "hubs": {
       "exercitiiEchipament": {
@@ -2819,6 +2820,44 @@
       "cable": "Cabluri",
       "bodyweight": "Greutatea corpului",
       "band": "Benzi elastice"
+    }
+  },
+  "partner": {
+    "title": "Partener de antrenament",
+    "intro": "Te antrenezi cu cineva? Legati conturile: logezi sesiunea o data, iar el o adauga in istoricul lui cu un tap.",
+    "nameLabel": "Numele tau (il vede partenerul)",
+    "namePlaceholder": "ex. Daniel",
+    "createCta": "Genereaza un cod",
+    "codeShare": "Da-i codul partenerului. Il introduce in Cont > Partener de antrenament.",
+    "codeWaiting": "Valabil 24 de ore. Ecranul se actualizeaza cand se leaga.",
+    "haveCode": "Ai primit un cod de la partener?",
+    "joinCta": "Leaga-ma",
+    "joinError": {
+      "invalid": "Codul e gresit sau a expirat. Cere unul nou.",
+      "self": "E codul tau. Trebuie sa-l introduca partenerul.",
+      "error": "Nu m-am putut conecta. Verifica internetul si incearca din nou."
+    },
+    "linkedWith": "Te antrenezi cu {name}",
+    "howItWorks": "Dupa sesiune apasa si \"Trimite si lui {name}\". Poti trimite si mai tarziu, din Istoric.",
+    "unpairCta": "Dezleaga",
+    "unpairCancel": "Anuleaza",
+    "unpairAccept": "Da, dezleaga",
+    "fallbackName": "partenerul tau",
+    "send": {
+      "cta": "Trimite si lui {name}",
+      "sent": "Trimis lui {name}"
+    },
+    "inbox": {
+      "title": "{name} a logat un antrenament",
+      "question": "L-ai facut si tu?",
+      "addCta": "Da, adauga la mine",
+      "noCta": "Nu",
+      "skipped": "Sar (nu sunt pentru tine): {names}",
+      "nothingForYou": "Nimic din el nu se potriveste listei tale.",
+      "addedToast": "Adaugat in istoricul tau"
+    },
+    "history": {
+      "with": "Cu {name}"
     }
   }
 }

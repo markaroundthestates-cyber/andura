@@ -544,6 +544,28 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           return { streak: updated, lastStreakDate: todayIso };
         }),
 
+      // Training-partner import (founder 2026-10-23: he and his friend train
+      // together). Never touches the in-progress fields, so a session the partner
+      // sent mid-workout can't wipe the one being logged. The streak moves only
+      // forward: a back-dated import never rewinds lastStreakDate.
+      importSession: (summary) =>
+        set((s) => {
+          if (s.sessionsHistory.some((x) => x.ts === summary.ts) || s.deletedSessionTs.includes(summary.ts)) return {};
+          const firstSet = Math.min(...(summary.exercises ?? []).flatMap((e) => e.sets.map((x) => x.timestamp)));
+          persistSessionLogs(summary, Number.isFinite(firstSet) ? firstSet : summary.ts);
+          const nextHistory = [...s.sessionsHistory, summary].sort((a, b) => a.ts - b.ts);
+          archiveOverflowSessions(nextHistory);
+          const day = todTs(summary.ts);
+          const forward = s.lastStreakDate === null || day > s.lastStreakDate;
+          return {
+            sessionsHistory: nextHistory.slice(-SESSIONS_HISTORY_MAX),
+            ...(s.lastSession === null || summary.ts >= s.lastSession.ts ? { lastSession: summary } : {}),
+            ...(forward
+              ? { streak: nextStreak(s.streak, s.lastStreakDate, day, resolveStreakActiveWeek()), lastStreakDate: day }
+              : {}),
+          };
+        }),
+
       resetStreak: () => set({ streak: 0, lastStreakDate: null }),
 
       reset: () =>

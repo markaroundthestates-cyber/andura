@@ -22,6 +22,9 @@ export const USER_DATA_KEYS = [
   // the user's per-exercise exclusions ("Nu pot face asta" / "Aparat lipsa"), synced
   // last-write-wins from 2026-10-23 (sync_exclusions_lww_v1).
   'wv2-equipment-missing-exercises',
+  // training-partner local cache (link, unsent outbox, sent marks, own display name);
+  // the cloud copy is authoritative — cleared so a shared device doesn't keep the link.
+  'wv2-partner', 'wv2-partner-outbox', 'wv2-partner-sent', 'wv2-partner-myname', 'wv2-partner-invite',
   // sync-lww-ts — per-key write stamps for the last-write-wins settings
   // (firebase.js LWW_SYNC_KEYS); a stale stamp after a start-over would block the
   // fresh cloud value, so it resets with the data it stamps.

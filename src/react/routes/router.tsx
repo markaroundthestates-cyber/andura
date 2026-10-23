@@ -98,6 +98,7 @@ const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m)
 const Noutati = lazy(() => import('./screens/cont/Noutati').then((m) => ({ default: m.Noutati })));
 // Sala mea — per-gym curated equipment stacks (2026-07-02).
 const SalaMea = lazy(() => import('./screens/cont/SalaMea').then((m) => ({ default: m.SalaMea })));
+const Partener = lazy(() => import('./screens/cont/Partener').then((m) => ({ default: m.Partener })));
 // NOTE (Account regroup 2026-06-12) — ExerciseLibrary / SettingsPrivacy /
 // SettingsTerms / SettingsExport / SettingsImport / SettingsAbout /
 // SettingsSupport / SettingsFaq are no longer referenced directly here: their
@@ -249,6 +250,8 @@ export const router = createBrowserRouter([
           { path: 'noutati', element: <LazyRoute><Noutati /></LazyRoute> },
           // Sala mea — per-gym curated equipment stacks.
           { path: 'sala-mea', element: <LazyRoute><SalaMea /></LazyRoute> },
+          // Partener de antrenament — log once, both accounts get the session.
+          { path: 'partener', element: <LazyRoute><Partener /></LazyRoute> },
           // Account regroup 2026-06-12 — NEW grouped hubs (Cont rows point here).
           { path: 'exercitii-echipament', element: <LazyRoute><ExercitiiEchipament /></LazyRoute> },
           { path: 'datele-mele', element: <LazyRoute><DateleMele /></LazyRoute> },

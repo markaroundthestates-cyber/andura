@@ -1627,7 +1627,8 @@
       "dateleMele": "My data",
       "confidentialitateTermeni": "Privacy & terms",
       "ajutorDespre": "Help & about",
-      "noutati": "What's new"
+      "noutati": "What's new",
+      "partener": "Training partner"
     },
     "hubs": {
       "exercitiiEchipament": {
@@ -2819,6 +2820,44 @@
       "cable": "Cables",
       "bodyweight": "Bodyweight",
       "band": "Bands"
+    }
+  },
+  "partner": {
+    "title": "Training partner",
+    "intro": "Train with someone? Link your accounts: log the session once, and they add it to their history with one tap.",
+    "nameLabel": "Your name (your partner sees it)",
+    "namePlaceholder": "e.g. Daniel",
+    "createCta": "Create a code",
+    "codeShare": "Give this code to your partner. They enter it in Account > Training partner.",
+    "codeWaiting": "Valid 24 hours. This screen updates when they join.",
+    "haveCode": "Got a code from your partner?",
+    "joinCta": "Link me",
+    "joinError": {
+      "invalid": "That code is wrong or expired. Ask for a new one.",
+      "self": "That is your own code. Your partner has to enter it.",
+      "error": "Could not connect. Check your internet and try again."
+    },
+    "linkedWith": "You train with {name}",
+    "howItWorks": "After a session, tap \"Send to {name}\" too. You can also send it later from History.",
+    "unpairCta": "Unlink",
+    "unpairCancel": "Cancel",
+    "unpairAccept": "Yes, unlink",
+    "fallbackName": "your partner",
+    "send": {
+      "cta": "Send to {name} too",
+      "sent": "Sent to {name}"
+    },
+    "inbox": {
+      "title": "{name} logged a workout",
+      "question": "Did you do it too?",
+      "addCta": "Yes, add it to mine",
+      "noCta": "No",
+      "skipped": "Left out (not for you): {names}",
+      "nothingForYou": "Nothing in it fits your list.",
+      "addedToast": "Added to your history"
+    },
+    "history": {
+      "with": "With {name}"
     }
   }
 }

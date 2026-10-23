@@ -13,6 +13,22 @@
           ".write": "auth != null && auth.uid === $uid"
         }
       }
+    },
+    "partnerInvites": {
+      "$code": {
+        ".read": "auth !== null",
+        ".write": "auth !== null && (!data.exists() || data.child('uid').val() === auth.uid) && (!newData.exists() || newData.child('uid').val() === auth.uid)",
+        ".validate": "$code.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['uid', 'name', 'ts'])"
+      }
+    },
+    "partnerInbox": {
+      "$uid": {
+        ".read": "auth !== null && auth.uid === $uid",
+        "$msgId": {
+          ".write": "auth !== null && (auth.uid === $uid || (!data.exists() && newData.child('from').val() === auth.uid && (root.child('users').child($uid).child('partners').child(auth.uid).exists() || (newData.child('type').val() === 'join' && newData.child('code').isString() && root.child('partnerInvites').child(newData.child('code').val()).child('uid').val() === $uid && root.child('partnerInvites').child(newData.child('code').val()).child('ts').val() > now - 86400000))))",
+          ".validate": "newData.hasChildren(['type', 'from', 'ts'])"
+        }
+      }
     }
   }
 }

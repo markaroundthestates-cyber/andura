@@ -652,6 +652,10 @@ export const FLAGS = Object.freeze({
   //   and unreachable from another device. Now synced last-write-wins (an un-exclude
   //   sticks); a pre-sync local list is unioned on the first adopt. Sync flag, not pinned.
   sync_exclusions_lww_v1: { rollout: 1, default: true },
+  // partner_sync_v1 (2026-10-23, founder + his friend train together) — pair two
+  //   accounts with a code; a finished session is sent to the partner, who adds it
+  //   with one tap (src/react/lib/partner.ts). UI + sync flag, not an engine flag.
+  partner_sync_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are
