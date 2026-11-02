@@ -548,7 +548,13 @@
       "deferred": "Ocupat — am mutat {name} mai tarziu in sesiune.",
       "skippedTitle": "Exercitii sarite",
       "skippedRestore": "Adauga la loc",
-      "restored": "Ai adaugat {name} inapoi."
+      "restored": "Ai adaugat {name} inapoi.",
+      "deferredTitle": "Amanate (aparat ocupat)",
+      "deferredNow": "Fa-l acum",
+      "deferredNowToast": "Inapoi la {name}.",
+      "deferredNextToast": "{name} urmeaza.",
+      "backToOriginal": "Inapoi la {name}",
+      "backToOriginalToast": "Inapoi la {name}."
     },
     "missingConfirm": {
       "title": "Aparat lipsa?",

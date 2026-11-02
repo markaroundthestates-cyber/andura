@@ -136,6 +136,9 @@ export function Workout(): JSX.Element {
   const droppedExercises = useWorkoutStore((s) => s.droppedExercises);
   // Founder Busy/Missing redesign 2026-06-12 — defer (busy = move to later slot).
   const deferExercise = useWorkoutStore((s) => s.deferExercise);
+  // Founder 2026-11-02 — bring a deferred (busy) exercise back now that it freed up.
+  const deferredExercises = useWorkoutStore((s) => s.deferredExercises);
+  const bringExerciseForward = useWorkoutStore((s) => s.bringExerciseForward);
   // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set + mutation.
   const refusalTriedByEx = useWorkoutStore((s) => s.refusalTriedByEx);
   const markRefusalTried = useWorkoutStore((s) => s.markRefusalTried);
@@ -1403,6 +1406,8 @@ export function Workout(): JSX.Element {
     handleCancelMissing,
     handleConfirmMissing,
     permanentPrompt,
+    backToOriginal,
+    handleBackToOriginal,
     handleConfirmPermanent,
     handleCancelPermanent,
   } = useWorkoutSwap({
@@ -1467,6 +1472,45 @@ export function Workout(): JSX.Element {
       toast.show({ message: t('workout.swap.restored', { name }), variant: 'success' });
     },
     [bumpActivity, restoreExercise],
+  );
+  // Founder 2026-11-02 — "Ocupat" moved his Machine Shoulder Press to the end, the
+  // machine freed up straight away and there was no way back to it. Every PENDING
+  // deferred lift (ahead of the cursor, not dropped, sets left) gets "Fa-l acum":
+  // it comes forward to NOW when the current exercise has not started, else right
+  // after it. Same chip strip as the skipped exercises.
+  const deferredSlots = useMemo(
+    () =>
+      exercises === null
+        ? []
+        : Object.entries(deferredExercises)
+            .map(([k, v]) => ({ slotIdx: Number(k), ...v }))
+            .filter(({ slotIdx }) => {
+              const ex = exercises[slotIdx];
+              return slotIdx > safeExIdx && ex !== undefined && !droppedExercises[slotIdx] && (history[slotIdx]?.length ?? 0) < ex.sets;
+            })
+            .sort((a, b) => a.slotIdx - b.slotIdx),
+    [deferredExercises, exercises, safeExIdx, droppedExercises, history],
+  );
+  const handleDoDeferredNow = useCallback(
+    (slotIdx: number, name: string): void => {
+      bumpActivity();
+      const to = currentSetIdx === 0 ? safeExIdx : safeExIdx + 1;
+      if (to < slotIdx) {
+        setExercises((prev) => {
+          if (prev === null) return prev;
+          const next = prev.slice();
+          const [moved] = next.splice(slotIdx, 1);
+          next.splice(to, 0, moved!);
+          return next;
+        });
+        bringExerciseForward(slotIdx, to);
+      }
+      toast.show({
+        message: t(to === safeExIdx ? 'workout.swap.deferredNowToast' : 'workout.swap.deferredNextToast', { name }),
+        variant: 'success',
+      });
+    },
+    [bumpActivity, currentSetIdx, safeExIdx, bringExerciseForward],
   );
   // Stable, render-ordered list of dropped slots for the skipped strip.
   const droppedSlots = useMemo(
@@ -1978,6 +2022,39 @@ export function Workout(): JSX.Element {
             onLipsa={handleOpenMissingConfirm}
             onNuVreau={handleNuVreau}
           />
+
+          {/* Founder 2026-11-02 — a pick-list substitute leads back to the exercise
+              the slot started as while nothing is logged on it yet. */}
+          {backToOriginal && (
+            <button
+              type="button"
+              onClick={handleBackToOriginal}
+              data-testid="swap-back-to-original"
+              className="pulse-card pulse-card-tight w-full flex items-center justify-center gap-1.5 px-3 py-2 mb-4 text-sm text-ink2"
+            >
+              {t('workout.swap.backToOriginal', { name: backToOriginal.name })}
+            </button>
+          )}
+
+          {deferredSlots.length > 0 && (
+            <div className="mb-4" data-testid="deferred-strip">
+              <p className="text-xs font-medium text-ink3 mb-1.5">{t('workout.swap.deferredTitle')}</p>
+              <div className="flex flex-wrap gap-2">
+                {deferredSlots.map((slot) => (
+                  <button
+                    key={slot.slotIdx}
+                    type="button"
+                    onClick={() => handleDoDeferredNow(slot.slotIdx, slot.name)}
+                    data-testid={`deferred-now-${slot.slotIdx}`}
+                    className="pulse-card pulse-card-tight flex items-center gap-1.5 px-3 py-1.5 text-xs text-ink2"
+                  >
+                    <span className="font-medium text-ink truncate max-w-[10rem]">{slot.name}</span>
+                    <span className="text-brick">{t('workout.swap.deferredNow')}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Founder swap redesign 2026-06-05 — skipped-exercises strip. An
               exercise dropped via the pick-list "I don't want to do this" row

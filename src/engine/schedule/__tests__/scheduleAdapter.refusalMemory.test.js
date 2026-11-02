@@ -124,3 +124,33 @@ describe('mergePenalties — variadic max-merge (pain + refusal share the soft c
     expect(mergePenalties(null, { B: 0.5 })).toEqual({ B: 0.5 });
   });
 });
+
+// Founder 2026-11-02 — resetting one exercise rewrote the OTHERS as bare counts,
+// erasing their timestamps → their soft demote vanished. And "Inapoi la" the
+// original takes back exactly the one refusal the swap cost.
+describe('resetRefusalCounter keeps the other refusals alive; undoRefusal takes back one', () => {
+  it('resetting one leaves the others with their timestamp and penalty', async () => {
+    const now = Date.UTC(2026, 10, 2, 7);
+    incrementRefusal('Lying Triceps Extension EZ-bar', now);
+    incrementRefusal('Cable Triceps Kickback Rope', now);
+    const before = getRefusalPenalties(now)['Cable Triceps Kickback Rope'];
+    expect(before).toBeGreaterThan(0.5);
+    resetRefusalCounter('Lying Triceps Extension EZ-bar');
+    expect(getRefusalCounter()['Lying Triceps Extension EZ-bar']).toBeUndefined();
+    expect(getRefusalPenalties(now)['Cable Triceps Kickback Rope']).toBeCloseTo(before, 6);
+  });
+
+  it('undoRefusal drops one count, keeps the timestamp, removes the entry at zero', async () => {
+    const { undoRefusal } = await import('../scheduleAdapter/refusalFlowStorage.js');
+    const now = Date.UTC(2026, 10, 2, 7);
+    incrementRefusal('Machine Shoulder Press', now - 864e5);
+    incrementRefusal('Machine Shoulder Press', now);
+    undoRefusal('Machine Shoulder Press');
+    expect(getRefusalCounter()['Machine Shoulder Press']).toBe(1);
+    expect(JSON.parse(localStorage.getItem(REFUSAL_COUNTER_KEY))['Machine Shoulder Press'].ts).toBe(now);
+    undoRefusal('Machine Shoulder Press');
+    expect(getRefusalCounter()['Machine Shoulder Press']).toBeUndefined();
+    undoRefusal('Machine Shoulder Press'); // nothing left → no-op
+    expect(getRefusalCounter()).toEqual({});
+  });
+});

@@ -179,8 +179,27 @@ export function getRefusalPenalties(now = Date.now()) {
  */
 export function resetRefusalCounter(exerciseName) {
   if (typeof exerciseName !== 'string' || exerciseName.length === 0) return;
-  const current = getRefusalCounter();
+  // The raw {n, ts} entries, not getRefusalCounter's bare counts: rewriting the
+  // others as counts erased their timestamps → their soft demote silently vanished.
+  const current = _readRefusalEntries();
   if (!(exerciseName in current)) return;
   const { [exerciseName]: _drop, ...rest } = current;
   try { localStorage.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(rest)); } catch { /* noop */ }
+}
+
+/**
+ * Take back ONE refusal (founder 2026-11-02: "Nu vreau" on a busy cable, then
+ * "Inapoi la" the original once it freed up — that was not a taste refusal).
+ * The count drops by one (entry removed at zero); others untouched.
+ *
+ * @param {string} exerciseName
+ */
+export function undoRefusal(exerciseName) {
+  if (typeof exerciseName !== 'string' || exerciseName.length === 0) return;
+  const entries = _readRefusalEntries();
+  const prev = entries[exerciseName];
+  if (!prev) return;
+  const { [exerciseName]: _drop, ...rest } = entries;
+  const next = prev.n > 1 ? { ...rest, [exerciseName]: { n: prev.n - 1, ts: prev.ts } } : rest;
+  try { localStorage.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(next)); } catch { /* noop */ }
 }

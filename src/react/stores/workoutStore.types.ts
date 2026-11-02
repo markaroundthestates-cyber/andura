@@ -349,6 +349,12 @@ export interface WorkoutState {
    * session — same lifecycle as refusalTriedByEx/performedExercises.
    */
   droppedExercises: Record<number, { id: string; name: string; engineName?: string }>;
+  /**
+   * Slots moved later by "Ocupat" (busy), keyed by their CURRENT index and kept
+   * aligned by every reorder — the screen offers "Fa-l acum" for the pending ones.
+   * Same lifecycle as droppedExercises.
+   */
+  deferredExercises: Record<number, { name: string; engineName?: string }>;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -571,7 +577,9 @@ export interface WorkoutActions {
    * stays at fromIdx, which now holds the formerly-next pending exercise, so it
    * becomes current immediately. No-op unless `toIdx > fromIdx >= 0`.
    */
-  deferExercise: (fromIdx: number, toIdx: number) => void;
+  deferExercise: (fromIdx: number, toIdx: number, identity?: { name: string; engineName?: string }) => void;
+  /** Bring a later slot FORWARD to `toIdx` (reverse of deferExercise; clears its deferred marker). */
+  bringExerciseForward: (fromIdx: number, toIdx: number) => void;
 
   /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.

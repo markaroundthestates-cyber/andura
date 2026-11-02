@@ -139,6 +139,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       refusalTriedByEx: {},
       performedExercises: {},
       droppedExercises: {},
+      deferredExercises: {},
       deletedSessionTs: [],
 
       startSession: (sessionStart) =>
@@ -164,6 +165,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           refusalTriedByEx: {},
           performedExercises: {},
       droppedExercises: {},
+      deferredExercises: {},
         }),
 
       // HIGH-CODE-05 fix: title preserved from caller (real workout name)
@@ -242,6 +244,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           refusalTriedByEx: {},
           performedExercises: {},
       droppedExercises: {},
+      deferredExercises: {},
         }),
 
       finishSession: (summary) =>
@@ -286,6 +289,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             refusalTriedByEx: {},
             performedExercises: {},
       droppedExercises: {},
+      deferredExercises: {},
           };
         }),
 
@@ -481,7 +485,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // slots. The screen only ever defers a NOT-yet-started current exercise behind
       // PENDING ones, so in practice the shifted range carries empty history — but the
       // remap is total so a refusal-tried / partially-logged slot would survive too.
-      deferExercise: (fromIdx, toIdx) =>
+      deferExercise: (fromIdx, toIdx, identity) =>
         set((s) => {
           if (
             !Number.isInteger(fromIdx) ||
@@ -508,6 +512,42 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             performedExercises: remap(s.performedExercises),
             refusalTriedByEx: remap(s.refusalTriedByEx),
             droppedExercises: remap(s.droppedExercises),
+            // The deferred lift is marked at its new slot so the screen can offer
+            // "Fa-l acum" when the machine frees up (founder 2026-11-02).
+            deferredExercises: identity
+              ? { ...remap(s.deferredExercises), [toIdx]: identity }
+              : remap(s.deferredExercises),
+          };
+        }),
+
+      // Founder 2026-11-02 ("cumsa sa am optiunea sa ma duc inapoi la exercitiu" —
+      // his busy Machine Shoulder Press was deferred to the end, the machine freed
+      // up right away, and he did it off the app). The reverse rotation of
+      // deferExercise: the slot at `fromIdx` comes FORWARD to `toIdx` (< fromIdx)
+      // and every slot in [toIdx, fromIdx) shifts UP by one, all index-keyed maps
+      // with them. The cursor stays put, so with toIdx = exIdx the brought-forward
+      // exercise is current at once (the one it displaced is next). Its deferred
+      // marker is cleared. No-op when the indices are out of order.
+      bringExerciseForward: (fromIdx, toIdx) =>
+        set((s) => {
+          if (!Number.isInteger(fromIdx) || !Number.isInteger(toIdx) || toIdx >= fromIdx || toIdx < 0) {
+            return {};
+          }
+          const remap = <V,>(m: Record<number, V>): Record<number, V> => {
+            const next: Record<number, V> = {};
+            for (const [k, v] of Object.entries(m)) {
+              const i = Number(k);
+              next[i === fromIdx ? toIdx : i >= toIdx && i < fromIdx ? i + 1 : i] = v;
+            }
+            return next;
+          };
+          const { [fromIdx]: _brought, ...deferred } = s.deferredExercises;
+          return {
+            history: remap(s.history),
+            performedExercises: remap(s.performedExercises),
+            refusalTriedByEx: remap(s.refusalTriedByEx),
+            droppedExercises: remap(s.droppedExercises),
+            deferredExercises: remap(deferred),
           };
         }),
 
@@ -598,6 +638,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           refusalTriedByEx: {},
           performedExercises: {},
           droppedExercises: {},
+          deferredExercises: {},
         }),
     }),
     {
@@ -646,6 +687,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         // mixing engine keys on continued logging. refusalTriedByEx stays
         // runtime-only (an adaptation hint, not a user decision).
         droppedExercises: state.droppedExercises,
+        deferredExercises: state.deferredExercises,
         performedExercises: state.performedExercises,
         // Live rest countdown — persisted so a reload / re-mount mid-rest
         // rehydrates the timer instead of resolving rest instantly (which would
@@ -689,6 +731,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // session — clear them to the idle defaults too (they are meaningless
           // once the in-progress fields above reset).
           merged.droppedExercises = {};
+          merged.deferredExercises = {};
           merged.performedExercises = {};
         }
         // The session picks belong to a session in flight or paused — with neither

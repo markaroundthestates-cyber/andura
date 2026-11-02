@@ -63,6 +63,7 @@ export {
   getRefusalCounter,
   incrementRefusal,
   resetRefusalCounter,
+  undoRefusal,
 } from './scheduleAdapter/refusalFlowStorage.js';
 
 export { translateToEngineEquipment } from './scheduleAdapter/equipmentTranslation.js';

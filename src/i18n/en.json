@@ -548,7 +548,13 @@
       "deferred": "Busy — moved {name} later in the session.",
       "skippedTitle": "Skipped exercises",
       "skippedRestore": "Add back",
-      "restored": "Added {name} back."
+      "restored": "Added {name} back.",
+      "deferredTitle": "Moved later (machine busy)",
+      "deferredNow": "Do it now",
+      "deferredNowToast": "Back to {name}.",
+      "deferredNextToast": "{name} is next.",
+      "backToOriginal": "Back to {name}",
+      "backToOriginalToast": "Back to {name}."
     },
     "missingConfirm": {
       "title": "Missing equipment?",

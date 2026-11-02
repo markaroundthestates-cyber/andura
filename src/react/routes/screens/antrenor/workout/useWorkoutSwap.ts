@@ -13,6 +13,7 @@ import {
   incrementRefusal,
   getRefusalCounter,
   resetRefusalCounter,
+  undoRefusal,
   REFUSAL_COUNTER_THRESHOLD,
   addMissingEquipmentExercise,
 } from '../../../../../engine/schedule/scheduleAdapter.js';
@@ -68,7 +69,7 @@ export interface UseWorkoutSwapArgs {
   dropExercise: (exIdx: number, identity: { id: string; name: string; engineName?: string }) => void;
   // Founder Busy/Missing redesign 2026-06-12 — reorder the index-keyed store maps
   // when the screen moves the busy exercise to a later slot (defer).
-  deferExercise: (fromIdx: number, toIdx: number) => void;
+  deferExercise: (fromIdx: number, toIdx: number, identity?: { name: string; engineName?: string }) => void;
   setExercises: React.Dispatch<React.SetStateAction<readonly PlannedExercise[] | null>>;
   /** Current set ordinal for the current exercise (history[safeExIdx].length).
    *  Drives the mid-exercise-busy fallback decision (see handleOcupat). */
@@ -114,6 +115,11 @@ export interface UseWorkoutSwap {
    *  EN canonical to hard-exclude on YES; `displayName` is the RO copy fill. Gated
    *  behind dp_refusal_permanent_prompt_v1 (flag OFF → never opens). */
   permanentPrompt: { open: boolean; engineName: string; displayName: string };
+  /** The exercise this slot was swapped away from via the pick-list — offered back
+   *  ("Inapoi la X") while no set is logged on the substitute; null otherwise. */
+  backToOriginal: PlannedExercise | null;
+  /** Put the original back in this slot (and take back the refusal it cost). */
+  handleBackToOriginal: () => void;
   /** YES → hard-exclude (addMissingEquipmentExercise) + reset the counter. */
   handleConfirmPermanent: () => void;
   /** NO → reset the counter only (don't nag every swap; soft demote still applies). */
@@ -174,6 +180,11 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
   }>({ open: false, engineName: '', displayName: '' });
   // Founder redesign — manual swap pick-list sheet state ("Nu vreau" + busy fallback).
   const [pickSheet, setPickSheet] = useState<SwapPickSheetState>(CLOSED_PICK);
+  // Founder 2026-11-02 ("cumsa sa am optiunea sa ma duc inapoi la exercitiu"): every
+  // pick-list substitute remembers the exercise the slot STARTED as (a chain A → B → C
+  // still leads back to A) and whether leaving A counted as a refusal. Keyed by the
+  // substitute's id, which is unique per slot, so a later defer / reorder can't misalign it.
+  const [origins, setOrigins] = useState<Record<string, { original: PlannedExercise; refused: boolean }>>({});
 
   // Names already present in / pending elsewhere in the session — never offered
   // as a swap (no duplicate-in-session). Built fresh per open.
@@ -319,7 +330,10 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       next.splice(anchor, 0, moved!); // moved lands at index `anchor`
       return next;
     });
-    deferExercise(safeExIdx, anchor);
+    deferExercise(safeExIdx, anchor, {
+      name: currentExercise.name,
+      ...(currentExercise.engineName ? { engineName: currentExercise.engineName } : {}),
+    });
     // D107 — record the defer as a (recoverable) skip-style event; no-op when the
     // collect gate is OFF, never throws. The exercise is NOT dropped — it returns.
     debugLog.event(
@@ -386,6 +400,10 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         markRefusalTried(safeExIdx, engineName);
       }
       const swapped = row.exercise;
+      setOrigins((o) => ({
+        ...o,
+        [swapped.id]: o[currentExercise.id] ?? { original: currentExercise, refused: pickSheet.reason === 'refusal' },
+      }));
       setExercises((prev) => {
         if (prev === null) return prev;
         const next = prev.slice();
@@ -431,8 +449,29 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         });
       }
     },
-    [bumpActivity, currentExercise.engineName, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName, pickSheet.reason],
+    [bumpActivity, currentExercise, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName, pickSheet.reason],
   );
+
+  const origin = origins[currentExercise.id];
+  const backToOriginal = origin && currentSetIdx === 0 ? origin.original : null;
+  const handleBackToOriginal = useCallback((): void => {
+    if (!origin || currentSetIdx > 0) return;
+    bumpActivity();
+    const original = origin.original;
+    if (origin.refused && typeof original.engineName === 'string') undoRefusal(original.engineName);
+    setExercises((prev) => {
+      if (prev === null) return prev;
+      const next = prev.slice();
+      next[safeExIdx] = original;
+      return next;
+    });
+    swapExercise(safeExIdx, {
+      id: original.id,
+      name: original.name,
+      ...(original.engineName !== undefined ? { engineName: original.engineName } : {}),
+    });
+    toast.show({ message: t('workout.swap.backToOriginalToast', { name: original.name }), variant: 'success' });
+  }, [origin, currentSetIdx, bumpActivity, setExercises, swapExercise, safeExIdx]);
 
   // Drop the WHOLE exercise from today's session (pick-list "I don't want to do
   // this"). Index-stable store drop (marks the slot dropped + clears its partial
@@ -596,6 +635,8 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     handleCancelMissing,
     handleConfirmMissing,
     permanentPrompt,
+    backToOriginal,
+    handleBackToOriginal,
     handleConfirmPermanent,
     handleCancelPermanent,
   };

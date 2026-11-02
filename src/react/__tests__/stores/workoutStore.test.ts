@@ -1576,3 +1576,53 @@ describe('deferExercise — forward index remap keeps every map aligned', () => 
     expect(s.exIdx).toBe(0);
   });
 });
+
+// ══ bringExerciseForward — founder 2026-11-02 ("inapoi la exercitiu") ═══════════
+describe('bringExerciseForward — the reverse of a defer keeps every map aligned', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('defer 0 → 3 then bring it back to 0 restores every slot', () => {
+    const before = {
+      history: { 1: [{ kg: 60, reps: 6, rating: 'greu' as const }] },
+      performedExercises: { 2: { id: 'c', name: 'C' } },
+      refusalTriedByEx: { 3: ['D-orig'] },
+      droppedExercises: {},
+      deferredExercises: {},
+      exIdx: 0,
+      setIdx: 0,
+    };
+    useWorkoutStore.setState(before);
+    useWorkoutStore.getState().deferExercise(0, 3, { name: 'Machine Shoulder Press' });
+    expect(useWorkoutStore.getState().deferredExercises).toEqual({ 3: { name: 'Machine Shoulder Press' } });
+    useWorkoutStore.getState().bringExerciseForward(3, 0);
+    const s = useWorkoutStore.getState();
+    expect(s.history).toEqual(before.history);
+    expect(s.performedExercises).toEqual(before.performedExercises);
+    expect(s.refusalTriedByEx).toEqual(before.refusalTriedByEx);
+    expect(s.deferredExercises).toEqual({});
+    expect(s.exIdx).toBe(0);
+  });
+
+  it('brought to the slot after a started exercise: that exercise keeps its sets', () => {
+    useWorkoutStore.setState({
+      history: { 0: [{ kg: 20, reps: 10, rating: 'potrivit' }] },
+      deferredExercises: { 3: { name: 'MSP' }, 2: { name: 'Other' } },
+      exIdx: 0,
+    });
+    useWorkoutStore.getState().bringExerciseForward(3, 1);
+    const s = useWorkoutStore.getState();
+    expect(s.history[0]).toEqual([{ kg: 20, reps: 10, rating: 'potrivit' }]);
+    // The other deferred lift shifted up with its slot.
+    expect(s.deferredExercises).toEqual({ 3: { name: 'Other' } });
+  });
+
+  it('no-op when not moving strictly earlier', () => {
+    useWorkoutStore.setState({ history: { 2: [{ kg: 1, reps: 1, rating: 'usor' }] }, deferredExercises: { 2: { name: 'X' } } });
+    useWorkoutStore.getState().bringExerciseForward(1, 2);
+    useWorkoutStore.getState().bringExerciseForward(2, 2);
+    expect(useWorkoutStore.getState().history).toEqual({ 2: [{ kg: 1, reps: 1, rating: 'usor' }] });
+    expect(useWorkoutStore.getState().deferredExercises).toEqual({ 2: { name: 'X' } });
+  });
+});

@@ -89,6 +89,7 @@ beforeEach(() => {
     lastSession: null,
     refusalTriedByEx: {},
     droppedExercises: {},
+    deferredExercises: {},
     performedExercises: {},
   });
   localStorage.clear();
@@ -370,5 +371,75 @@ describe('Workout swap — "Aparat ocupat" defer is MUSCLE-AWARE', () => {
     const order = await walkOrder(2);
     expect(order[0]).toContain('flexii cu cablu'); // curl current
     expect(order[1]).toContain('extensii cvadriceps'); // leg ext landed right behind it
+  });
+});
+
+// Founder 2026-11-02 ("cumsa sa am optiunea sa ma duc inapoi la exercitiu"): his
+// busy Machine Shoulder Press was deferred to the end of the push day, the machine
+// freed up straight away and he had no way back to it.
+describe('Workout swap — back to a deferred / swapped exercise', () => {
+  const PUSH_1102 = [
+    ex('msp-0', 'Presa umeri aparat', 'Machine Shoulder Press'),
+    ex('incdb-1', 'Impins inclinat gantere', 'Incline DB Press'),
+    ex('rpd-2', 'Fluturari inverse aparat', 'Reverse Pec Deck'),
+    ex('fcp-3', 'Presa piept aparat', 'Flat Chest Press Machine'),
+  ];
+  const mockPush = () => vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...SWAP_FIXTURE, exerciseCount: 4, exercises: PUSH_1102 });
+
+  it('a deferred lift waits in a strip; "Fa-l acum" makes it current again', async () => {
+    mockPush();
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    await waitFor(() => expect(screen.getByTestId('wv2-exname').textContent).not.toContain('Presa umeri'));
+    const strip = await screen.findByTestId('deferred-strip');
+    expect(strip.textContent).toContain('Presa umeri aparat');
+    const slot = Number(Object.keys(useWorkoutStore.getState().deferredExercises)[0]);
+    fireEvent.click(screen.getByTestId(`deferred-now-${slot}`));
+    await waitFor(() => expect(screen.getByTestId('wv2-exname').textContent).toContain('Presa umeri aparat'));
+    expect(screen.queryByTestId('deferred-strip')).not.toBeInTheDocument();
+    // Nothing lost: the four lifts are all still ahead, the displaced one next.
+    const order = await walkOrder(4);
+    expect(order[0]).toContain('Presa umeri aparat');
+    expect(order[1]).toContain('Impins inclinat gantere');
+    expect(new Set(order).size).toBe(4);
+  });
+
+  it('mid-exercise, "Fa-l acum" queues the deferred lift right after the current one', async () => {
+    mockPush();
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    await screen.findByTestId('deferred-strip');
+    expect(screen.getByTestId('wv2-exname').textContent).toContain('Impins inclinat gantere');
+    useWorkoutStore.setState({ history: { 0: [{ kg: 20, reps: 10, rating: 'potrivit', timestamp: Date.now() }] } });
+    const slot = Number(Object.keys(useWorkoutStore.getState().deferredExercises)[0]);
+    fireEvent.click(await screen.findByTestId(`deferred-now-${slot}`));
+    // The current exercise (with its logged set) stays current; the lift is next.
+    expect(screen.getByTestId('wv2-exname').textContent).toContain('Impins inclinat gantere');
+    expect(useWorkoutStore.getState().history[0]).toHaveLength(1);
+    const order = await walkOrder(2);
+    expect(order[1]).toContain('Presa umeri aparat');
+  });
+
+  it('"Nu vreau" → pick → "Inapoi la" puts the original back and takes back the refusal', async () => {
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
+    fireEvent.click(await screen.findByTestId('swap-pick-row-0'));
+    await waitFor(() => expect(screen.getByTestId('wv2-exname').textContent).not.toContain('inclinat cu bara'));
+    const back = await screen.findByTestId('swap-back-to-original');
+    expect(back.textContent).toContain('inclinat cu bara');
+    fireEvent.click(back);
+    await waitFor(() => expect(screen.getByTestId('wv2-exname').textContent).toContain('inclinat cu bara'));
+    expect(screen.queryByTestId('swap-back-to-original')).not.toBeInTheDocument();
+    const counter = JSON.parse(localStorage.getItem('wv2-refusal-counter') ?? '{}');
+    expect(counter['Incline Barbell Bench']).toBeUndefined();
+  });
+
+  it('no way back once a set is logged on the substitute', async () => {
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
+    fireEvent.click(await screen.findByTestId('swap-pick-row-0'));
+    expect(await screen.findByTestId('swap-back-to-original')).toBeInTheDocument();
+    useWorkoutStore.setState({ history: { 0: [{ kg: 20, reps: 10, rating: 'potrivit', timestamp: Date.now() }] } });
+    await waitFor(() => expect(screen.queryByTestId('swap-back-to-original')).not.toBeInTheDocument());
   });
 });
