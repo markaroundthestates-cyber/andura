@@ -22,7 +22,9 @@ env:
 
 jobs:
   qa:
-    runs-on: ubuntu-latest
+    # Pinned (2026-11-02): ubuntu-latest moved to 26.04, where Playwright 1.60 has no
+    # chromium build ("Playwright does not support chromium on ubuntu26.04-x64").
+    runs-on: ubuntu-24.04
     # Run regardless of deploy outcome so we always get a report, but skip if deploy itself was skipped
     if: ${{ github.event.workflow_run.conclusion != 'skipped' }}
 

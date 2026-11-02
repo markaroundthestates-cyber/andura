@@ -49,7 +49,9 @@ env:
 jobs:
   authenticated-e2e:
     name: Authenticated core-loop E2E (advisory, non-blocking)
-    runs-on: ubuntu-latest
+    # Pinned (2026-11-02): ubuntu-latest moved to 26.04, where Playwright 1.60 has no
+    # chromium build ("Playwright does not support chromium on ubuntu26.04-x64").
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     # Don't bother when the deploy itself was skipped (docs-only pushes etc.).
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
