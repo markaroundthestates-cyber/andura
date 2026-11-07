@@ -164,3 +164,35 @@ describe('SettingsPrefs — render + interactions', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+// Founder 2026-11-07 — "last 3" and "full raw history" download a .json file
+// instead of the clipboard; the default last-workout button still copies.
+describe('SettingsPrefs — debug log export', () => {
+  it('last 3 / full history download a file named by scope + date', async () => {
+    const { debugLog } = await import('../../../lib/debugLog');
+    const { vi } = await import('vitest');
+    const snap = vi.spyOn(debugLog, 'snapshot').mockResolvedValue([{ id: 'e1', t: 1, kind: 'tap', payload: {} }] as never);
+    const exp = vi.spyOn(debugLog, 'exportJson').mockResolvedValue('{"events":[]}');
+    const created: string[] = [];
+    const origCreate = URL.createObjectURL;
+    const origRevoke = URL.revokeObjectURL;
+    URL.createObjectURL = vi.fn(() => 'blob:x');
+    URL.revokeObjectURL = vi.fn();
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { created.push(this.download); });
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('advanced-debug-copy-all'));
+    await vi.waitFor(() => expect(created).toHaveLength(1));
+    expect(created[0]).toMatch(/^andura-debug-full-\d{4}-\d{2}-\d{2}-\d{4}\.json$/);
+    fireEvent.click(screen.getByTestId('advanced-debug-copy-last3'));
+    await vi.waitFor(() => expect(created).toHaveLength(2));
+    expect(created[1]).toMatch(/^andura-debug-last3-/);
+    expect(exp).toHaveBeenCalledWith('all');
+    expect(writeText).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('advanced-debug-copy'));
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalledWith('{"events":[]}'));
+    click.mockRestore(); snap.mockRestore(); exp.mockRestore();
+    URL.createObjectURL = origCreate; URL.revokeObjectURL = origRevoke;
+  });
+});

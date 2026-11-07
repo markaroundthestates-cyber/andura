@@ -14,6 +14,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { checkForUpdatesAndApply } from '../../../lib/swUpdate';
 import { debugLog, isDebugEnabled, setDebugEnabled, isCollectEnabled, setCollectEnabled } from '../../../lib/debugLog';
 import { toast } from '../../../lib/toast';
+import { downloadTextFile, fileStamp } from '../../../lib/download';
 import { SubHeader } from '../../../components/SubHeader';
 import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
 
@@ -83,6 +84,17 @@ export function SettingsPrefs(): JSX.Element {
       return;
     }
     const json = await debugLog.exportJson(scope);
+    // Founder 2026-11-07: the last-3 / full-history exports download as a file (too
+    // big for the phone clipboard); the default last-workout button still copies.
+    if (scope !== 'last') {
+      try {
+        downloadTextFile(`andura-debug-${scope === 'all' ? 'full' : 'last3'}-${fileStamp()}.json`, json);
+        toast.show({ message: t('settings.prefs.advanced.debugLogDownloaded'), variant: 'success' });
+      } catch {
+        toast.show({ message: t('settings.prefs.advanced.debugLogDownloadFailed'), variant: 'error' });
+      }
+      return;
+    }
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       void navigator.clipboard
         .writeText(json)
@@ -306,7 +318,7 @@ export function SettingsPrefs(): JSX.Element {
             <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
           {/* Scope variants (on-demand): the default button above copies the LAST
-              workout; these copy the last 3 / the full raw history. */}
+              workout; these download the last 3 / the full raw history as a file. */}
           <div className="flex gap-2 px-4 pb-3.5">
             <button
               type="button"

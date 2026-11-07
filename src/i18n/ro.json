@@ -1765,12 +1765,14 @@
         "debugLogDesc": "Inregistreaza tap-urile pentru raportari bug (se aplica la urmatoarea pornire)",
         "debugLogCopy": "Copiaza jurnal debug",
         "debugLogCopyDesc": "Copiaza ULTIMUL antrenament ca JSON (fara tap-uri de navigare)",
-        "debugLogCopyLast3": "Ultimele 3 antrenamente",
-        "debugLogCopyAll": "Tot istoricul (brut)",
+        "debugLogCopyLast3": "Descarca ultimele 3 antrenamente",
+        "debugLogCopyAll": "Descarca tot istoricul (brut)",
         "debugLogCopied": "Jurnal debug copiat",
         "debugLogEmpty": "Jurnalul debug e gol",
         "collect": "Imbunatateste antrenamentul (pe dispozitiv)",
-        "collectDesc": "Pastreaza interactiunile tale de antrenament pe acest dispozitiv ca sa-ti imbunatateasca coaching-ul. Nu paraseste niciodata dispozitivul."
+        "collectDesc": "Pastreaza interactiunile tale de antrenament pe acest dispozitiv ca sa-ti imbunatateasca coaching-ul. Nu paraseste niciodata dispozitivul.",
+        "debugLogDownloaded": "Jurnalul debug salvat ca fisier",
+        "debugLogDownloadFailed": "Nu am putut salva fisierul"
       }
     },
     "profile": {

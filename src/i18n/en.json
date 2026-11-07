@@ -1765,12 +1765,14 @@
         "debugLogDesc": "Record taps for bug reports (applies on next launch)",
         "debugLogCopy": "Copy debug log",
         "debugLogCopyDesc": "Copy the LAST workout as JSON (no navigation taps)",
-        "debugLogCopyLast3": "Last 3 workouts",
-        "debugLogCopyAll": "Full raw history",
+        "debugLogCopyLast3": "Download last 3 workouts",
+        "debugLogCopyAll": "Download full raw history",
         "debugLogCopied": "Debug log copied",
         "debugLogEmpty": "Debug log is empty",
         "collect": "Improve my training (on-device)",
-        "collectDesc": "Keep your training interactions on this device to improve your coaching. Never leaves your device."
+        "collectDesc": "Keep your training interactions on this device to improve your coaching. Never leaves your device.",
+        "debugLogDownloaded": "Debug log saved as a file",
+        "debugLogDownloadFailed": "Could not save the file"
       }
     },
     "profile": {
