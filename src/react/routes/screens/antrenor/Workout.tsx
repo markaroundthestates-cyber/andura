@@ -82,6 +82,9 @@ import { useWakeLock } from './workout/useWakeLock';
 import { useWhyModalA11y } from './workout/useWhyModalA11y';
 import { useInactivityWatch } from './workout/useInactivityWatch';
 import { useWorkoutSwap } from './workout/useWorkoutSwap';
+import { useLiveTraining } from './workout/useLiveTraining';
+import { LiveStrip } from '../../../components/Workout/LiveStrip';
+import { endLive } from '../../../lib/liveSession';
 import { toast } from '../../../lib/toast';
 import { debugLog } from '../../../lib/debugLog';
 
@@ -1512,6 +1515,26 @@ export function Workout(): JSX.Element {
     },
     [bumpActivity, currentSetIdx, safeExIdx, bringExerciseForward],
   );
+  // Training together (founder 2026-11-07): where the friends in this live session
+  // are, "Randul tau", and "Treci si tu" — a friend's exercise still ahead of me
+  // comes forward through the same move as "Fa-l acum".
+  const liveTraining = useLiveTraining(
+    hasWorkout ? { exName: currentExercise.name, engineName: currentExercise.engineName ?? currentExercise.name, setIdx: currentSetIdx, sets: currentExercise.sets } : null,
+  );
+  const liveSlotFor = useCallback(
+    (engineName: string): number =>
+      exercises === null
+        ? -1
+        : exercises.findIndex((e, i) => i > safeExIdx && (e.engineName ?? e.name) === engineName && !droppedExercises[i] && (history[i]?.length ?? 0) < e.sets),
+    [exercises, safeExIdx, droppedExercises, history],
+  );
+  const handleFollowLive = useCallback(
+    (engineName: string, name: string): void => {
+      const slot = liveSlotFor(engineName);
+      if (slot > safeExIdx) handleDoDeferredNow(slot, exercises?.[slot]?.name ?? name);
+    },
+    [liveSlotFor, safeExIdx, handleDoDeferredNow, exercises],
+  );
   // Stable, render-ordered list of dropped slots for the skipped strip.
   const droppedSlots = useMemo(
     () =>
@@ -1587,6 +1610,9 @@ export function Workout(): JSX.Element {
     // value persists for the calendar day; a NEW day re-prompts; recovery /
     // recommendation shaping read the persisted score. discardSession() still
     // clears the transient session/sessionEnergy slice.
+    // A live session closes with it (host) / shows me as done (friend).
+    const live = useWorkoutStore.getState().liveSession;
+    if (live) void endLive(live, { exName: '', engineName: '', setIdx: 0, sets: 0, restEndsAt: null, joinedAt: live.startedAt });
     discardSession();
     navigate(gotoPath('antrenor'));
   }, [pauseSession, workoutTitle, navigate, discardSession]);
@@ -1895,6 +1921,13 @@ export function Workout(): JSX.Element {
               glance on the gym floor. The why-trigger keeps its 44px touch
               target. Secondary chrome (demo / swap / volume) sits quieter below.
               testids + the canonical setLabel text are preserved. */}
+          <LiveStrip
+            live={liveTraining}
+            myEngineName={currentExercise.engineName ?? currentExercise.name}
+            canFollow={(n) => liveSlotFor(n) > safeExIdx}
+            onFollow={handleFollowLive}
+          />
+
           <div className="mb-5" data-testid="wv2-exname">
             <Kicker color="var(--aqua)">{t('workout.currentExercise')}</Kicker>
             <div className="flex items-start gap-2 mt-1.5">

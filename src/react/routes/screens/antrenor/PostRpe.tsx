@@ -44,7 +44,7 @@ import { DB, todTs } from '../../../../db.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
 import { toast } from '../../../lib/toast';
 import { Kicker } from '../../../components/pulse/Kicker';
-import { sendSessionToFriend } from '../../../lib/partner';
+import { endLive } from '../../../lib/liveSession';
 import { t } from '../../../../i18n/index.js';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
@@ -283,9 +283,9 @@ export function PostRpe(): JSX.Element {
     const energyUserReported =
       isEnabled('dp_deload_self_feed_fix_v1') && energy !== undefined && sessionEnergy !== null;
 
-    // Training friends picked for today ("Cu cine te antrenezi azi?") — read before
-    // finishSession clears the session picks; the session goes to them once saved.
-    const trainWith = useWorkoutStore.getState().sessionTrainWith;
+    // Training together — read before finishSession clears the session picks: the
+    // host closes the live session, a friend shows as done (each saved his own).
+    const live = useWorkoutStore.getState().liveSession;
     const summary = {
       title,
       meta,
@@ -299,7 +299,7 @@ export function PostRpe(): JSX.Element {
     };
     finishSession(summary);
     incrementStreak();
-    for (const uid of trainWith) void sendSessionToFriend(summary, uid);
+    if (live) void endLive(live, { exName: '', engineName: '', setIdx: 0, sets: 0, restEndsAt: null, joinedAt: live.startedAt });
 
     // CRIT #3 — after finishSession persists new logs (workoutStore writeback),
     // refresh pr-records hash from full logs scan. MMI Engine #9

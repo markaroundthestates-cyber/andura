@@ -8,7 +8,8 @@
 
 import type { JSX, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { UserPlus, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Dumbbell, UserPlus, Users } from 'lucide-react';
 import { t } from '../../i18n/index.js';
 import { toast } from '../lib/toast';
 import {
@@ -16,16 +17,23 @@ import {
   myPartnerName, partnerPollWorthy, planPartnerImport, setMyPartnerName,
   type FriendRequest, type PartnerSessionMessage,
 } from '../lib/partner';
-import { sessionDisplayTitle } from '../lib/sessionTitle';
+import { sessionDisplayTitle, sessionGroupType } from '../lib/sessionTitle';
+import { findLiveInvites, markInviteAnswered, type LiveInvite } from '../lib/liveSession';
+import { gotoPath } from '../lib/navigation';
+import { useWorkoutStore } from '../stores/workoutStore';
 import { toExerciseDisplay } from '../lib/exerciseDisplay';
 import { formatDateDMY } from '../lib/format';
 import { todTs } from '../../db.js';
 
-const POLL_MS = 60_000;
+// A live invite is time-sensitive (the host is starting now) → a short poll, but only
+// with a friend or a request out (partnerPollWorthy).
+const POLL_MS = 20_000;
 
 export default function PartnerInbox(): JSX.Element | null {
   const [queue, setQueue] = useState<PartnerSessionMessage[]>([]);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
+  const [invites, setInvites] = useState<LiveInvite[]>([]);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [name, setName] = useState(() => myPartnerName());
   const primaryRef = useRef<HTMLButtonElement | null>(null);
@@ -34,6 +42,10 @@ export default function PartnerInbox(): JSX.Element | null {
     const { sessions, requests: incoming } = await checkPartnerInbox();
     setQueue((cur) => (cur.length > 0 ? cur : sessions));
     setRequests((cur) => (cur.length > 0 ? cur : incoming));
+    // Not while a session of my own is open (a paused one included).
+    const busy = useWorkoutStore.getState().sessionStart !== null || useWorkoutStore.getState().pausedSnapshot !== null;
+    const live = busy ? [] : await findLiveInvites();
+    setInvites((cur) => (cur.length > 0 ? cur : live));
   }, []);
 
   useEffect(() => {
@@ -47,9 +59,48 @@ export default function PartnerInbox(): JSX.Element | null {
     };
   }, [refresh]);
 
-  const req = requests[0];
-  const msg = req ? undefined : queue[0];
-  useEffect(() => { if (req || msg) primaryRef.current?.focus(); }, [req, msg]);
+  const invite = invites[0];
+  const req = invite ? undefined : requests[0];
+  const msg = invite || req ? undefined : queue[0];
+  useEffect(() => { if (invite || req || msg) primaryRef.current?.focus(); }, [invite, req, msg]);
+
+  if (invite) {
+    const type = sessionGroupType({ exercises: invite.plan.exercises.map((e) => ({ engineName: e.engineName, sets: Array.from({ length: e.sets }) })) });
+    const what = type ? t(`workout.sessionTitle.${type}`) : t('postRpe.fallbackTitle');
+    const answerInvite = (join: boolean): void => {
+      markInviteAnswered(invite);
+      setInvites((cur) => cur.slice(1));
+      if (join) navigate(gotoPath('workout-preview'), { state: { livePlan: invite.plan } });
+    };
+    return (
+      <Sheet testId="live-invite" titleId="live-invite-title">
+        <div className="flex items-center gap-2 mb-2">
+          <Dumbbell className="w-5 h-5 text-brick" aria-hidden="true" />
+          <h2 id="live-invite-title" className="text-base font-bold text-ink">
+            {t('live.invite.title', { name: invite.plan.hostName, what })}
+          </h2>
+        </div>
+        <p className="text-sm text-ink2 mb-4">{t('live.invite.body', { count: invite.plan.exercises.length })}</p>
+        <button
+          ref={primaryRef}
+          type="button"
+          onClick={() => answerInvite(true)}
+          data-testid="live-invite-join"
+          className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2 transition-transform active:scale-[.97]"
+        >
+          {t('live.invite.joinCta', { name: invite.plan.hostName })}
+        </button>
+        <button
+          type="button"
+          onClick={() => answerInvite(false)}
+          data-testid="live-invite-skip"
+          className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold"
+        >
+          {t('live.invite.skipCta')}
+        </button>
+      </Sheet>
+    );
+  }
 
   if (req) {
     // The first answer also sets the name the friend will see (asked once).

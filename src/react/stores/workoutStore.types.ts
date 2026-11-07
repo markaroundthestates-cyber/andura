@@ -50,6 +50,19 @@ export interface SessionContext {
 export interface SessionPlanOptions {
   differentMuscle?: boolean;
   differentMuscleCluster?: string;
+  // Training together (founder 2026-11-07): a friend who joined the host's live
+  // session runs the host's exercises, prescribed for him (livePlan.ts).
+  livePlan?: LivePlan;
+}
+
+/** The host's workout as a joining friend receives it (no weights — his own). */
+export interface LivePlan {
+  host: string;
+  hostName: string;
+  title: string;
+  sessionType?: string;
+  startedAt: number;
+  exercises: Array<{ engineName: string; sets: number }>;
 }
 
 export interface ExerciseHistoryEntry {
@@ -317,6 +330,9 @@ export interface WorkoutState {
   // Training friends (uids) picked for today on the TimeBudget step — the saved
   // session is sent to them (partner.ts). Cleared with the time budget.
   sessionTrainWith: string[];
+  // The live session this workout belongs to (host = me when I started it with
+  // friends, else the friend whose plan I joined) — beats go to liveSessions/<host>.
+  liveSession: { host: string; startedAt: number } | null;
   // Tombstones — the `ts` of every logged session the user explicitly DELETED
   // from Istoric (mislogged workout, Daniel's wife). Plain removal from
   // sessionsHistory is not enough: the cloud sync merges by UNION (mergeArrayUnion
@@ -473,6 +489,7 @@ export interface WorkoutActions {
   setSessionTimeBudgetMin: (min: number | null) => void;
   setSessionBodyweightOnly: (on: boolean) => void;
   setSessionTrainWith: (uids: string[]) => void;
+  setLiveSession: (live: { host: string; startedAt: number } | null) => void;
   // U-05 (HIGH) — day-boundary streak. `now` injectabil (default Date.now())
   // pentru determinism test. Aceeasi zi = no-op, ziua urmatoare = +1, gap > 1
   // zi (sau primul streak) = reset la 1.

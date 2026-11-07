@@ -726,7 +726,7 @@
     "with": {
       "label": "Who are you training with today?",
       "alone": "Alone",
-      "hint": "When you save the session, it goes to {names} too."
+      "hint": "At Start, {names} gets your workout and does it with their own weights."
     }
   },
   "readinessVerdict": {
@@ -2888,6 +2888,22 @@
     },
     "history": {
       "with": "With {name}"
+    }
+  },
+  "live": {
+    "altReason": "An alternative for you",
+    "previewWith": "{name}'s workout, with your own weights",
+    "yourTurn": "Your turn",
+    "at": "{exercise} · set {set}/{sets}",
+    "rest": "rest {time}",
+    "done": "finished",
+    "follow": "Go too",
+    "hostEnded": "The host finished the session.",
+    "invite": {
+      "title": "{name} is starting {what}. Training with them?",
+      "body": "You do the same {count} exercises, with your own weights. Each of you logs your own sets.",
+      "joinCta": "Train with {name}",
+      "skipCta": "Not today"
     }
   }
 }

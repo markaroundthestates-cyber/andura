@@ -726,7 +726,7 @@
     "with": {
       "label": "Cu cine te antrenezi azi?",
       "alone": "Singur",
-      "hint": "Cand salvezi sesiunea, o primeste si {names}."
+      "hint": "La Start, {names} primeste antrenamentul tau si il face cu greutatile lui."
     }
   },
   "readinessVerdict": {
@@ -2888,6 +2888,22 @@
     },
     "history": {
       "with": "Cu {name}"
+    }
+  },
+  "live": {
+    "altReason": "Alternativa pentru tine",
+    "previewWith": "Antrenamentul lui {name}, cu greutatile tale",
+    "yourTurn": "Randul tau",
+    "at": "{exercise} · seria {set}/{sets}",
+    "rest": "pauza {time}",
+    "done": "a terminat",
+    "follow": "Treci si tu",
+    "hostEnded": "Gazda a terminat sesiunea.",
+    "invite": {
+      "title": "{name} incepe {what}. Te antrenezi cu el?",
+      "body": "Faci aceleasi {count} exercitii, cu greutatile tale. Fiecare isi logheaza seriile lui.",
+      "joinCta": "Hai cu {name}",
+      "skipCta": "Nu azi"
     }
   }
 }

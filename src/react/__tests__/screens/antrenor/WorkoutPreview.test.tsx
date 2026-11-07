@@ -45,6 +45,7 @@ function renderPreview(
     painContext?: { region: string; intensity: 1 | 2 | 3 };
     overrideKind?: 'easier' | 'harder' | 'different-muscle';
     differentMuscleCluster?: string;
+    livePlan?: import('../../../stores/workoutStore').LivePlan;
   }
 ) {
   return render(
@@ -725,5 +726,40 @@ describe('WorkoutPreview — exercise list (T4)', () => {
       expect(list.textContent).toMatch(/24\s*kg\/hand/i); // carry load per hand
       expect(list.textContent).not.toMatch(/0\s*reps/i);  // no phantom reps
     });
+  });
+});
+
+// Founder 2026-11-07 — training together: a friend who joined runs the host's plan
+// (prescribed for him); Start reports into the host's live session. A host with
+// friends picked for today publishes his at Start.
+describe('WorkoutPreview — training together', () => {
+  const LIVE = { host: 'daniel', hostName: 'Daniel', title: 'Workout', startedAt: 123, exercises: [{ engineName: 'Leg Press', sets: 3 }] };
+  const PLAN = { workoutTitle: 'Workout', exerciseCount: 1, estimatedDuration: 20, intensityMod: 'normal' as const, volumeKg: 0, exercises: [{ id: 'lp', name: 'Presa', engineName: 'Leg Press', sets: 3, targetReps: 10, targetKg: 70, restSec: 90 }] };
+  beforeEach(() => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockClear();
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(PLAN as never);
+    useWorkoutStore.setState({ liveSession: null, sessionTrainWith: [], sessionPlanOptions: null });
+  });
+
+  it("a joined friend's preview composes the host's plan and Start joins the live session", async () => {
+    renderPreview({ livePlan: LIVE });
+    await waitFor(() => expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith({ livePlan: LIVE }));
+    expect(screen.getByTestId('preview-live-with').textContent).toContain('Daniel');
+    fireEvent.click(await screen.findByTestId('preview-start-cta'));
+    expect(useWorkoutStore.getState().liveSession).toEqual({ host: 'daniel', startedAt: 123 });
+    expect(useWorkoutStore.getState().sessionPlanOptions).toEqual({ livePlan: LIVE });
+  });
+
+  it('a host with a friend picked publishes the session at Start', async () => {
+    const live = await import('../../../lib/liveSession');
+    const start = vi.spyOn(live, 'startLiveSession').mockResolvedValue(true);
+    useWorkoutStore.setState({ sessionTrainWith: ['friend'] });
+    renderPreview();
+    await waitFor(() => expect(engineWrappers.getTodayWorkout).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByTestId('preview-start-cta')).toBeInTheDocument());
+    await new Promise((r) => setTimeout(r, 0));
+    fireEvent.click(screen.getByTestId('preview-start-cta'));
+    expect(start).toHaveBeenCalledWith(expect.objectContaining({ workoutTitle: 'Workout' }), ['friend']);
+    start.mockRestore();
   });
 });

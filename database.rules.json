@@ -24,6 +24,22 @@
         }
       }
     },
+    "liveSessions": {
+      "$hostUid": {
+        ".read": "auth !== null && (auth.uid === $hostUid || data.child('members').child(auth.uid).exists())",
+        ".write": "auth !== null && auth.uid === $hostUid",
+        "members": {
+          "$m": {
+            ".validate": "root.child('users').child($hostUid).child('partners').child($m).exists()"
+          }
+        },
+        "beats": {
+          "$uid": {
+            ".write": "auth !== null && auth.uid === $uid && root.child('liveSessions').child($hostUid).child('members').child($uid).exists()"
+          }
+        }
+      }
+    },
     "partnerInbox": {
       "$uid": {
         ".read": "auth !== null && auth.uid === $uid",

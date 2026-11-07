@@ -396,3 +396,6 @@ export async function dismissPartnerSession(msg: PartnerSessionMessage): Promise
   if (!uid) return false;
   return (await rest(`partnerInbox/${uid}/${msg.id}`, 'DELETE')).ok;
 }
+
+// The live training session (liveSession.ts) talks to the same RTDB the same way.
+export { rest as partnerRest, myUid as partnerUid };

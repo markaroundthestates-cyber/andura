@@ -63,6 +63,7 @@ import { flattenSessionsToRecoveryLogs } from '../../engine/schedule/scheduleAda
 import { laggingGroupsFromLogs } from '../../engine/schedule/scheduleAdapter/volumeAdaptation.js';
 import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
 import { useWorkoutStore } from '../stores/workoutStore';
+import type { SessionPlanOptions } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
 import { useAerobicStore } from '../stores/aerobicStore';
@@ -350,9 +351,15 @@ export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
  * throws (fail-silent).
  */
 export async function getTodayWorkout(
-  options: { differentMuscle?: boolean; differentMuscleCluster?: string } = {},
+  options: SessionPlanOptions = {},
 ): Promise<PlannedWorkoutOutput | null> {
   try {
+    // Training together: a friend's session runs the host's exercises, prescribed
+    // for this user (lazy module — only a joined live session loads it).
+    if (options.livePlan) {
+      const live = options.livePlan;
+      return await cachedPlan(`live|${JSON.stringify(live)}`, async () => (await import('./livePlan')).composeLivePlan(live));
+    }
     // "Different group" ephemeral override (ScheduleOverride "Alta grupa") threaded
     // through. Default {} → byte-identical to the prior no-arg behavior for every
     // other consumer (Antrenor / Workout / PostRpe / SessionPill / coachDirector).

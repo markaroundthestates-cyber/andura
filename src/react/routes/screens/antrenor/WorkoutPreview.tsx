@@ -30,7 +30,8 @@ import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggre
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
-import type { SessionPlanOptions } from '../../../stores/workoutStore';
+import type { LivePlan, SessionPlanOptions } from '../../../stores/workoutStore';
+import { startLiveSession } from '../../../lib/liveSession';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
@@ -51,6 +52,9 @@ interface WorkoutPreviewLocationState {
   // WP-5 moat — busy coarse equipment types from EquipmentSwap. The preview
   // recomposes the session with these temporarily unavailable → named swaps.
   equipmentContext?: { busyCoarseTypes?: string[] };
+  // Training together (founder 2026-11-07): a friend's live session he joined —
+  // the host's exercises, prescribed for this user (livePlan.ts).
+  livePlan?: LivePlan;
 }
 
 interface IntensityBanner {
@@ -148,6 +152,7 @@ export function WorkoutPreview(): JSX.Element {
     // The user's own group pick from the override screen (founder 2026-08-28).
     // Absent → the engine's freshest-first auto-pick, exactly as before.
     differentMuscleCluster,
+    livePlan,
   } = (location.state as WorkoutPreviewLocationState | null) ?? {};
   const intensityMod: IntensityMod =
     stateIntensityMod ?? sessionEnergy?.intensityMod ?? 'normal';
@@ -156,14 +161,16 @@ export function WorkoutPreview(): JSX.Element {
   const wantDifferentMuscle = overrideKind === 'different-muscle';
   // ONE options object for the preview compose AND the started session (Start
   // stores it) — Workout re-derives the plan with it, so it gets this exact plan.
-  const planOptions = useMemo<SessionPlanOptions | null>(() => (wantDifferentMuscle
+  const planOptions = useMemo<SessionPlanOptions | null>(() => (livePlan
+    ? { livePlan }
+    : wantDifferentMuscle
     ? {
         differentMuscle: true,
         ...(typeof differentMuscleCluster === 'string' && differentMuscleCluster.length > 0
           ? { differentMuscleCluster }
           : {}),
       }
-    : null), [wantDifferentMuscle, differentMuscleCluster]);
+    : null), [livePlan, wantDifferentMuscle, differentMuscleCluster]);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
   // while pipeline pending; preview still renders cu hardcoded fallback values
@@ -262,6 +269,11 @@ export function WorkoutPreview(): JSX.Element {
     // aplica modifierul la target-uri ca adaptarea afisata aici sa fie reala.
     setSessionContext({ intensityMod, painContext: painContext ?? null, ...(userIntensity ? { userIntensity } : {}) });
     setSessionPlanOptions(planOptions);
+    // Training together: a joined friend's session reports into the host's live
+    // session; a host with friends picked for today publishes his.
+    const trainWith = useWorkoutStore.getState().sessionTrainWith;
+    if (livePlan) useWorkoutStore.getState().setLiveSession({ host: livePlan.host, startedAt: livePlan.startedAt });
+    else if (workout && trainWith.length > 0) void startLiveSession(workout, trainWith);
     navigate(gotoPath('workout'));
   }
 
@@ -342,6 +354,11 @@ export function WorkoutPreview(): JSX.Element {
         {/* Founder 2026-10-14 ("mai repede sa imi spuna cinstit"): a budget longer than
             the session is not padded with volume (volume follows recovery + phase) —
             say so instead of silently ignoring the answer. */}
+        {livePlan && (
+          <p className="text-sm text-ink2 mt-2" data-testid="preview-live-with">
+            {t('live.previewWith', { name: livePlan.hostName })}
+          </p>
+        )}
         {!hasNoPlan && !loading && timeBudgetMin !== null && duration < timeBudgetMin - 5 && (
           <p className="text-sm text-ink2 mt-2" data-testid="preview-budget-honest">
             {t('workout.preview.budgetHonest', { budget: timeBudgetMin, n: duration })}
