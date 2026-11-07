@@ -105,3 +105,24 @@ describe('TimeBudget — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
   });
 });
+
+// Founder 2026-11-07 ("today we train together"): with training friends, the step
+// asks who you train with today; the pick rides with the session.
+describe('TimeBudget — "Who are you training with today?"', () => {
+  it('hidden without friends; with one, "Alone" by default and a tap picks the friend', () => {
+    localStorage.removeItem('wv2-partner');
+    useWorkoutStore.setState({ sessionTrainWith: [] });
+    const first = renderTimeBudget();
+    expect(screen.queryByTestId('with-chips')).not.toBeInTheDocument();
+    first.unmount();
+    localStorage.setItem('wv2-partner', JSON.stringify([{ uid: 'friend', name: 'Sade', since: 1 }]));
+    renderTimeBudget();
+    expect(screen.getByTestId('with-chip-alone').getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByTestId('with-chip-friend'));
+    expect(useWorkoutStore.getState().sessionTrainWith).toEqual(['friend']);
+    expect(screen.getByTestId('with-hint').textContent).toContain('Sade');
+    fireEvent.click(screen.getByTestId('with-chip-alone'));
+    expect(useWorkoutStore.getState().sessionTrainWith).toEqual([]);
+    localStorage.removeItem('wv2-partner');
+  });
+});

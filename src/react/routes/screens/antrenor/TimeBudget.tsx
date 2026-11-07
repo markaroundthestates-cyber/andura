@@ -24,6 +24,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { t } from '../../../../i18n/index.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
+import { cachedFriends, partnerEnabled } from '../../../lib/partner';
 
 // Optional pre-session TIME budget chips. Skippable per ADR 025 — leaving
 // "No limit" (null, the default) keeps the persona-derived session byte-identical.
@@ -38,6 +39,10 @@ export function TimeBudget(): JSX.Element {
   const bodyweightOnly = useWorkoutStore((s) => s.sessionBodyweightOnly);
   const setBodyweightOnly = useWorkoutStore((s) => s.setSessionBodyweightOnly);
   const showWhere = isEnabled('dp_vacation_no_station_v1');
+  const trainWith = useWorkoutStore((s) => s.sessionTrainWith);
+  const setTrainWith = useWorkoutStore((s) => s.setSessionTrainWith);
+  const friends = partnerEnabled() ? cachedFriends() : [];
+  const together = friends.filter((f) => trainWith.includes(f.uid));
 
   function handleContinue(): void {
     // sessionTimeBudgetMin is already committed to the store on each chip tap, so
@@ -126,6 +131,56 @@ export function TimeBudget(): JSX.Element {
             </div>
             {bodyweightOnly && (
               <p className="text-sm text-ink2 mt-3" data-testid="where-nogym-hint">{t('timeBudget.where.noGymHint')}</p>
+            )}
+          </>
+        )}
+        {/* Training friends (founder 2026-11-07 "today we train together"): who is
+            training with you today — the saved session goes to them on its own. */}
+        {friends.length > 0 && (
+          <>
+            <h3 className="text-base font-semibold text-ink mt-8 mb-3">{t('timeBudget.with.label')}</h3>
+            <div className="flex flex-wrap gap-2" data-testid="with-chips">
+              <button
+                type="button"
+                onClick={() => setTrainWith([])}
+                data-testid="with-chip-alone"
+                data-selected={trainWith.length === 0}
+                aria-pressed={trainWith.length === 0}
+                className="rounded-full px-4 py-2 text-sm font-semibold border transition"
+                style={
+                  trainWith.length === 0
+                    ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
+                    : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
+                }
+              >
+                {t('timeBudget.with.alone')}
+              </button>
+              {friends.map((f) => {
+                const on = trainWith.includes(f.uid);
+                return (
+                  <button
+                    key={f.uid}
+                    type="button"
+                    onClick={() => setTrainWith(on ? trainWith.filter((u) => u !== f.uid) : [...trainWith, f.uid])}
+                    data-testid={`with-chip-${f.uid}`}
+                    data-selected={on}
+                    aria-pressed={on}
+                    className="rounded-full px-4 py-2 text-sm font-semibold border transition"
+                    style={
+                  on
+                    ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
+                    : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
+                }
+                  >
+                    {f.name || t('partner.fallbackName')}
+                  </button>
+                );
+              })}
+            </div>
+            {together.length > 0 && (
+              <p className="text-sm text-ink2 mt-3" data-testid="with-hint">
+                {t('timeBudget.with.hint', { names: together.map((f) => f.name || t('partner.fallbackName')).join(', ') })}
+              </p>
             )}
           </>
         )}

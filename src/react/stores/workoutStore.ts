@@ -136,6 +136,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       sessionEnergy: null,
       sessionTimeBudgetMin: null,
       sessionBodyweightOnly: false,
+      sessionTrainWith: [],
       refusalTriedByEx: {},
       performedExercises: {},
       droppedExercises: {},
@@ -241,6 +242,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionEnergy: null,
           sessionTimeBudgetMin: null,
           sessionBodyweightOnly: false,
+          sessionTrainWith: [],
           refusalTriedByEx: {},
           performedExercises: {},
       droppedExercises: {},
@@ -286,6 +288,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             sessionEnergy: null,
             sessionTimeBudgetMin: null,
             sessionBodyweightOnly: false,
+            sessionTrainWith: [],
             refusalTriedByEx: {},
             performedExercises: {},
       droppedExercises: {},
@@ -579,6 +582,10 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // needs nothing — floor, wall, a chair. Same lifecycle as the time budget.
       setSessionBodyweightOnly: (on) => set({ sessionBodyweightOnly: on }),
 
+      // "Cu cine te antrenezi azi?" (TimeBudget step, founder 2026-11-07 "today we
+      // train together"): the friends this session goes to when it is saved.
+      setSessionTrainWith: (uids) => set({ sessionTrainWith: uids }),
+
       // U-05 (HIGH) — day-boundary streak. Aceeasi zi calendaristica = no-op
       // (2 sesiuni/zi NU = 2 zile), ziua urmatoare = +1, gap > 1 zi = reset 1.
       // `now` injectabil pentru test determinism. lastStreakDate persistat.
@@ -635,6 +642,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionEnergy: null,
           sessionTimeBudgetMin: null,
           sessionBodyweightOnly: false,
+          sessionTrainWith: [],
           refusalTriedByEx: {},
           performedExercises: {},
           droppedExercises: {},
@@ -701,6 +709,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         sessionPlanOptions: state.sessionPlanOptions,
         sessionTimeBudgetMin: state.sessionTimeBudgetMin,
         sessionBodyweightOnly: state.sessionBodyweightOnly,
+        sessionTrainWith: state.sessionTrainWith,
         sessionContext: state.sessionContext,
       }) as Partial<WorkoutState & WorkoutActions>,
       // APP-LIFECYCLE-01 — discard a STALE in-progress session on rehydrate so a
@@ -740,6 +749,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           merged.sessionPlanOptions = null;
           merged.sessionTimeBudgetMin = null;
           merged.sessionBodyweightOnly = false;
+          merged.sessionTrainWith = [];
           merged.sessionContext = null;
         }
         return merged;

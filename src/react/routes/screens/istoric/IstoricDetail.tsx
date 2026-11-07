@@ -20,7 +20,7 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
 import { sessionDisplayTitle } from '../../../lib/sessionTitle';
 import { Kicker } from '../../../components/pulse/Kicker';
-import { SendToPartnerButton } from '../../../components/SendToPartnerButton';
+import { SendToFriendsButtons } from '../../../components/SendToFriendsButtons';
 import { t, getCurrentLocale } from '../../../../i18n/index.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
 
@@ -380,7 +380,7 @@ export function IstoricDetail(): JSX.Element {
         </p>
       )}
 
-      <SendToPartnerButton session={session} className="mt-8" />
+      <SendToFriendsButtons session={session} className="mt-8" />
 
       {/* Delete this session (mislogged workout) — two-tap inline confirm. */}
       <div className="mt-8" data-testid="istoric-detail-delete">

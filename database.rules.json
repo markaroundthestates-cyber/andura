@@ -14,18 +14,21 @@
         }
       }
     },
-    "partnerInvites": {
-      "$code": {
-        ".read": "auth !== null",
-        ".write": "auth !== null && (!data.exists() || data.child('uid').val() === auth.uid) && (!newData.exists() || newData.child('uid').val() === auth.uid)",
-        ".validate": "$code.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['uid', 'name', 'ts'])"
+    "friendRequests": {
+      "$emailKey": {
+        ".read": "auth !== null && auth.token.email.toLowerCase().replace('.', ',') === $emailKey",
+        "$fromUid": {
+          ".read": "auth !== null && auth.uid === $fromUid",
+          ".write": "auth !== null && (auth.uid === $fromUid || auth.token.email.toLowerCase().replace('.', ',') === $emailKey)",
+          ".validate": "newData.hasChildren(['name', 'ts']) && newData.child('name').isString() && newData.child('name').val().length <= 40"
+        }
       }
     },
     "partnerInbox": {
       "$uid": {
         ".read": "auth !== null && auth.uid === $uid",
         "$msgId": {
-          ".write": "auth !== null && (auth.uid === $uid || (!data.exists() && newData.child('from').val() === auth.uid && (root.child('users').child($uid).child('partners').child(auth.uid).exists() || (newData.child('type').val() === 'join' && newData.child('code').isString() && root.child('partnerInvites').child(newData.child('code').val()).child('uid').val() === $uid && root.child('partnerInvites').child(newData.child('code').val()).child('ts').val() > now - 86400000))))",
+          ".write": "auth !== null && (auth.uid === $uid || (!data.exists() && newData.child('from').val() === auth.uid && (root.child('users').child($uid).child('partners').child(auth.uid).exists() || (newData.child('type').val() === 'accept' && root.child('friendRequests').child(auth.token.email.toLowerCase().replace('.', ',')).child($uid).exists()))))",
           ".validate": "newData.hasChildren(['type', 'from', 'ts'])"
         }
       }

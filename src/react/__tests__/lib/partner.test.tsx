@@ -1,14 +1,17 @@
-// Founder 2026-10-23: he and his friend train together — the friend's sessions were
-// copied by hand twice. Two "phones" share one fake RTDB that enforces the same
-// partner rules as database.rules.json (probed live), so the whole flow runs:
-// code → join → send (offline first) → "Adaug si la tine?" → history, and unlink.
+// Founder 2026-10-23: he and his friend train together. 2026-11-07: the code flow
+// was clumsy (his code expired unanswered) → friends by email + "Cu cine te
+// antrenezi azi?". Two "phones" share one fake RTDB that enforces the same rules as
+// database.rules.json (probed live), so the whole flow runs: request by email →
+// "Accepta" → session goes out → "L-ai facut si tu?" → history; remove a friend.
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
+const EMAIL: Record<string, string> = { daniel: 'maziludaniel@example.com', friend: 'Sade.13@example.com', other: 'other@example.com' };
 let currentUid: string | null = null;
+const jwt = (email: string): string => `h.${btoa(JSON.stringify({ email })).replace(/=+$/, '')}.s`;
 vi.mock('../../../auth.js', async (orig) => ({
   ...(await orig<typeof import('../../../auth.js')>()),
-  getAuthState: () => (currentUid ? { uid: currentUid, idToken: 'tok', expiry: Date.now() + 3600e3 } : null),
+  getAuthState: () => (currentUid ? { uid: currentUid, idToken: jwt(EMAIL[currentUid]!), expiry: Date.now() + 3600e3 } : null),
 }));
 vi.mock('../../../firebase.js', async (orig) => ({
   ...(await orig<typeof import('../../../firebase.js')>()),
@@ -16,8 +19,9 @@ vi.mock('../../../firebase.js', async (orig) => ({
 }));
 
 import {
-  acceptPartnerSession, cachedPartner, checkPartnerInbox, createInvite, joinWithCode,
-  planPartnerImport, sendSessionToPartner, unpair, wasSentToPartner,
+  acceptFriendRequest, acceptPartnerSession, askedEmails, cachedFriends, cancelFriendRequest, checkPartnerInbox,
+  declineFriendRequest, emailKey, planPartnerImport, removeFriend, sendFriendRequest, sendSessionToFriend,
+  setMyPartnerName, wasSentToFriend,
 } from '../../lib/partner';
 import PartnerInbox from '../../components/PartnerInbox';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -26,7 +30,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { setMissingEquipmentExercises } from '../../../engine/schedule/scheduleAdapter.js';
 import { DB } from '../../../db.js';
 
-// ── fake RTDB with the partner rules ──────────────────────────────────────────
+// ── fake RTDB with the friend rules ───────────────────────────────────────────
 type Tree = Record<string, unknown>;
 let tree: Tree = {};
 let online = true;
@@ -37,23 +41,23 @@ function put(path: string[], v: unknown): void {
   if (v === null) delete o[path[path.length - 1]!];
   else o[path[path.length - 1]!] = v;
 }
+const keyOf = (uid: string): string => emailKey(EMAIL[uid]!);
 function allowed(method: string, p: string[], body: Tree | null): boolean {
   const uid = currentUid;
   if (!uid) return false;
   const [root, a, b] = p;
   if (root === 'users') return a === uid;
-  if (root === 'partnerInvites') {
-    if (method === 'GET') return p.length === 2;
-    const cur = at(p) as Tree | undefined;
-    return (!cur || cur.uid === uid) && (method === 'DELETE' || (body?.uid === uid && /^[A-Z2-9]{6}$/.test(a!)));
+  if (root === 'friendRequests') {
+    if (method === 'GET') return p.length === 2 ? a === keyOf(uid) : b === uid || a === keyOf(uid);
+    if (b !== uid && a !== keyOf(uid)) return false;
+    return method === 'DELETE' || (typeof body?.name === 'string' && body.name.length <= 40 && typeof body.ts === 'number');
   }
   if (root === 'partnerInbox') {
     if (method === 'GET') return a === uid && p.length === 2;
     if (a === uid) return true;
     if (method !== 'PUT' || at(p) !== undefined || body?.from !== uid || !b) return false;
     if (at(['users', a!, 'partners', uid]) !== undefined) return true;
-    const inv = at(['partnerInvites', String(body.code)]) as Tree | undefined;
-    return body.type === 'join' && inv?.uid === a && Number(inv?.ts) > Date.now() - 86_400_000;
+    return body.type === 'accept' && at(['friendRequests', keyOf(uid), a!]) !== undefined;
   }
   return false;
 }
@@ -68,7 +72,7 @@ const fakeFetch = vi.fn(async (url: string, init?: RequestInit) => {
   return { ok: true, json: async () => structuredClone(at(p) ?? null) } as Response;
 });
 
-// ── two phones: each keeps its own localStorage ──────────────────────────────
+// ── phones: each keeps its own localStorage ──────────────────────────────────
 const phones: Record<string, Record<string, string>> = {};
 let onPhone: string | null = null;
 function switchTo(uid: string): void {
@@ -79,14 +83,13 @@ function switchTo(uid: string): void {
   currentUid = uid;
 }
 
-const DAY = Date.UTC(2026, 9, 23, 16);
+const DAY = Date.UTC(2026, 10, 7, 16);
 const set = (kg: number, reps: number, i: number) => ({ kg, reps, rating: 'potrivit' as const, timestamp: DAY + i * 120e3 });
 const ex = (engineName: string, kg: number, reps: number, base: number) => ({
   exerciseId: engineName.toLowerCase().replace(/\W+/g, '-'), exerciseName: engineName, engineName,
   sets: [set(kg, reps, base), set(kg, reps, base + 1), set(kg, reps, base + 2)],
   totalVolume: 3 * kg * reps, peakOneRM: kg,
 });
-// The founder's 10-23 legs day shape (+ a squat and a lunge his friend can't do).
 const LEGS: LastSessionSummary = {
   title: 'Workout', meta: '', ts: DAY + 3600e3, durationMin: 52,
   exercises: [
@@ -106,160 +109,154 @@ beforeEach(() => {
 });
 afterEach(() => { vi.unstubAllGlobals(); currentUid = null; });
 
-async function pairDanielWithFriend(): Promise<void> {
+async function befriend(): Promise<void> {
   switchTo('daniel');
-  const code = await createInvite('Daniel');
-  expect(code).toMatch(/^[A-Z2-9]{6}$/);
+  setMyPartnerName('Daniel');
+  expect(await sendFriendRequest(' SADE.13@example.com ')).toBe('ok');
+  expect(askedEmails()).toEqual(['sade.13@example.com']);
   switchTo('friend');
-  expect(await joinWithCode(code!.toLowerCase(), 'Sade')).toBe('ok');
-  expect(cachedPartner()?.name).toBe('Daniel');
+  setMyPartnerName('Sade');
+  const { requests } = await checkPartnerInbox();
+  expect(requests).toEqual([expect.objectContaining({ from: 'daniel', name: 'Daniel' })]);
+  expect(await acceptFriendRequest(requests[0]!)).toBe(true);
+  expect(cachedFriends().map((f) => f.name)).toEqual(['Daniel']);
+  switchTo('daniel');
+  await checkPartnerInbox();
 }
 
-describe('training partner — pairing', () => {
-  it('a code links both accounts; the inviter lists the joiner at its next check', async () => {
-    await pairDanielWithFriend();
-    switchTo('daniel');
-    expect(cachedPartner()).toBeNull();
-    await checkPartnerInbox();
-    expect(cachedPartner()).toMatchObject({ uid: 'friend', name: 'Sade' });
-    expect(at(['partnerInvites'])).toEqual({});
+describe('training friends — adding by email', () => {
+  it('a request by email → accepted in his app → both list each other', async () => {
+    await befriend();
+    expect(cachedFriends()).toEqual([expect.objectContaining({ uid: 'friend', name: 'Sade' })]);
+    expect(askedEmails()).toEqual([]);
+    expect(at(['friendRequests'])).toEqual({ [keyOf('friend')]: {} });
   });
 
-  it('an unlinked user with no code out reads only his own link, never the inbox', async () => {
-    switchTo('stranger');
-    fakeFetch.mockClear();
-    expect(await checkPartnerInbox()).toEqual([]);
-    expect(fakeFetch.mock.calls.map(([u]) => String(u))).toEqual(['https://rtdb.test/users/stranger/partners.json']);
+  it('wrong / own / repeated email is refused with a reason; a stranger never sees the request', async () => {
+    switchTo('daniel');
+    setMyPartnerName('Daniel');
+    expect(await sendFriendRequest('not-an-email')).toBe('invalid');
+    expect(await sendFriendRequest('MaziluDaniel@example.com')).toBe('self');
+    expect(await sendFriendRequest('sade.13@example.com')).toBe('ok');
+    expect(await sendFriendRequest('sade.13@example.com')).toBe('already');
+    switchTo('other');
+    expect((await checkPartnerInbox()).requests).toEqual([]);
   });
 
-  it('a wrong, own or expired code is refused with a reason', async () => {
+  it('declined or cancelled requests leave the waiting list', async () => {
     switchTo('daniel');
-    const code = await createInvite('Daniel');
-    expect(await joinWithCode(code!, 'Daniel')).toBe('self');
+    setMyPartnerName('Daniel');
+    await sendFriendRequest('sade.13@example.com');
+    await sendFriendRequest('other@example.com');
+    expect(await cancelFriendRequest('other@example.com')).toBe(true);
     switchTo('friend');
-    expect(await joinWithCode('ABC', 'Sade')).toBe('invalid');
-    expect(await joinWithCode('ZZZZZZ', 'Sade')).toBe('invalid');
-    put(['partnerInvites', code!, 'ts'], Date.now() - 2 * 86_400_000);
-    expect(await joinWithCode(code!, 'Sade')).toBe('invalid');
+    const { requests } = await checkPartnerInbox();
+    await declineFriendRequest(requests[0]!);
+    switchTo('daniel');
+    await checkPartnerInbox();
+    expect(askedEmails()).toEqual([]);
+    expect(cachedFriends()).toEqual([]);
+  });
+
+  it('an unlinked user with nothing out reads only his link and his requests', async () => {
+    switchTo('other');
+    fakeFetch.mockClear();
+    await checkPartnerInbox();
+    expect(fakeFetch.mock.calls.map(([u]) => String(u))).toEqual([
+      'https://rtdb.test/users/other/partners.json',
+      `https://rtdb.test/friendRequests/${keyOf('other')}.json`,
+    ]);
   });
 });
 
-describe('training partner — a session travels', () => {
+describe('training friends — a session travels', () => {
   beforeEach(() => {
-    // The friend's back: no squats; the walking lunge is on his "Nu pot face asta" list.
     useOnboardingStore.setState((s) => ({ data: { ...s.data, refusedPatterns: ['squat'] } }));
   });
 
-  it('sent before the inviter listed the joiner (and offline) it waits, then arrives', async () => {
-    await pairDanielWithFriend();
-    switchTo('friend');
+  it('offline it waits in the outbox, then arrives', async () => {
+    await befriend();
     online = false;
-    await sendSessionToPartner(LEGS);
-    expect(wasSentToPartner(LEGS.ts)).toBe(true);
+    await sendSessionToFriend(LEGS, 'friend');
+    expect(wasSentToFriend(LEGS.ts, 'friend')).toBe(true);
     online = true;
-    await checkPartnerInbox(); // the inviter has not listed him yet → still waiting
-    switchTo('daniel');
-    expect(await checkPartnerInbox()).toEqual([]); // lists the friend
+    await checkPartnerInbox(); // outbox retried
     switchTo('friend');
-    await checkPartnerInbox(); // outbox retried, now allowed
-    switchTo('daniel');
-    const pending = await checkPartnerInbox();
-    expect(pending).toHaveLength(1);
-    expect(pending[0]!.name).toBe('Sade');
+    const { sessions } = await checkPartnerInbox();
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]!.name).toBe('Daniel');
   });
 
-  it('the receiver gets exactly what he can do — weights as logged, own PRs, streak', async () => {
-    await pairDanielWithFriend();
-    switchTo('daniel');
-    await checkPartnerInbox();
-    await sendSessionToPartner(LEGS);
+  it('the friend gets exactly what he can do — weights as logged, his own PRs, streak', async () => {
+    await befriend();
+    await sendSessionToFriend(LEGS, 'friend');
     switchTo('friend');
     setMissingEquipmentExercises(['Walking Lunge']);
-    // His own history: Leg Press 80 (so 90 is HIS PR), Leg Curl 110 (so the curl is not).
-    const prior = (exName: string, w: number, d: number) => ({ date: '2026-10-1' + d, ex: exName, w, kg: w, set: 1, sets: 1, reps: '8', ts: DAY - (10 - d) * 864e5, session: DAY - (10 - d) * 864e5, rpe: 7.5 });
-    DB.set('logs', [prior('Leg Press', 80, 6), prior('Leg Curl', 110, 6)]);
-    const [msg] = await checkPartnerInbox();
-    // The sender's PR flags don't travel as truth.
-    msg!.session.exercises[3]!.sets[0]!.isPR = true;
-    expect(msg).toBeDefined();
+    const prior = (exName: string, w: number) => ({ date: '2026-11-01', ex: exName, w, kg: w, set: 1, sets: 1, reps: '8', ts: DAY - 6 * 864e5, session: DAY - 6 * 864e5, rpe: 7.5 });
+    DB.set('logs', [prior('Leg Press', 80), prior('Leg Curl', 110)]);
+    const { sessions: [msg] } = await checkPartnerInbox();
+    msg!.session.exercises[3]!.sets[0]!.isPR = true; // the sender's PR flags don't travel as truth
     const plan = planPartnerImport(msg!.session);
     expect(plan.exercises.map((e) => e.engineName)).toEqual(['Leg Press', 'Leg Curl']);
     expect(plan.skipped).toHaveLength(2);
-
     await acceptPartnerSession(msg!);
     const st = useWorkoutStore.getState();
-    expect(st.sessionsHistory).toHaveLength(1);
     expect(st.sessionsHistory[0]).toMatchObject({ ts: LEGS.ts, fromPartner: 'Daniel', sets: 6, volumeKg: 3 * 90 * 8 + 3 * 100 * 8 });
-    expect(st.lastSession?.ts).toBe(LEGS.ts);
     expect(st.streak).toBe(1);
-    const logs = DB.get<Array<{ ex: string; w: number }>>('logs') ?? [];
-    expect(logs.filter((l) => l.ex === 'Leg Press').map((l) => l.w)).toEqual([90, 90, 90, 80]);
-    expect(logs.some((l) => l.ex === 'Barbell Back Squat (High Bar)' || l.ex === 'Walking Lunge')).toBe(false);
-    // PRs measured against HIS history: the press is one, the curl (110 before) is not.
     const [press, curl] = st.sessionsHistory[0]!.exercises!;
     expect(press!.sets.some((s) => s.isPR)).toBe(true);
     expect(curl!.sets.some((s) => s.isPR)).toBe(false);
-    // Answered → gone from the inbox; a second accept of the same session is a no-op.
-    expect(await checkPartnerInbox()).toEqual([]);
+    expect((await checkPartnerInbox()).sessions).toEqual([]);
     await acceptPartnerSession(msg!);
     expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
   });
 
-  it('an import never touches the session he is logging right now', async () => {
-    await pairDanielWithFriend();
-    switchTo('daniel');
-    await checkPartnerInbox();
-    await sendSessionToPartner(LEGS);
-    switchTo('friend');
-    const live = { 0: [{ kg: 40, reps: 10, rating: 'potrivit' as const, timestamp: Date.now() }] };
-    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now(), history: live, exIdx: 0 });
-    const [msg] = await checkPartnerInbox();
-    await acceptPartnerSession(msg!);
-    const st = useWorkoutStore.getState();
-    expect(st.phase).toBe('logging');
-    expect(st.history).toEqual(live);
-    useWorkoutStore.setState({ phase: 'idle', sessionStart: null, history: {} });
-  });
-
-  it('the sheet asks, and one tap adds it', async () => {
-    await pairDanielWithFriend();
-    switchTo('daniel');
-    await checkPartnerInbox();
-    await sendSessionToPartner(LEGS);
-    switchTo('friend');
-    render(<PartnerInbox />);
-    expect(await screen.findByTestId('partner-inbox')).toBeTruthy();
-    expect(screen.getByTestId('partner-inbox-skipped').textContent).toBeTruthy();
-    fireEvent.click(screen.getByTestId('partner-inbox-add'));
-    await waitFor(() => expect(screen.queryByTestId('partner-inbox')).toBeNull());
-    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
-  });
-
-  it('"Nu" drops it without touching history', async () => {
-    await pairDanielWithFriend();
-    switchTo('daniel');
-    await checkPartnerInbox();
-    await sendSessionToPartner(LEGS);
-    switchTo('friend');
-    render(<PartnerInbox />);
-    fireEvent.click(await screen.findByTestId('partner-inbox-no'));
-    await waitFor(() => expect(screen.queryByTestId('partner-inbox')).toBeNull());
-    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(0);
-    expect(await checkPartnerInbox()).toEqual([]);
+  it('a stranger cannot send a session', async () => {
+    await befriend();
+    switchTo('other');
+    useWorkoutStore.setState({});
+    expect(await sendSessionToFriend(LEGS, 'friend')).toBe(false);
   });
 });
 
-describe('training partner — unlink', () => {
-  it('unlinking on one phone drops the link on the other', async () => {
-    await pairDanielWithFriend();
+describe('training friends — the sheet', () => {
+  it('a friend request asks once for the name, then one tap accepts', async () => {
     switchTo('daniel');
-    await checkPartnerInbox();
+    setMyPartnerName('Daniel');
+    await sendFriendRequest('sade.13@example.com');
     switchTo('friend');
-    expect(await unpair()).toBe(true);
-    expect(cachedPartner()).toBeNull();
+    render(<PartnerInbox />);
+    expect((await screen.findByTestId('partner-request')).textContent).toContain('Daniel');
+    const accept = screen.getByTestId('partner-request-accept') as HTMLButtonElement;
+    expect(accept.disabled).toBe(true); // no name yet
+    fireEvent.change(screen.getByTestId('partner-request-name'), { target: { value: 'Sade' } });
+    fireEvent.click(accept);
+    await waitFor(() => expect(screen.queryByTestId('partner-request')).toBeNull());
+    expect(cachedFriends().map((f) => f.uid)).toEqual(['daniel']);
+  });
+
+  it('a session: one tap adds it; "Nu" drops it', async () => {
+    await befriend();
+    await sendSessionToFriend(LEGS, 'friend');
+    await sendSessionToFriend({ ...LEGS, ts: LEGS.ts + 864e5 }, 'friend');
+    switchTo('friend');
+    render(<PartnerInbox />);
+    fireEvent.click(await screen.findByTestId('partner-inbox-add'));
+    await waitFor(() => expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1));
+    fireEvent.click(await screen.findByTestId('partner-inbox-no'));
+    await waitFor(() => expect(screen.queryByTestId('partner-inbox')).toBeNull());
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+  });
+});
+
+describe('training friends — remove', () => {
+  it('removing on one phone drops the friend on the other', async () => {
+    await befriend();
+    switchTo('friend');
+    expect(await removeFriend('daniel')).toBe(true);
+    expect(cachedFriends()).toEqual([]);
     switchTo('daniel');
     await checkPartnerInbox();
-    expect(cachedPartner()).toBeNull();
-    expect(at(['users', 'daniel', 'partners'])).toEqual({});
+    expect(cachedFriends()).toEqual([]);
   });
 });

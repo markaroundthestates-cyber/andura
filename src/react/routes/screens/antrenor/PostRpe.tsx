@@ -44,6 +44,7 @@ import { DB, todTs } from '../../../../db.js';
 import { isEnabled } from '../../../../util/featureFlags.js';
 import { toast } from '../../../lib/toast';
 import { Kicker } from '../../../components/pulse/Kicker';
+import { sendSessionToFriend } from '../../../lib/partner';
 import { t } from '../../../../i18n/index.js';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
@@ -282,7 +283,10 @@ export function PostRpe(): JSX.Element {
     const energyUserReported =
       isEnabled('dp_deload_self_feed_fix_v1') && energy !== undefined && sessionEnergy !== null;
 
-    finishSession({
+    // Training friends picked for today ("Cu cine te antrenezi azi?") — read before
+    // finishSession clears the session picks; the session goes to them once saved.
+    const trainWith = useWorkoutStore.getState().sessionTrainWith;
+    const summary = {
       title,
       meta,
       ts: Date.now(),
@@ -292,8 +296,10 @@ export function PostRpe(): JSX.Element {
       exercises,
       ...(energy !== undefined ? { energyEmoji: energy, energy } : {}),
       ...(energyUserReported ? { energyUserReported: true } : {}),
-    });
+    };
+    finishSession(summary);
     incrementStreak();
+    for (const uid of trainWith) void sendSessionToFriend(summary, uid);
 
     // CRIT #3 — after finishSession persists new logs (workoutStore writeback),
     // refresh pr-records hash from full logs scan. MMI Engine #9

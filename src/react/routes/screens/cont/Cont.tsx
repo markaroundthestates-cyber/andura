@@ -107,7 +107,7 @@ const SECTIONS: readonly ContSection[] = [
       { id: 'prefs', labelKey: 'cont.rows.prefs', Icon: SlidersHorizontal, target: 'settings-prefs' },
       { id: 'exercitii-echipament', labelKey: 'cont.rows.exercitiiEchipament', Icon: Dumbbell, target: 'cont-exercitii-echipament' },
       { id: 'sala-mea', labelKey: 'cont.rows.salaMea', Icon: Building2, target: 'cont-sala-mea' },
-      { id: 'partener', labelKey: 'cont.rows.partener', Icon: Users, target: 'cont-partener' },
+      { id: 'prieteni', labelKey: 'cont.rows.prieteni', Icon: Users, target: 'cont-prieteni' },
     ],
   },
   {

@@ -722,6 +722,11 @@
       "gym": "At the gym",
       "noGym": "No equipment",
       "noGymHint": "Floor, wall, a chair, a table: nothing else needed. A lighter session; your gym weights stay as they are."
+    },
+    "with": {
+      "label": "Who are you training with today?",
+      "alone": "Alone",
+      "hint": "When you save the session, it goes to {names} too."
     }
   },
   "readinessVerdict": {
@@ -1640,7 +1645,7 @@
       "confidentialitateTermeni": "Privacy & terms",
       "ajutorDespre": "Help & about",
       "noutati": "What's new",
-      "partener": "Training partner"
+      "prieteni": "Friends"
     },
     "hubs": {
       "exercitiiEchipament": {
@@ -2837,26 +2842,37 @@
     }
   },
   "partner": {
-    "title": "Training partner",
-    "intro": "Train with someone? Link your accounts: log the session once, and they add it to their history with one tap.",
-    "nameLabel": "Your name (your partner sees it)",
+    "title": "Friends",
+    "intro": "Train with someone? Add them by the email they sign in with. Before a session you pick who you train with today, and when you save it they get it too, with one tap to add it.",
+    "nameLabel": "Your name (your friends see it)",
     "namePlaceholder": "e.g. Daniel",
-    "createCta": "Create a code",
-    "codeShare": "Give this code to your partner. They enter it in Account > Training partner.",
-    "codeWaiting": "Valid 24 hours. This screen updates when they join.",
-    "haveCode": "Got a code from your partner?",
-    "joinCta": "Link me",
-    "joinError": {
-      "invalid": "That code is wrong or expired. Ask for a new one.",
-      "self": "That is your own code. Your partner has to enter it.",
-      "error": "Could not connect. Check your internet and try again."
+    "addTitle": "Add a friend",
+    "emailPlaceholder": "their email",
+    "emailHint": "The email they use to sign in to Andura. They answer in their own app.",
+    "sendRequestCta": "Send the request",
+    "requestResult": {
+      "ok": "Request sent. It shows up when they open Andura.",
+      "invalid": "That does not look like an email.",
+      "self": "That is your own email.",
+      "already": "Already asked, waiting for an answer.",
+      "error": "Could not send. Check your internet and try again."
     },
-    "linkedWith": "You train with {name}",
-    "howItWorks": "After a session, tap \"Send to {name}\" too. You can also send it later from History.",
-    "unpairCta": "Unlink",
+    "requestsTitle": "Asking to train with you",
+    "askedTitle": "Waiting for an answer",
+    "cancelRequest": "Cancel",
+    "noFriends": "No friends yet.",
+    "unpairCta": "Remove",
     "unpairCancel": "Cancel",
-    "unpairAccept": "Yes, unlink",
-    "fallbackName": "your partner",
+    "unpairAccept": "Yes, remove",
+    "fallbackName": "your friend",
+    "request": {
+      "title": "{name} wants to train with you",
+      "body": "If you accept, the sessions you do together with {name} land in your history with one tap.",
+      "acceptCta": "Accept",
+      "declineCta": "Decline",
+      "acceptedToast": "You and {name} are training friends",
+      "failedToast": "Could not connect. Try again."
+    },
     "send": {
       "cta": "Send to {name} too",
       "sent": "Sent to {name}"

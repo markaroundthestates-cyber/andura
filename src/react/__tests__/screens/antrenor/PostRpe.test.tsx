@@ -673,3 +673,38 @@ describe('PostRpe — finish-early parity (FIX 1)', () => {
     expect(useWorkoutStore.getState().streak).toBe(6);
   });
 });
+
+// Founder 2026-11-07 ("today we train together"): the friends picked on the
+// TimeBudget step get the saved session on their own — no extra tap.
+describe('PostRpe — training friends picked for today', () => {
+  beforeEach(() => {
+    seedSession();
+  });
+
+  it('saving sends the session to each friend picked, then clears the pick', async () => {
+    const partner = await import('../../../lib/partner');
+    const send = vi.spyOn(partner, 'sendSessionToFriend').mockResolvedValue(true);
+    useWorkoutStore.setState({ sessionTrainWith: ['friend-a', 'friend-b'] });
+    renderPostRpe();
+    await waitFor(() => expect(getTodayWorkout).toHaveBeenCalled());
+    submit(/Just right/i);
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(2));
+    const saved = useWorkoutStore.getState().lastSession!;
+    expect(send).toHaveBeenNthCalledWith(1, saved, 'friend-a');
+    expect(send).toHaveBeenNthCalledWith(2, saved, 'friend-b');
+    expect(useWorkoutStore.getState().sessionTrainWith).toEqual([]);
+    send.mockRestore();
+  });
+
+  it('training alone sends nothing', async () => {
+    const partner = await import('../../../lib/partner');
+    const send = vi.spyOn(partner, 'sendSessionToFriend').mockResolvedValue(true);
+    useWorkoutStore.setState({ sessionTrainWith: [] });
+    renderPostRpe();
+    await waitFor(() => expect(getTodayWorkout).toHaveBeenCalled());
+    submit(/Just right/i);
+    await waitFor(() => expect(useWorkoutStore.getState().lastSession).not.toBeNull());
+    expect(send).not.toHaveBeenCalled();
+    send.mockRestore();
+  });
+});

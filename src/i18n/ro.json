@@ -722,6 +722,11 @@
       "gym": "La sala",
       "noGym": "Fara aparate",
       "noGymHint": "Podea, perete, un scaun, o masa: altceva nu-ti trebuie. Sesiune mai usoara; greutatile de la sala raman neatinse."
+    },
+    "with": {
+      "label": "Cu cine te antrenezi azi?",
+      "alone": "Singur",
+      "hint": "Cand salvezi sesiunea, o primeste si {names}."
     }
   },
   "readinessVerdict": {
@@ -1640,7 +1645,7 @@
       "confidentialitateTermeni": "Confidentialitate si termeni",
       "ajutorDespre": "Ajutor si despre",
       "noutati": "Noutati",
-      "partener": "Partener de antrenament"
+      "prieteni": "Prieteni"
     },
     "hubs": {
       "exercitiiEchipament": {
@@ -2837,26 +2842,37 @@
     }
   },
   "partner": {
-    "title": "Partener de antrenament",
-    "intro": "Te antrenezi cu cineva? Legati conturile: logezi sesiunea o data, iar el o adauga in istoricul lui cu un tap.",
-    "nameLabel": "Numele tau (il vede partenerul)",
+    "title": "Prieteni",
+    "intro": "Te antrenezi cu cineva? Adauga-l dupa emailul cu care intra in Andura. Inainte de sesiune alegi cu cine te antrenezi azi, iar cand o salvezi o primeste si el, cu un tap sa o adauge.",
+    "nameLabel": "Numele tau (il vad prietenii)",
     "namePlaceholder": "ex. Daniel",
-    "createCta": "Genereaza un cod",
-    "codeShare": "Da-i codul partenerului. Il introduce in Cont > Partener de antrenament.",
-    "codeWaiting": "Valabil 24 de ore. Ecranul se actualizeaza cand se leaga.",
-    "haveCode": "Ai primit un cod de la partener?",
-    "joinCta": "Leaga-ma",
-    "joinError": {
-      "invalid": "Codul e gresit sau a expirat. Cere unul nou.",
-      "self": "E codul tau. Trebuie sa-l introduca partenerul.",
-      "error": "Nu m-am putut conecta. Verifica internetul si incearca din nou."
+    "addTitle": "Adauga un prieten",
+    "emailPlaceholder": "emailul lui",
+    "emailHint": "Emailul cu care intra in Andura. Raspunde din aplicatia lui.",
+    "sendRequestCta": "Trimite cererea",
+    "requestResult": {
+      "ok": "Cerere trimisa. O vede cand deschide Andura.",
+      "invalid": "Nu pare un email.",
+      "self": "E emailul tau.",
+      "already": "Ai cerut deja, asteapta raspunsul.",
+      "error": "Nu am putut trimite. Verifica internetul si incearca din nou."
     },
-    "linkedWith": "Te antrenezi cu {name}",
-    "howItWorks": "Dupa sesiune apasa si \"Trimite si lui {name}\". Poti trimite si mai tarziu, din Istoric.",
-    "unpairCta": "Dezleaga",
+    "requestsTitle": "Vor sa se antreneze cu tine",
+    "askedTitle": "Asteapta raspuns",
+    "cancelRequest": "Anuleaza",
+    "noFriends": "Niciun prieten inca.",
+    "unpairCta": "Sterge",
     "unpairCancel": "Anuleaza",
-    "unpairAccept": "Da, dezleaga",
-    "fallbackName": "partenerul tau",
+    "unpairAccept": "Da, sterge",
+    "fallbackName": "prietenul tau",
+    "request": {
+      "title": "{name} vrea sa va antrenati impreuna",
+      "body": "Daca accepti, sesiunile facute impreuna cu {name} intra in istoricul tau cu un tap.",
+      "acceptCta": "Accepta",
+      "declineCta": "Refuza",
+      "acceptedToast": "Tu si {name} sunteti prieteni de antrenament",
+      "failedToast": "Nu m-am putut conecta. Incearca din nou."
+    },
     "send": {
       "cta": "Trimite si lui {name}",
       "sent": "Trimis lui {name}"
