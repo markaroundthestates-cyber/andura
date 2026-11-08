@@ -20,6 +20,7 @@ import { Play, ChevronRight } from 'lucide-react';
 import { useWorkoutStore, getCurrentMode } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { getTodayWorkout } from '../lib/engineWrappers';
+import { currentSessionPlanOptions } from '../lib/sessionPlan';
 import type { PlannedWorkoutOutput } from '../lib/engineWrappers';
 import { gotoPath } from '../lib/navigation';
 import { t } from '../../i18n/index.js';
@@ -96,7 +97,7 @@ export function SessionPill(): JSX.Element | null {
   useEffect(() => {
     if (!pillWillRender) return;
     let cancelled = false;
-    getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {}).then((p) => {
+    getTodayWorkout(currentSessionPlanOptions()).then((p) => {
       if (!cancelled) setPlanned(p);
     });
     return () => { cancelled = true; };

@@ -45,6 +45,7 @@ vi.mock('../../../lib/engineWrappers', async () => {
 
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useScheduleStore } from '../../../stores/scheduleStore';
 import { getPRDelta, getTodayWorkout, getWhyExerciseSummary } from '../../../lib/engineWrappers';
 import { debugLog } from '../../../lib/debugLog';
 import { DB } from '../../../../db.js';
@@ -370,6 +371,7 @@ describe('Workout — plan from the started session', async () => {
   beforeEach(() => {
     resetStore();
     vi.mocked(getTodayWorkout).mockClear();
+    useScheduleStore.setState({ days: ['training', 'training', 'training', 'training', 'training', 'training', 'training'] });
   });
 
   it('"Alta grupa" pick → the plan is derived with the same options', async () => {
@@ -382,6 +384,15 @@ describe('Workout — plan from the started session', async () => {
   it('no pick → the scheduled plan', async () => {
     await renderWorkoutAndWait();
     expect(getTodayWorkout).toHaveBeenCalledWith({});
+  });
+
+  // Founder 2026-11-08 + the core-loop E2E on a Sunday: a session under way on a
+  // calendar rest day (past midnight, or opened without the preview) keeps its plan.
+  it('a rest day never empties the session under way', async () => {
+    useScheduleStore.setState({ days: ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] });
+    await renderWorkoutAndWait();
+    expect(getTodayWorkout).toHaveBeenCalledWith({ trainOnRestDay: true });
+    useScheduleStore.setState({ days: ['training', 'training', 'training', 'training', 'training', 'training', 'training'] });
   });
 });
 

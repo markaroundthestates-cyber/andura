@@ -34,6 +34,7 @@ import type {
   LogEntry,
 } from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
+import { currentSessionPlanOptions } from '../../../lib/sessionPlan';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { gotoPath } from '../../../lib/navigation';
 import {
@@ -154,7 +155,7 @@ export function PostRpe(): JSX.Element {
     // about which muscles) + the real logged sets; exercise names degrade to the
     // honest 'Exercitiu N' fallback below. Only a session with NOTHING logged is
     // rejected (nothing to save) — that is the legitimate empty case.
-    const planned = await getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {});
+    const planned = await getTodayWorkout(currentSessionPlanOptions());
     if (setsDone === 0) {
       submittingRef.current = false; // nothing persisted — allow a retry
       toast.show({

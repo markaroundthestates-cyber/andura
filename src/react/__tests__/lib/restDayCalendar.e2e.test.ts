@@ -56,4 +56,13 @@ describe('dp_rest_day_train_anyway_v1 — a session started on a rest day', () =
     expect(await composePlannedWorkoutToday(SUNDAY, { trainOnRestDay: true })).toBeNull();
     localStorage.removeItem('_devFlags');
   });
+
+  it('on a training day the flag changes nothing (the week still shapes the split)', async () => {
+    commitCalendarEdit(week(true), SUNDAY);
+    const names = (p: Awaited<ReturnType<typeof composePlannedWorkoutToday>>) => (p?.exercises ?? []).map((e) => `${e.engineName ?? e.name} ${e.sets}`);
+    const plain = names(await composePlannedWorkoutToday(SUNDAY));
+    invalidatePlanCache();
+    expect(plain.length).toBeGreaterThan(0);
+    expect(names(await composePlannedWorkoutToday(SUNDAY, { trainOnRestDay: true }))).toEqual(plain);
+  });
 });

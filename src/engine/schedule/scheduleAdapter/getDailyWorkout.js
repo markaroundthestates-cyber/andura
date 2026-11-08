@@ -132,8 +132,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // "Sesiune usoara", or Start after moving his days) chose to train — compose it
   // instead of an empty plan behind "Can't build the full plan right now".
   const trainAnyway = options?.trainOnRestDay === true && isEnabled('dp_rest_day_train_anyway_v1');
-  const override = trainAnyway ? null : getCalendarOverride(date);
-  if (override && Array.isArray(override.selectedDays)) {
+  // Only the rest-day stop is skipped: the week still shapes the split, so on a
+  // training day the flag changes nothing.
+  const override = getCalendarOverride(date);
+  if (!trainAnyway && override && Array.isArray(override.selectedDays)) {
     const dayConfig = override.selectedDays[dayIdx];
     if (dayConfig && dayConfig.active === false) {
       return null;

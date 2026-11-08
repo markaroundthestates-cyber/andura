@@ -40,6 +40,7 @@ import { coachPick } from '../../../lib/coachVoice';
 import { isPerHandLoad } from '../../../lib/exerciseDisplay';
 import { getTodayWorkout, getPRDelta, getWhyExerciseSummary, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
+import { currentSessionPlanOptions } from '../../../lib/sessionPlan';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
@@ -189,7 +190,7 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     let cancelled = false;
     // The plan this session was started on ("Alta grupa" pick rides in the store).
-    getTodayWorkout(useWorkoutStore.getState().sessionPlanOptions ?? {}).then((planned) => {
+    getTodayWorkout(currentSessionPlanOptions()).then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
         setWarmupSets(planned?.warmup?.warmupSets ?? []);
