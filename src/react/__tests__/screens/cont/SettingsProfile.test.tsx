@@ -783,11 +783,10 @@ describe('SettingsProfile — weight continuity (onboarding -> profil edit autor
 // WITHOUT re-seeding → activeWeekFromScheduleStore() returned the STALE
 // onboarding-frequency days, so the engine kept building the OLD-frequency program
 // until the next Monday rollover. The fix re-seeds resetWeekly() on a frequency
-// change UNLESS a manual calendar override (current-week wv2-calendar-override)
-// exists — then the user's explicit calendar is preserved.
+// change UNLESS the user customized this week's days (they differ from what the old
+// frequency seeds) — then the user's explicit calendar is preserved.
 describe('SettingsProfile — frequency edit re-seeds the calendar (freq-edit-reseed)', () => {
   const SCHEDULE_STORE_KEY = 'wv2-schedule-store';
-  const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 
   /** Active-day tuple the engine reads from scheduleStore (`days` → training bool). */
   async function engineActiveWeek(): Promise<boolean[] | null> {
@@ -832,29 +831,21 @@ describe('SettingsProfile — frequency edit re-seeds the calendar (freq-edit-re
     sched.useScheduleStore.getState().resetWeekly();
     const daysBefore = persistedDays();
 
-    // User has manually customized the calendar for THIS week (current-week override).
+    // User has manually customized THIS week's days (2026-11-08: the engine copy
+    // mirrors the week, so a customization lives in the week itself).
     const adapter = await import('../../../../engine/schedule/scheduleAdapter.js');
-    const weekIso = adapter.getWeekStartIso(new Date());
-    localStorage.setItem(CALENDAR_OVERRIDE_KEY, JSON.stringify({
-      selectedDays: [
-        { day: 'L', active: true }, { day: 'M', active: true }, { day: 'M2', active: false },
-        { day: 'J', active: false }, { day: 'V', active: false }, { day: 'S', active: false },
-        { day: 'D', active: false },
-      ],
-      weekStartIso: weekIso,
-      committedAt: new Date().toISOString(),
-    }));
-    expect(adapter.getCalendarOverride()).not.toBeNull();
+    sched.useScheduleStore.setState({ days: ['training', 'training', 'rest', 'rest', 'rest', 'rest', 'rest'] });
+    const customized = persistedDays();
+    expect(customized).not.toEqual(daysBefore);
 
     renderScreen();
     fireEvent.change(screen.getByTestId('profile-frequency-select'), { target: { value: '5' } });
     fireEvent.click(screen.getByTestId('settings-profile-save'));
     await flush();
 
-    // resetWeekly was NOT called → scheduleStore.days unchanged (override preserved).
-    expect(persistedDays()).toEqual(daysBefore);
-    // The override itself is intact.
-    expect(adapter.getCalendarOverride()).not.toBeNull();
+    // resetWeekly was NOT called → the customized days are kept, engine copy included.
+    expect(persistedDays()).toEqual(customized);
+    expect(adapter.getCalendarOverride()?.selectedDays.map((d) => d.active)).toEqual([true, true, false, false, false, false, false]);
   });
 
   it('edit a NON-frequency field does NOT re-seed the calendar', async () => {

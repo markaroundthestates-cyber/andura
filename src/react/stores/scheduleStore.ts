@@ -188,3 +188,23 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     }
   )
 );
+
+// Founder 2026-11-08 ("Can't build the full plan right now" on a day the Home card
+// offered): the engine reads the week from its own committed copy
+// (scheduleAdapter wv2-calendar-override), written only by saveWeekly on THIS
+// device, while Home reads these days — which also arrive from the other device
+// through the store sync and change on every toggle. The two drifted (Sunday
+// "training" on Home, "rest" for the engine) and Start led to an empty plan. The
+// engine copy now follows the days whenever they change, for the current week.
+function syncEngineCalendar(state: ScheduleState): void {
+  if (state.weekStartISO !== weekStartIso()) return;
+  const DAY_KEYS = ['L', 'M', 'M2', 'J', 'V', 'S', 'D'] as const;
+  const dayConfigs = state.days.map((kind, idx) => ({ day: DAY_KEYS[idx] ?? 'L', active: kind === 'training' }));
+  void import('../../engine/schedule/scheduleAdapter.js')
+    .then((mod) => { (mod as { commitCalendarEdit?: (d: typeof dayConfigs) => unknown }).commitCalendarEdit?.(dayConfigs); })
+    .catch(() => { /* the next change retries */ });
+}
+syncEngineCalendar(useScheduleStore.getState());
+useScheduleStore.subscribe((s, prev) => {
+  if (s.days !== prev.days || s.weekStartISO !== prev.weekStartISO) syncEngineCalendar(s);
+});

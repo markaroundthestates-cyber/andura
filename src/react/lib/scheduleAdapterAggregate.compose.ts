@@ -1364,6 +1364,8 @@ export async function composePlannedWorkoutToday(
     differentMuscle?: boolean;
     /** The user's own pick among the ranked alternatives (see getDailyWorkout). */
     differentMuscleCluster?: string;
+    /** Today is a rest day in the calendar but the user started a session anyway. */
+    trainOnRestDay?: boolean;
     _mrvRecompute?: boolean;
   } = {},
 ): Promise<PlannedWorkoutOutput | null> {

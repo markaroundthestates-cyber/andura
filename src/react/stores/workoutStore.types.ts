@@ -53,6 +53,8 @@ export interface SessionPlanOptions {
   // Training together (founder 2026-11-07): a friend who joined the host's live
   // session runs the host's exercises, prescribed for him (livePlan.ts).
   livePlan?: LivePlan;
+  // Started on a rest day of the calendar (founder 2026-11-08) — compose anyway.
+  trainOnRestDay?: boolean;
 }
 
 /** The host's workout as a joining friend receives it (no weights — his own). */

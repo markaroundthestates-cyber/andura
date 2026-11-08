@@ -32,6 +32,14 @@ vi.mock('../../../lib/engineWrappers', () => ({
 
 import { WorkoutPreview } from '../../../routes/screens/antrenor/WorkoutPreview';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useScheduleStore } from '../../../stores/scheduleStore';
+import { beforeEach as everyTest } from 'vitest';
+
+// Today is a training day unless a test says otherwise (the rest-day path adds
+// trainOnRestDay to the plan options — founder 2026-11-08).
+everyTest(() => {
+  useScheduleStore.setState({ days: ['training', 'training', 'training', 'training', 'training', 'training', 'training'] });
+});
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -761,5 +769,18 @@ describe('WorkoutPreview — training together', () => {
     fireEvent.click(screen.getByTestId('preview-start-cta'));
     expect(start).toHaveBeenCalledWith(expect.objectContaining({ workoutTitle: 'Workout' }), ['friend']);
     start.mockRestore();
+  });
+});
+
+// Founder 2026-11-08 ("Can't build the full plan right now"): reaching the preview on
+// a calendar rest day composes the session anyway instead of an empty plan.
+describe('WorkoutPreview — started on a rest day', () => {
+  it('asks the engine to compose despite the rest day, and Start keeps that for the session', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockClear();
+    const rest = ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] as const;
+    useScheduleStore.setState({ days: rest });
+    renderPreview();
+    await waitFor(() => expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith({ trainOnRestDay: true }));
+    useScheduleStore.setState({ days: ['training', 'training', 'training', 'training', 'training', 'training', 'training'] });
   });
 });

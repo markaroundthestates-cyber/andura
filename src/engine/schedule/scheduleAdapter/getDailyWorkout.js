@@ -96,7 +96,7 @@ import {
  *
  * @param {object} [userState] - { user, recentSessions, weights, profileTier, flags, meta }
  * @param {Date} [now=new Date()] - injected for deterministic testing
- * @param {{differentMuscle?: boolean, differentMuscleCluster?: string, _mrvRecompute?: boolean}} [options]
+ * @param {{differentMuscle?: boolean, differentMuscleCluster?: string, trainOnRestDay?: boolean, _mrvRecompute?: boolean}} [options]
  *   differentMuscle = swap today's cluster for an alternative (today only, never
  *   persisted); differentMuscleCluster = the user's OWN pick among the ranked
  *   alternatives (ignored unless differentMuscle is set and it names a real,
@@ -127,8 +127,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // false → byte-identical to the prior behavior for every other caller.
   const wantDifferentMuscle = options?.differentMuscle === true;
 
-  // Rest day check via calendar override
-  const override = getCalendarOverride(date);
+  // Rest day check via calendar override. dp_rest_day_train_anyway_v1 (founder
+  // 2026-11-08): the user who starts a session on his rest day (the rest card's
+  // "Sesiune usoara", or Start after moving his days) chose to train — compose it
+  // instead of an empty plan behind "Can't build the full plan right now".
+  const trainAnyway = options?.trainOnRestDay === true && isEnabled('dp_rest_day_train_anyway_v1');
+  const override = trainAnyway ? null : getCalendarOverride(date);
   if (override && Array.isArray(override.selectedDays)) {
     const dayConfig = override.selectedDays[dayIdx];
     if (dayConfig && dayConfig.active === false) {

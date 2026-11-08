@@ -30,6 +30,7 @@ import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggre
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useScheduleStore } from '../../../stores/scheduleStore';
 import type { LivePlan, SessionPlanOptions } from '../../../stores/workoutStore';
 import { startLiveSession } from '../../../lib/liveSession';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -161,8 +162,20 @@ export function WorkoutPreview(): JSX.Element {
   const wantDifferentMuscle = overrideKind === 'different-muscle';
   // ONE options object for the preview compose AND the started session (Start
   // stores it) — Workout re-derives the plan with it, so it gets this exact plan.
+  // Founder 2026-11-08: reaching the preview on a calendar rest day means the user
+  // chose to train (the rest card's "Sesiune usoara", a Start after moving days) —
+  // the engine composes it instead of an empty "Can't build the full plan".
+  const todayIsRest = useScheduleStore((s) => s.days[(new Date().getDay() + 6) % 7] === 'rest');
   const planOptions = useMemo<SessionPlanOptions | null>(() => (livePlan
     ? { livePlan }
+    : todayIsRest
+    ? {
+        ...(wantDifferentMuscle ? { differentMuscle: true } : {}),
+        ...(wantDifferentMuscle && typeof differentMuscleCluster === 'string' && differentMuscleCluster.length > 0
+          ? { differentMuscleCluster }
+          : {}),
+        trainOnRestDay: true,
+      }
     : wantDifferentMuscle
     ? {
         differentMuscle: true,
@@ -170,7 +183,7 @@ export function WorkoutPreview(): JSX.Element {
           ? { differentMuscleCluster }
           : {}),
       }
-    : null), [livePlan, wantDifferentMuscle, differentMuscleCluster]);
+    : null), [livePlan, todayIsRest, wantDifferentMuscle, differentMuscleCluster]);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
   // while pipeline pending; preview still renders cu hardcoded fallback values

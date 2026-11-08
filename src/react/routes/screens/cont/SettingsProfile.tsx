@@ -330,12 +330,16 @@ export function SettingsProfile(): JSX.Element {
     // personalizat manual calendarul (un override de saptamana curenta), ca sa nu
     // ii suprascriem alegerea explicita. Lazy import rupe ciclul scheduleStore→
     // onboardingStore (oglindeste onboardingStore.finalize). Best-effort.
+    // Personalizat = zilele saptamanii difera de cele pe care le seedeaza VECHEA
+    // frecventa (2026-11-08: copia engine-ului urmeaza acum mereu zilele, deci
+    // existenta ei nu mai inseamna "personalizat").
     if (draft.frequency !== priorFrequency) {
-      void import('../../../../engine/schedule/scheduleAdapter.js')
-        .then((m) => {
-          if (m.getCalendarOverride()) return; // calendar personalizat — pastreaza-l
-          return import('../../../stores/scheduleStore')
-            .then((s) => s.useScheduleStore.getState().resetWeekly());
+      void import('../../../stores/scheduleStore')
+        .then((s) => {
+          const st = s.useScheduleStore.getState();
+          const seeded = s.defaultWeekForFrequency(priorFrequency);
+          if (st.days.some((d, i) => d !== seeded[i])) return; // calendar personalizat — pastreaza-l
+          st.resetWeekly();
         })
         .catch(() => { /* schedule re-seed best-effort */ });
     }
