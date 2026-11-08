@@ -169,14 +169,23 @@ describe('training friends — adding by email', () => {
     expect(cachedFriends()).toEqual([]);
   });
 
-  it('an unlinked user with nothing out reads only his link and his requests', async () => {
-    switchTo('other');
-    fakeFetch.mockClear();
+  it('a request sent from the PC is completed on the phone too (founder 2026-11-08)', async () => {
+    // PC: Daniel asks Sade. The phone (same account, other device) never saw it.
+    switchTo('daniel');
+    setMyPartnerName('Daniel');
+    await sendFriendRequest('sade.13@example.com');
+    const pc = { ...localStorage } as Record<string, string>;
+    switchTo('friend');
+    setMyPartnerName('Sade');
+    const { requests } = await checkPartnerInbox();
+    await acceptFriendRequest(requests[0]!);
+    // Daniel's phone: no friends cached, no request of its own out.
+    currentUid = 'daniel';
+    localStorage.clear();
+    expect(askedEmails()).toEqual([]);
     await checkPartnerInbox();
-    expect(fakeFetch.mock.calls.map(([u]) => String(u))).toEqual([
-      'https://rtdb.test/users/other/partners.json',
-      `https://rtdb.test/friendRequests/${keyOf('other')}.json`,
-    ]);
+    expect(cachedFriends().map((f) => f.name)).toEqual(['Sade']);
+    expect(Object.keys(pc).length).toBeGreaterThan(0);
   });
 });
 

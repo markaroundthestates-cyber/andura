@@ -284,8 +284,9 @@ export async function checkPartnerInbox(): Promise<InboxCheck> {
     .filter(([from]) => from !== uid && !friends.some((f) => f.uid === from))
     .map(([from, v]) => ({ from, name: String(v?.name ?? ''), ts: Number(v?.ts ?? 0) }))
     .sort((a, b) => a.ts - b.ts);
-  // Nobody linked and nothing of mine out → nobody can have written to my inbox.
-  if (friends.length === 0 && askedEmails().length === 0) return { sessions: [], requests };
+  // Always read the inbox: a request sent from ANOTHER device of mine leaves no trace
+  // here (founder 2026-11-08: Dan's 'accept' sat unread on the phone until the PC,
+  // which had sent the request, opened the app).
   const inbox = await rest(`partnerInbox/${uid}`);
   if (!inbox.ok) return { sessions: [], requests };
   const msgs = Object.entries((inbox.data ?? {}) as Record<string, Record<string, unknown>>)
