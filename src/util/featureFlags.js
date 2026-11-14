@@ -672,6 +672,15 @@ export const FLAGS = Object.freeze({
   //   the phase minimum), so beating the shown target is never called "too heavy".
   //   Pinned OFF in fp + sims.
   dp_ego_cap_target_reps_v1: { rollout: 1, default: true },
+  // dp_learned_ladder_phase_v1 (2026-11-14, founder "Andura a recomandat greutati care
+  //   nu erau pe aparat") — the learned-step ladder starts on the offset his own loads
+  //   share instead of the table floor (Leg Extension pins 75/84/93, not 82/91/100).
+  //   Pinned OFF in fp + sims.
+  dp_learned_ladder_phase_v1: { rollout: 1, default: true },
+  // dp_station_two_loads_v1 (2026-11-14) — the station-from-loads inference needs two
+  //   distinct loads on exactly one gym stack (was three): Reverse Pec Deck 41/50 → the
+  //   Matrix stack, next after 50 = 54 not 55. Pinned OFF in fp + sims.
+  dp_station_two_loads_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

@@ -144,3 +144,39 @@ describe('the ladder follows the loads he sets (2026-10-09 audit)', () => {
     expect(roundToEquipmentWeight(75, 'Flat Chest Press Machine')).toBe(75);
   });
 });
+
+// Founder 2026-11-14 ("Andura a recomandat greutati care nu erau pe aparat"): the deload
+// week's Leg Extension read 91 — his pins are 75 / 84 / 93 / 102, the learned 9 kg step
+// walked from the table floor (10 → 82, 91, 100: his Leg Curl's pins, not this machine's).
+describe('the learned step starts on his own pins (2026-11-14)', () => {
+  const flags = (o) => localStorage.setItem('_devFlags', JSON.stringify(o));
+  const ladder = (ex) => localStorage.setItem('dp-equipment-ladder', JSON.stringify({
+    [ex]: { max: 129, min: 75, modalGaps: 3, n: 12, nDistinct: 4, step: 9 },
+  }));
+  const MATRIX = [4.5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 64, 68, 73];
+  beforeEach(() => localStorage.clear());
+
+  it('Leg Extension 75 / 84 / 93: a step under 93 is 84, and 81.4 snaps to 84', () => {
+    ladder('Leg Extension');
+    localStorage.setItem('logs', JSON.stringify(rows('Leg Extension', [93, 93, 84, 84, 75, 75])));
+    expect(getPrevWeight(93, 'Leg Extension')).toBe(84);
+    expect(roundToEquipmentWeight(81.4, 'Leg Extension')).toBe(84);
+    flags({ dp_learned_ladder_phase_v1: false });
+    expect(getPrevWeight(93, 'Leg Extension')).toBe(91);
+  });
+
+  it('Leg Curl 82 / 91 / 100 keeps its pins', () => {
+    ladder('Leg Curl');
+    localStorage.setItem('logs', JSON.stringify(rows('Leg Curl', [100, 100, 91, 91, 82, 82])));
+    expect(getPrevWeight(100, 'Leg Curl')).toBe(91);
+    expect(getNextWeight(91, 'Leg Curl')).toBe(100);
+  });
+
+  it('two loads on exactly one gym stack name the station (Reverse Pec Deck 41 / 50 → Matrix 54)', () => {
+    localStorage.setItem('dp-gyms', JSON.stringify({ activeId: 'g', gyms: { g: { id: 'g', name: 'MyGym Domnesti', stacks: { matrix_cable: MATRIX } } } }));
+    localStorage.setItem('logs', JSON.stringify(rows('Reverse Pec Deck', [50, 50, 41, 41])));
+    expect(getNextWeightGym(50, 'Reverse Pec Deck')).toBe(54);
+    flags({ dp_station_two_loads_v1: false });
+    expect(getNextWeightGym(50, 'Reverse Pec Deck')).not.toBe(54);
+  });
+});

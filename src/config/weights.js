@@ -367,6 +367,29 @@ export const EXERCISE_EQUIPMENT_MAP = {
 };
 
 /** @param {string} exerciseName */
+/**
+ * dp_learned_ladder_phase_v1 (founder 2026-11-14: "Andura a recomandat greutati care nu
+ * erau pe aparat") — the learned step walked from the table's floor (leg_machine 10 →
+ * 10, 19, ..., 82, 91, 100), right for his Leg Curl but not for his Leg Extension, whose
+ * pins sit 2 kg higher (75, 84, 93, 102): a deload step under 93 landed on 91. The walk
+ * now starts on the offset his own loads share (the most common one). No loads → floor.
+ * @param {string} ex @param {number} lo @param {number} step @returns {number} offset in [0, step)
+ */
+function _ladderPhase(ex, lo, step) {
+  if (!isEnabled('dp_learned_ladder_phase_v1') || !(step > 0)) return 0;
+  const counts = new Map();
+  for (const w of usedLoads(ex)) {
+    if (!(w >= lo)) continue;
+    const off = Math.round((((w - lo) % step) + step) % step * 100) / 100;
+    const k = off >= step - 0.01 ? 0 : off;
+    counts.set(k, (counts.get(k) || 0) + 1);
+  }
+  let best = 0;
+  let bestN = 0;
+  for (const [k, n] of counts) if (n > bestN) { best = k; bestN = n; }
+  return best;
+}
+
 function getList(exerciseName) {
   const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
   const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
@@ -388,7 +411,7 @@ function getList(exerciseName) {
       const hardSpan = (hi - lo) / (hardCoded.length - 1);
       if (step < hardSpan) {
         const ladder = [];
-        for (let w = lo; w <= hi + 1e-9; w += step) ladder.push(Math.round(w * 100) / 100);
+        for (let w = lo + _ladderPhase(exerciseName, lo, step); w <= hi + 1e-9; w += step) ladder.push(Math.round(w * 100) / 100);
         if (ladder.length >= 2) return ladder;
       }
     }
@@ -466,7 +489,10 @@ function _inferredGymStack(ex) {
   const g = activeGym();
   if (!g || !g.stacks || typeof g.stacks !== 'object') return null;
   const used = usedLoads(ex);
-  if (used.length < 3) return null;
+  // dp_station_two_loads_v1 (2026-11-14): two loads that sit on exactly ONE stack name
+  // the station too — his Reverse Pec Deck kept only 41 / 50 in the window and the next
+  // step after 50 read 55 (his Matrix pin is 54).
+  if (used.length < (isEnabled('dp_station_two_loads_v1') ? 2 : 3)) return null;
   const hits = [];
   for (const type of Object.keys(g.stacks)) {
     const steps = activeGymStepsForType(type);
