@@ -99,3 +99,41 @@ describe('ego-cap wired into checkInSessionAdjust', () => {
     expect(calFactor()).not.toBe(null);
   });
 });
+
+// Founder debug log 2026-11-14: Seated Calf shown 95x10, logged 150x11 "potrivit" →
+// "You jumped up a lot and it got heavy". 11 reps BEAT the shown 10; the ego test
+// read the phase minimum (12) instead. dp_ego_cap_target_reps_v1 reads the shown reps.
+describe('ego-jump cap — missed reps measured against the shown target', () => {
+  const EX = 'Seated Calf Raise Machine';
+  beforeEach(() => {
+    localStorage.clear();
+    const base = Date.UTC(2026, 0, 1);
+    DB.set('logs', [
+      { ex: EX, w: 100, reps: 9, rpe: 7.5, ts: base + 2 * 86400000 },
+      { ex: EX, w: 100, reps: 9, rpe: 7.5, ts: base + 1 * 86400000 },
+    ]);
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  const run = (/** @type {string[]} */ on) => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => on.includes(id));
+    const rMin = DP.getPhaseAwareRepRange(EX, false)[0];
+    // shown target 2 below the phase minimum; the user beats it by one rep
+    return DP.checkInSessionAdjust(EX, [7.5], [rMin - 1], {
+      recKg: 95, recReps: rMin - 2, loggedKg: 150, setIdx: 1, nowMs: Date.UTC(2026, 0, 5),
+    });
+  };
+
+  it('beating the shown reps after a big jump is not called "too heavy"', () => {
+    const r = run(['dp_ego_cap_v1', 'dp_ego_cap_target_reps_v1']);
+    expect(r?.msg ?? '').not.toContain('construim corect');
+    expect(r?.msg ?? '').not.toContain('build it right');
+  });
+
+  it('flag OFF keeps the legacy phase-minimum test (the cap fires)', () => {
+    const r = run(['dp_ego_cap_v1']);
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBeLessThan(150);
+  });
+});

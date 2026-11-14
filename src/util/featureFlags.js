@@ -666,6 +666,12 @@ export const FLAGS = Object.freeze({
   //   (SessionPlanOptions.trainOnRestDay) instead of returning an empty plan.
   //   Pinned OFF in fp + sims.
   dp_rest_day_train_anyway_v1: { rollout: 1, default: true },
+  // dp_ego_cap_target_reps_v1 (2026-11-14, founder debug log: Seated Calf 150x11 rated
+  //   "potrivit" vs a shown 95x10 → "You jumped up a lot and it got heavy") — the
+  //   ego-jump "missed reps" test reads the reps the set PRESCRIBED (when lower than
+  //   the phase minimum), so beating the shown target is never called "too heavy".
+  //   Pinned OFF in fp + sims.
+  dp_ego_cap_target_reps_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

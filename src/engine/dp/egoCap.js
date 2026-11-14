@@ -23,19 +23,24 @@ export const EGO_JUMP_RATIO = 1.25;
  * @param {number} args.loggedReps reps achieved on that set
  * @param {number} args.rMin      the active phase minimum rep target
  * @param {boolean} args.wasHard  the set was rated greu (near-failure)
+ * @param {number|null} [args.shownReps] the reps the set PRESCRIBED (dp_ego_cap_target_reps_v1,
+ *   2026-11-14): when below rMin (a shown 95x10 with rMin 12), beating them is not a
+ *   "missed reps" set. null → the phase minimum alone (legacy).
  * @param {boolean} [args.wasEasy] the set was rated usor — EASY = demonstrated
  *   capacity, not an ego jump. A big jump rated easy (even if a rep short) is the
  *   user PROVING the load; it must NOT be capped. (Off → caller passes false →
  *   byte-identical legacy: `wasHard || (missedReps && !false)` === `wasHard || missedReps`.)
  * @returns {boolean}
  */
-export function isEgoJump({ recKg, loggedKg, loggedReps, rMin, wasHard, wasEasy }) {
+export function isEgoJump({ recKg, loggedKg, loggedReps, rMin, shownReps = null, wasHard, wasEasy }) {
   const rec = Number(recKg);
   const logged = Number(loggedKg);
   if (!Number.isFinite(rec) || rec <= 0) return false;
   if (!Number.isFinite(logged) || logged <= 0) return false;
   if (logged <= rec * EGO_JUMP_RATIO) return false; // not an aggressive jump
-  const missedReps = Number.isFinite(loggedReps) && Number.isFinite(rMin) && loggedReps < rMin;
+  const shown = Number(shownReps);
+  const repFloor = shownReps != null && Number.isFinite(shown) && shown > 0 ? Math.min(rMin, shown) : rMin;
+  const missedReps = Number.isFinite(loggedReps) && Number.isFinite(repFloor) && loggedReps < repFloor;
   return Boolean(wasHard) || (missedReps && !wasEasy);
 }
 

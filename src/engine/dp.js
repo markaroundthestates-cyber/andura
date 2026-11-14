@@ -2359,7 +2359,7 @@ export const DP = {
       // set the user rated easy. Flag OFF → wasEasy:false → byte-identical legacy.
       const egoCapEasyExempt = isEnabled('dp_ego_cap_easy_exempt_v1');
       const egoJump = isEnabled('dp_ego_cap_v1') && isEgoJump({
-        recKg: Number(ctx.recKg), loggedKg, loggedReps, rMin,
+        recKg: Number(ctx.recKg), loggedKg, loggedReps, rMin, shownReps: isEnabled('dp_ego_cap_target_reps_v1') ? Number(ctx.recReps) : null,
         wasHard: lastRPE >= 9.5,
         wasEasy: egoCapEasyExempt && (lastRPE <= 6.5),
       });
