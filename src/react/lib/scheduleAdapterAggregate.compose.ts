@@ -1880,6 +1880,12 @@ export async function composePlannedWorkoutToday(
       // scale applies the ENGINE's magnitude (e.g. −12.5%) instead of the flat
       // legacy ×0.8. null when no active deload → factors keep their legacy path.
       deloadPctDecrement: hasActiveDeload ? (mod?.intensity_pct_decrement ?? null) : null,
+      // Which deload (founder 2026-11-14: announce it at the start of the week so he
+      // does not force the weights): the planned 4th week of the block, or a reactive
+      // one from accumulated fatigue. Omitted when no active deload.
+      ...(hasActiveDeload
+        ? { deloadKind: plan.deloadState === 'SCHEDULED_LINEAR' || plan.deloadState === 'RESOLVING' ? 'scheduled' as const : 'reactive' as const }
+        : {}),
       exercises: outExercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       // Warm-up blueprint. The session-level {line, durationMin} unchanged; the

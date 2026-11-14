@@ -183,6 +183,9 @@ export interface PlannedWorkoutOutput {
   // the ENGINE magnitude instead of the flat legacy x0.8. null/absent = no active
   // deload (factors keep the legacy fallback).
   deloadPctDecrement?: number | null;
+  // The active deload's origin: the planned 4th week of the block ('scheduled') or
+  // accumulated fatigue ('reactive'). null/absent = no active deload.
+  deloadKind?: 'scheduled' | 'reactive' | null;
   exercises: PlannedExercise[]; // Phase 4 task_10 — rich aggregate Workout/WorkoutPreview consume
   volumeKg: number; // Phase 4 task_10 — estimated total tonnage planned
   // F-workout-preview/T1 — Engine Warm-up §9.7 blueprint surface (duration_min +

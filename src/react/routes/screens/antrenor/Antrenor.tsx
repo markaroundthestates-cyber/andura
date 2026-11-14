@@ -30,7 +30,7 @@
 //   - mockup andura-clasic.html lines 735-825
 
 import type { JSX } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
@@ -45,6 +45,8 @@ import { t } from '../../../../i18n/index.js';
 import { ResumeSessionCard } from '../../../components/Antrenor/ResumeSessionCard';
 import { ReactivateCard } from '../../../components/Antrenor/ReactivateCard';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
+// Shown only in a deload week — loaded on demand, out of the main chunk.
+const DeloadWeekNotice = lazy(() => import('../../../components/Antrenor/DeloadWeekNotice').then((m) => ({ default: m.DeloadWeekNotice })));
 import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
 import { ReadinessVerdict } from '../../../components/Antrenor/ReadinessVerdict';
 import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificationBanner';
@@ -430,7 +432,14 @@ export function Antrenor(): JSX.Element {
           prefer coach.isRestDay (engine signal) when aggregate loaded, fallback
           coachStore.schedContext (user override mechanism). */}
       {showWorkoutCard ? (
-        <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
+        <>
+          <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
+          {coach?.plannedWorkout?.intensityMod === 'minus' && (
+            <Suspense fallback={null}>
+              <DeloadWeekNotice workout={coach.plannedWorkout} />
+            </Suspense>
+          )}
+        </>
       ) : (
         <CoachRestCard
           onLightSession={handleStart}

@@ -309,6 +309,14 @@
       }
     }
   },
+  "deloadNotice": {
+    "title": "Deload week",
+    "bodyScheduled": "After 3 weeks of building, this week is lighter on purpose: {lighter} and one more rep in reserve. Don't force the weights - this is how your joints and nervous system recover so you can grow again. It lasts one week, then you're back to your normal weights.",
+    "bodyReactive": "Your last workouts show accumulated fatigue, so I'm keeping things lighter for a while: {lighter} and one more rep in reserve. Don't force the weights; once the fatigue clears, we go back to normal.",
+    "lighterPct": "~{pct}% lighter weights",
+    "lighter": "lighter weights",
+    "cta": "Got it"
+  },
   "coachInsight": {
     "combine": "{primary} {secondary}",
     "clause": {

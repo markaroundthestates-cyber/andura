@@ -728,6 +728,8 @@ describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down susta
     expect(out).not.toBeNull();
     // Reactive AA deload fired end-to-end → the plan carries the deload cut.
     expect(out!.intensityMod).toBe('minus');
+    // Founder 2026-11-14: the Home notice names which deload it is.
+    expect(out!.deloadKind).toBe('reactive');
   });
 
   it('green-energy sessions → no reactive deload → intensityMod stays "normal"', async () => {
@@ -737,6 +739,7 @@ describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down susta
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
     expect(out!.intensityMod).toBe('normal');
+    expect(out!.deloadKind).toBeUndefined();
   });
 
   it('only 2 red sessions → below the 3-consecutive threshold → no reactive deload', async () => {

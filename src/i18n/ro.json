@@ -309,6 +309,14 @@
       }
     }
   },
+  "deloadNotice": {
+    "title": "Saptamana de deload",
+    "bodyScheduled": "Dupa 3 saptamani de crestere, saptamana asta e mai usoara intentionat: {lighter} si o repetare in plus in rezerva. Nu forta greutatile - asa recuperezi articulatiile si sistemul nervos, ca sa poti creste din nou. Tine o singura saptamana, apoi revii la greutatile normale.",
+    "bodyReactive": "Ultimele antrenamente arata oboseala adunata, asa ca te las mai usor o perioada: {lighter} si o repetare in plus in rezerva. Nu forta greutatile; cand oboseala trece, revenim la normal.",
+    "lighterPct": "greutati cu ~{pct}% mai mici",
+    "lighter": "greutati mai mici",
+    "cta": "Am inteles"
+  },
   "coachInsight": {
     "combine": "{primary} {secondary}",
     "clause": {
