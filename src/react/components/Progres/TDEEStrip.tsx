@@ -50,6 +50,8 @@ import { resolveActivePhase } from '../../lib/engineWrappers';
 import { readUserMaintenanceTDEE } from '../../lib/userTdee';
 import { useProgresStore } from '../../stores/progresStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { mesocycleWeekNow } from '../../lib/scheduleAdapterAggregate.builder';
 import { useNutritionStore } from '../../stores/nutritionStore';
 import { useAerobicStore, aerobicKcalForDate } from '../../stores/aerobicStore';
 import { t } from '../../../i18n/index.js';
@@ -74,8 +76,6 @@ const PHASE_KEY_MAP = {
   MAINTENANCE: 'progres.tdee.phases.maintenance',
   STRENGTH: 'progres.tdee.phases.strength',
 } as const;
-
-const MESOCYCLE_WEEKS = 4; // Linear Block Periodization V1 — 4-week mesocycle clasic
 
 // RO thousands separator (dot, ICU ro-RO) — cross-strip parity ("1.850").
 function fmtNum(n: number): string {
@@ -111,16 +111,6 @@ function getCurrentPhaseLabel(): string {
   }
 }
 
-/**
- * Compute current week-in-mesocycle from sessions count. Empty sessions →
- * week 1 (T0 fresh user).
- */
-function computeWeekInMesocycle(sessionsCount: number, freqPerWeek: number): number {
-  if (sessionsCount <= 0 || freqPerWeek <= 0) return 1;
-  const weeksElapsed = Math.floor(sessionsCount / freqPerWeek);
-  return (weeksElapsed % MESOCYCLE_WEEKS) + 1;
-}
-
 export function TDEEStrip(): JSX.Element {
   const dateISO = todayIso();
   const [target, setTarget] = useState<NutritionTarget | null>(null);
@@ -144,10 +134,10 @@ export function TDEEStrip(): JSX.Element {
   const targetObiectiv = useProgresStore((s) => s.targetObiectiv);
   const weightLog = useProgresStore((s) => s.weightLog);
   const phaseLabel = getCurrentPhaseLabel();
-  const weekInMeso = useMemo(
-    () => computeWeekInMesocycle(sessionsHistory.length, 3),
-    [sessionsHistory.length],
-  );
+  // Same week the plan runs (calendar weeks from the first session's Monday), not
+  // sessions / 3 — the strip said one week while Antrenor ran the deload in another.
+  const goal = useOnboardingStore((s) => s.data.goal);
+  const weekInMeso = useMemo(() => mesocycleWeekNow(sessionsHistory, goal), [sessionsHistory, goal]);
 
   // ── Edit state (kcal + protein, current day only) ──────────────────────
   const [kcalEdit, setKcalEdit] = useState(false);

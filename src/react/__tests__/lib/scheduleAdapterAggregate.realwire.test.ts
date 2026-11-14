@@ -764,8 +764,10 @@ describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down susta
 // intensity_pct_decrement 12.5 → intensityMod 'minus'; weeksElapsed 0/4/8 → IDLE.)
 describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advances mesocycle', () => {
   // A non-red session (green energy → no reactive-deload confound) whose ts sits
-  // `daysAgo` in the past. trainingWeeks = floor(daysAgo / 7) = weeksElapsed, so
-  // 24 days → 3 weeks → mesocycle week 4 (0-indexed 3) → scheduled deload window.
+  // `daysAgo` in the past. Whole weeks (0 / 21 days) keep the count the same on every
+  // weekday: weeks are calendar weeks from the first session's Monday
+  // (dp_meso_week_monday_v1), so "3 days ago" is already last week on a Monday.
+  // 21 days → 3 weeks → mesocycle week 4 (0-indexed 3) → scheduled deload window.
   function greenSessionDaysAgo(daysAgo: number): LastSessionSummary {
     const ts = Date.now() - daysAgo * MS_PER_DAY;
     return {
@@ -787,8 +789,8 @@ describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advance
   }
 
   it('fresh history (week 0) → no scheduled deload → intensityMod "normal"', async () => {
-    // Earliest session 3 days ago → weeksElapsed 0 → mesocycle week 1 (LOAD).
-    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(3)] });
+    // Earliest session today → weeksElapsed 0 → mesocycle week 1 (LOAD).
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(0)] });
     const us = buildUserStateForPipeline();
     expect(us.meta.weeksElapsed).toBe(0);
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
@@ -797,8 +799,8 @@ describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advance
   });
 
   it('~3 weeks of history → mesocycle week 4 scheduled deload → intensityMod "minus"', async () => {
-    // Earliest session 24 days ago → weeksElapsed 3 → mesocycle week 4 deload.
-    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(24)] });
+    // Earliest session 21 days ago → weeksElapsed 3 → mesocycle week 4 deload.
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(21)] });
     const us = buildUserStateForPipeline();
     expect(us.meta.weeksElapsed).toBe(3);
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
@@ -810,10 +812,10 @@ describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advance
   });
 
   it('weeksElapsed differs with training age → the prescription is NOT frozen at week 0', async () => {
-    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(3)] });
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(0)] });
     const weekZero = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
 
-    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(24)] });
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(21)] });
     const weekFour = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
 
     // Same user, same calendar day — only the training-history age differs, yet

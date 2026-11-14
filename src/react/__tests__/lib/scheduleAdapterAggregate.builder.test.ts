@@ -15,11 +15,12 @@
 //   - src/engine/goalAdaptation/templates.js (isNewbieEffect trainingWeeks)
 //   - src/engine/specialization/index.js (persona/profileTier/goalPhase gates)
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   buildUserStateForPipeline,
   estimateBfFraction,
 } from '../../lib/scheduleAdapterAggregate';
+import { mesocycleWeekNow } from '../../lib/scheduleAdapterAggregate.builder';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import type { LastSessionSummary } from '../../stores/workoutStore';
@@ -571,6 +572,44 @@ describe('buildUserStateForPipeline — FIX #3 weeksElapsed advances periodizati
     const vol0 = week0.meta.volume_target_pct as Record<string, number>;
     const vol5 = week5.meta.volume_target_pct as Record<string, number>;
     expect(Number(vol5.chest)).toBeGreaterThan(Number(vol0.chest));
+  });
+});
+
+// Founder 2026-11-14: "andura stie ca eu saptamana asta nu am avut deload?". His first
+// log is Monday 2026-06-01 13:38 and he trains Monday ~08:30, so with 7-day windows from
+// that log every Monday-morning session sat in LAST week's phase: the 11-09 deload week
+// would have run into Monday 11-16 morning. dp_meso_week_monday_v1.
+describe('buildUserStateForPipeline — the mesocycle week starts on Monday', () => {
+  const firstLog = new Date(2026, 5, 1, 13, 38).getTime();
+  const mondayMorning = new Date(2026, 10, 16, 8, 30);
+  function weeksAt(at: Date, flag: boolean): number {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(at);
+    try {
+      localStorage.setItem('_devFlags', JSON.stringify({ dp_meso_week_monday_v1: flag }));
+      seedSessions([{ ...sessionAt(0, 'potrivit', 'green'), ts: firstLog }]);
+      return Number(buildUserStateForPipeline().meta.weeksElapsed);
+    } finally {
+      vi.useRealTimers();
+    }
+  }
+
+  it('Monday 08:30 after the deload week is already week 1 of the next mesocycle', () => {
+    expect(weeksAt(mondayMorning, true)).toBe(24);
+    expect(24 % 4).toBe(0);
+    expect(weeksAt(mondayMorning, false)).toBe(23);
+  });
+
+  it('Sunday night is still the deload week, Monday 00:05 is not', () => {
+    expect(weeksAt(new Date(2026, 10, 15, 23, 50), true)).toBe(23);
+    expect(weeksAt(new Date(2026, 10, 16, 0, 5), true)).toBe(24);
+  });
+
+  it('the Progres label shows the same week the plan runs (was sessions / 3)', () => {
+    const history = [{ ...sessionAt(0, 'potrivit', 'green'), ts: firstLog }];
+    expect(mesocycleWeekNow(history, 'slabire', new Date(2026, 10, 15, 20, 0).getTime())).toBe(4);
+    expect(mesocycleWeekNow(history, 'slabire', mondayMorning.getTime())).toBe(1);
+    expect(mesocycleWeekNow([], 'slabire', mondayMorning.getTime())).toBe(1);
   });
 });
 

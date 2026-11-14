@@ -18,7 +18,8 @@ import { doneVolumeByGroupThisWeek } from '../../engine/schedule/intraWeekVolume
 import { getWeekStartIso, primaryEmphasizedGroup } from '../../engine/schedule/scheduleAdapter.js';
 import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
-import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
+import { resolvePersonaId, resolveGoalId } from '../../engine/periodization/volumeLandmarks.js';
+import { computeMacrocycleBlock } from '../../engine/periodization/macrocycle.js';
 import { estimateBfFraction, measuredBfPercent } from './bodyComp';
 import { useProgresStore, latestBodyMeasurements } from '../stores/progresStore';
 import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
@@ -120,6 +121,37 @@ function trainingStartTs(
 }
 
 /**
+ * Whole training weeks from the start anchor to `ts`. Flag on: calendar weeks
+ * from the Monday of the first session (local midnight, days rounded so DST
+ * shifts never move a boundary) — a Monday-morning session opens the new week.
+ * Flag off: 7-day windows from the first log's exact weekday+hour.
+ */
+function weeksSinceStart(startTs: number, ts: number): number {
+  if (!isEnabled('dp_meso_week_monday_v1')) return Math.floor((ts - startTs) / (7 * MS_PER_DAY));
+  const monday = new Date(startTs);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const day = new Date(ts);
+  day.setHours(0, 0, 0, 0);
+  return Math.floor(Math.round((day.getTime() - monday.getTime()) / MS_PER_DAY) / 7);
+}
+
+/**
+ * The mesocycle week (1-4) the plan runs today: the same anchor and block math
+ * as meta.weeksElapsed → periodization, for labels shown outside the plan (the
+ * Progres strip counted sessions / 3 and disagreed with the deload week).
+ */
+export function mesocycleWeekNow(
+  sessions: ReadonlyArray<LastSessionSummary>,
+  goal: unknown,
+  now: number = clockNow(),
+): 1 | 2 | 3 | 4 {
+  const startTs = trainingStartTs(sessions);
+  const weeks = startTs === undefined ? 0 : Math.max(0, weeksSinceStart(startTs, now));
+  return computeMacrocycleBlock(weeks, resolveGoalId(typeof goal === 'string' ? { goal } : {})).weekInMesocycle;
+}
+
+/**
  * Derive a session's mesocycle weekIdx (1-4) from its age relative to the
  * training start, modulo the 4-week cycle. No stateful counter — survives gaps
  * honestly (a break advances the modulo, matching real mesocycle drift).
@@ -132,9 +164,9 @@ function deriveWeekIdx(
 ): number | undefined {
   if (!Number.isFinite(sessionTs) || startTs === undefined) return undefined;
   const ts = Math.min(sessionTs, now);
-  const weeksSinceStart = Math.floor((ts - startTs) / (7 * MS_PER_DAY));
-  if (!Number.isFinite(weeksSinceStart) || weeksSinceStart < 0) return undefined;
-  return (weeksSinceStart % MESOCYCLE_WEEKS) + 1;
+  const weeks = weeksSinceStart(startTs, ts);
+  if (!Number.isFinite(weeks) || weeks < 0) return undefined;
+  return (weeks % MESOCYCLE_WEEKS) + 1;
 }
 
 // estimateBfFraction moved to ./bodyComp (leaf) to sever the nutrition→aggregate
@@ -479,7 +511,7 @@ export function buildUserStateForPipeline(): {
   const trainingWeeks =
     startTs === undefined
       ? 0
-      : Math.max(0, Math.floor((now - startTs) / (7 * MS_PER_DAY)));
+      : Math.max(0, weeksSinceStart(startTs, now));
   // Specialization meta wire (was unset → blocked at Gate 1 persona for EVERY
   // real user). persona = canonical age-based resolvePersonaId (reused, NOT
   // reinvented); profileTier from experience (Gate 2 reads T1+); goalPhase from

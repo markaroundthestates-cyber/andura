@@ -681,6 +681,12 @@ export const FLAGS = Object.freeze({
   //   distinct loads on exactly one gym stack (was three): Reverse Pec Deck 41/50 → the
   //   Matrix stack, next after 50 = 54 not 55. Pinned OFF in fp + sims.
   dp_station_two_loads_v1: { rollout: 1, default: true },
+  // dp_meso_week_monday_v1 (2026-11-14, founder "andura stie ca eu saptamana asta nu am
+  //   avut deload?") — the mesocycle week ran from the first log's weekday+hour (his:
+  //   Monday 13:38), so his Monday-morning session sat in LAST week's phase and the
+  //   deload spilled into Monday 11-16. Weeks now count calendar weeks from the Monday
+  //   of the first session (local midnight, DST-safe). Pinned OFF in fp + sims.
+  dp_meso_week_monday_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are
