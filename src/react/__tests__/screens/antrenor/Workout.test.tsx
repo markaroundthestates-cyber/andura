@@ -2493,3 +2493,24 @@ describe('Workout — in-session UX batch (dock yields + warm-up gating)', () =>
     expect(getTodayReadiness()).toBe(4);
   });
 });
+
+// Founder 2026-11-14 ("daca apesi pe + sau pe - sa iti dea stackul inregistrat de
+// andura... momentan adauga 0.5kg"): the in-session kg +/- step on the lift's ladder.
+describe('Workout — kg +/- step on the machine ladder', async () => {
+  beforeEach(() => {
+    resetStore();
+    useScheduleStore.setState({ days: ['training', 'training', 'training', 'training', 'training', 'training', 'training'] });
+  });
+
+  it('Bench Press 22.5: + gives the next real rung, not 23', async () => {
+    await renderWorkoutAndWait();
+    const input = (): HTMLInputElement => screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement;
+    await waitFor(() => expect(input().value).toBe('22.5'));
+    fireEvent.click(screen.getByTestId('setlog-tinta-kg-plus'));
+    const up = Number(input().value);
+    expect(up).toBeGreaterThan(23); // a real rung, not 22.5 + 0.5
+    fireEvent.click(screen.getByTestId('setlog-tinta-kg-minus'));
+    expect(Number(input().value)).toBeLessThan(up);
+    expect(Number(input().value) % 2.5).toBe(0);
+  });
+});

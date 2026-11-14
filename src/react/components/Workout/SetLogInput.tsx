@@ -170,6 +170,10 @@ interface SetLogInputProps {
   // True → the read-only target renders "X kg/mana" (i18n) so a DB target can
   // never read as the two-dumbbell total. Default false = legacy "X kg".
   perHandLoad?: boolean;
+  // Founder 2026-11-14 ("daca apesi pe + sau pe - sa iti dea stackul inregistrat de
+  // andura... momentan adauga 0.5kg"): the kg +/- step on THIS machine's ladder
+  // (84 → 93 → 102). Absent → the 0.5 kg nudge (bodyweight added load, legacy callers).
+  kgStep?: (current: number, dir: 1 | -1) => number;
 }
 
 export function SetLogInput({
@@ -189,7 +193,16 @@ export function SetLogInput({
   onDurationChange,
   targetSec,
   perHandLoad = false,
+  kgStep,
 }: SetLogInputProps): JSX.Element {
+  // kg +/-: the machine's next / previous rung when the parent knows it, else 0.5 kg.
+  const stepKg = (dir: 1 | -1, min: number): number => {
+    if (kgStep) {
+      const next = Number(kgStep(Number.isFinite(kg) ? kg : 0, dir));
+      if (Number.isFinite(next) && (dir > 0 ? next > kg : next < kg)) return Math.min(500, Math.max(min, next));
+    }
+    return stepValue(kg, dir * 0.5, min, 500);
+  };
   // #7 metric branches. 'time' = a hold logged in seconds, no load tile (a
   // weighted plank would carry a load, but the curated time entries are
   // bodyweight holds → keep it one clean field). 'carry' = a load tile PLUS a
@@ -338,13 +351,13 @@ export function SetLogInput({
               <div className="flex items-center justify-between gap-2 mt-2">
                 <DialButton
                   dir="down"
-                  onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
+                  onPress={() => onKgChange(stepKg(-1, 0))}
                   ariaLabel={t('setLog.kgDecrease')}
                   testId="setlog-carry-kg-minus"
                 />
                 <DialButton
                   dir="up"
-                  onPress={() => onKgChange(stepValue(kg, 0.5, 0, 500))}
+                  onPress={() => onKgChange(stepKg(1, 0))}
                   ariaLabel={t('setLog.kgIncrease')}
                   testId="setlog-carry-kg-plus"
                 />
@@ -474,13 +487,13 @@ export function SetLogInput({
             <div className="flex items-center justify-between gap-2 mt-1.5">
               <DialButton
                 dir="down"
-                onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
+                onPress={() => onKgChange(stepKg(-1, 0))}
                 ariaLabel={t('setLog.kgDecrease')}
                 testId="setlog-tinta-kg-minus"
               />
               <DialButton
                 dir="up"
-                onPress={() => onKgChange(stepValue(kg, 0.5, 0, 500))}
+                onPress={() => onKgChange(stepKg(1, 0))}
                 ariaLabel={t('setLog.kgIncrease')}
                 testId="setlog-tinta-kg-plus"
               />
@@ -637,13 +650,13 @@ export function SetLogInput({
           <div className="flex items-center justify-between gap-2 mt-2">
             <DialButton
               dir="down"
-              onPress={() => onKgChange(stepValue(kg, -0.5, isBodyweight ? 0 : 1, 500))}
+              onPress={() => onKgChange(stepKg(-1, isBodyweight ? 0 : 1))}
               ariaLabel={isBodyweight ? t('setLog.addedWeightDecrease') : t('setLog.kgDecrease')}
               testId="kg-minus"
             />
             <DialButton
               dir="up"
-              onPress={() => onKgChange(stepValue(kg, 0.5, isBodyweight ? 0 : 1, 500))}
+              onPress={() => onKgChange(stepKg(1, isBodyweight ? 0 : 1))}
               ariaLabel={isBodyweight ? t('setLog.addedWeightIncrease') : t('setLog.kgIncrease')}
               testId="kg-plus"
             />

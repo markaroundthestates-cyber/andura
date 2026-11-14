@@ -76,7 +76,7 @@ import { DP } from '../../../../engine/dp.js';
 import { platesPerSide } from '../../../../engine/plateMath.js';
 import { getExerciseMetadata } from '../../../../engine/exerciseLibrary.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
-import { roundToEquipmentWeight, getNextWeight, getPrevWeight, getPrevWeightGym } from '../../../../config/weights.js';
+import { roundToEquipmentWeight, getNextWeight, getPrevWeight, getPrevWeightGym, getNextWeightGym } from '../../../../config/weights.js';
 import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
 import { t } from '../../../../i18n/index.js';
 import { useWakeLock } from './workout/useWakeLock';
@@ -2305,6 +2305,13 @@ export function Workout(): JSX.Element {
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
+            // +/- walk this machine's rungs (the ladder Andura snaps recs to); the
+            // bodyweight added load keeps the 0.5 kg nudge.
+            {...(currentExercise.isBodyweight ? {} : {
+              kgStep: (cur: number, dir: 1 | -1) => Number(dir > 0
+                ? getNextWeightGym(cur, currentExercise.engineName ?? currentExercise.name)
+                : getPrevWeightGym(cur, currentExercise.engineName ?? currentExercise.name)),
+            })}
             // DECOUPLE target from entry (Daniel P0 2026-06-05 "coach is a
             // notepad"): the read-only "Tinta" shows the engine's PRESCRIBED
             // recommendation for this set (recKg/recReps — the SHARED current-

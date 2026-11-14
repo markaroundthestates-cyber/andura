@@ -686,3 +686,48 @@ describe('SetLogInput — select-all-on-tap + decimal buffer (type="number" .sel
     expect(screen.getByTestId('probe-kg')).toHaveTextContent('0');
   });
 });
+
+// Founder 2026-11-14: "daca apesi pe + sau pe - sa iti dea stackul inregistrat de
+// andura... momentan adauga 0.5kg". His Leg Extension pins: 75 / 84 / 93 / 102 / 111.
+describe('SetLogInput — kg +/- walk the machine ladder', () => {
+  const PINS = [75, 84, 93, 102, 111];
+  const kgStep = (cur: number, dir: 1 | -1): number => (dir > 0
+    ? (PINS.find((w) => w > cur) ?? PINS[PINS.length - 1]!)
+    : ([...PINS].reverse().find((w) => w < cur) ?? PINS[0]!));
+
+  it('+ and - jump to the next / previous pin (editable and tinta modes)', () => {
+    const onKgChange = vi.fn();
+    const { unmount } = renderInput({ kg: 93, onKgChange, kgStep });
+    fireEvent.click(screen.getByTestId('kg-plus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(102);
+    fireEvent.click(screen.getByTestId('kg-minus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(84);
+    unmount();
+    renderInput({ kg: 93, onKgChange, kgStep, mode: 'tinta', targetKg: 93, targetReps: 10 });
+    fireEvent.click(screen.getByTestId('setlog-tinta-kg-plus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(102);
+  });
+
+  it('a typed weight off the pins steps onto the nearest pin in that direction', () => {
+    const onKgChange = vi.fn();
+    renderInput({ kg: 90, onKgChange, kgStep });
+    fireEvent.click(screen.getByTestId('kg-plus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(93);
+    fireEvent.click(screen.getByTestId('kg-minus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(84);
+  });
+
+  it('past the last pin (no rung to go to) it falls back to the 0.5 kg nudge', () => {
+    const onKgChange = vi.fn();
+    renderInput({ kg: 111, onKgChange, kgStep });
+    fireEvent.click(screen.getByTestId('kg-plus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(111.5);
+  });
+
+  it('without a ladder (bodyweight added load) it stays 0.5 kg', () => {
+    const onKgChange = vi.fn();
+    renderInput({ kg: 10, onKgChange, isBodyweight: true });
+    fireEvent.click(screen.getByTestId('kg-plus'));
+    expect(onKgChange).toHaveBeenLastCalledWith(10.5);
+  });
+});
