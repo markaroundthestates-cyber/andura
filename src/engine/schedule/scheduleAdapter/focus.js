@@ -201,9 +201,14 @@ export function primaryEmphasizedGroup(focusPreset) {
  *   - the resolved preset to use INSTEAD of resolving focusPreset (dp_arms_signature_v1
  *     threads the umeri-demoted arms variant here so shoulders relaxes toward MEV instead
  *     of lerping toward MRV). Absent → resolve focusPreset normally (byte-identical).
+ * @param {string|null} [specTargetRO] - the specialization target whose up-bias the
+ *   weakness amplification owns. With suppressEmphasizeUp, only THIS group skips the
+ *   emphasize loop; the preset's other emphasized groups still lerp toward MRV
+ *   (founder 2026-11-16, upper focus: chest = spec target, so back + shoulders sat at
+ *   their raw cut budget — back at MEV). Absent → the whole loop is skipped (legacy).
  * @returns {Object<string, number>|null} biased EN-keyed budget (null passes through)
  */
-export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = false, presetOverride) {
+export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = false, presetOverride, specTargetRO = null) {
   if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
   const preset = presetOverride ?? resolveFocusPreset(focusPreset);
   if (preset.emphasize.length === 0 && preset.deEmphasize.length === 0) {
@@ -225,6 +230,8 @@ export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = f
   };
   if (!suppressEmphasizeUp) {
     for (const roGroup of preset.emphasize) biasGroup(roGroup, 'MRV');
+  } else if (specTargetRO) {
+    for (const roGroup of preset.emphasize) if (roGroup !== specTargetRO) biasGroup(roGroup, 'MRV');
   }
   for (const roGroup of preset.deEmphasize) biasGroup(roGroup, 'MEV');
   return out;

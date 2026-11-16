@@ -46,6 +46,7 @@ import {
 } from './scheduleAdapterAggregate.builder';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { phaseRirShift } from '../../engine/periodization/mesocycle.js';
+import { BIG11_RO_TO_EN_MAP, ISRAETEL_BASELINES } from '../../engine/periodization/constants.js';
 import {
   personaMrvCeilings,
   recomputeWeeklyDelivered,
@@ -1322,7 +1323,14 @@ export function scaleSetsByEnergy(
     const g = meta?.muscle_target_primary;
     return typeof g === 'string' && emphSet.has(g);
   };
-  return exercises.map((e) => {
+  // dp_energy_cut_mev_floor_v1 (founder 2026-11-16: "nu vreau sa avem sub volum pe
+  // ele") — the cut never takes a group below min(its pre-cut sets, its WEEKLY minimum
+  // MEV) in the session: cutting into a minimum dose preserves nothing. His Monday
+  // triceps (3+3 → 2+2, 4 of MEV 6) and Friday legs (hamstrings 7 → 5 of 6) sat under
+  // MEV only through this cut. After the per-exercise cut, a group short of that floor
+  // gets sets back, in plan order, up to each exercise's pre-cut count. Groups with MEV
+  // 0 (abs/forearms) and the share above MEV still take the cut.
+  const cut = exercises.map((e) => {
     // #1 — a non-emphasized tier-1 COMPOUND floors at 3 (main lift keeps its dose in a
     // cut); an emphasized group floors at its pre-cut sets (priority muscle preserved);
     // everything else takes the full cut down to MIN_SETS_PER_EX. KEEP-LOAD intact.
@@ -1334,6 +1342,36 @@ export function scaleSetsByEnergy(
       sets,
     };
   });
+  if (!isEnabled('dp_energy_cut_mev_floor_v1')) return cut;
+  const primaryOf = (e: TrimmableExercise): string | null => {
+    const meta = getExerciseMetadata(e.engineName ?? e.name) as { muscle_target_primary?: string } | null;
+    return typeof meta?.muscle_target_primary === 'string' ? meta.muscle_target_primary : null;
+  };
+  const before = new Map<string, number>();
+  const after = new Map<string, number>();
+  exercises.forEach((e, i) => {
+    const g = primaryOf(e);
+    if (!g) return;
+    before.set(g, (before.get(g) ?? 0) + e.sets);
+    after.set(g, (after.get(g) ?? 0) + (cut[i]?.sets ?? 0));
+  });
+  for (const [g, pre] of before) {
+    const en = BIG11_RO_TO_EN_MAP[g as keyof typeof BIG11_RO_TO_EN_MAP];
+    const mev = en ? ISRAETEL_BASELINES[en as keyof typeof ISRAETEL_BASELINES]?.MEV : undefined;
+    if (typeof mev !== 'number' || mev <= 0) continue;
+    let short = Math.min(pre, mev) - (after.get(g) ?? 0);
+    for (let i = 0; i < cut.length && short > 0; i++) {
+      const c = cut[i];
+      const orig = exercises[i];
+      if (!c || !orig || primaryOf(orig) !== g) continue;
+      const add = Math.min(short, orig.sets - c.sets);
+      if (add > 0) {
+        cut[i] = { ...c, sets: c.sets + add };
+        short -= add;
+      }
+    }
+  }
+  return cut;
 }
 
 /**

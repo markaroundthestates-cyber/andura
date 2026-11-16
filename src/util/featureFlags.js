@@ -692,6 +692,36 @@ export const FLAGS = Object.freeze({
   //   was floored at 1 in compose, so Pec Deck 2 → 1 on its comeback ramp. It now
   //   stops at MIN_SETS_PER_EX (2) like every other set cut. Pinned OFF in fp + sims.
   dp_sets_adjust_floor_two_v1: { rollout: 1, default: true },
+  // dp_focus_up_beside_spec_v1 (2026-11-16, founder "spate as vrea o idee mai mult volum...
+  //   o sa ramana in urma") — with the emphasis-specialization trade active, the focus's
+  //   FIRST group (upper: chest) is the spec target and its up-bias rides the weakness
+  //   amplification, so applyFocusBias skipped the emphasize loop for EVERY group: back +
+  //   shoulders sat at the raw cut budget (back at MEV 10). Now only the spec target
+  //   skips it. Pinned OFF in fp + sims.
+  dp_focus_up_beside_spec_v1: { rollout: 1, default: true },
+  // dp_energy_cut_mev_floor_v1 (2026-11-16, founder "nu vreau sa avem sub volum pe ele")
+  //   — the deficit volume cut (−22..30%) leaves alone a group whose sets in the session
+  //   do not exceed its weekly MEV: his Monday triceps (3+3 → 2+2) and Friday legs sat
+  //   under MEV only through it. Groups above MEV / MEV 0 still take the cut. Pinned
+  //   OFF in fp + sims.
+  dp_energy_cut_mev_floor_v1: { rollout: 1, default: true },
+  // dp_lone_day_mev_v1 (2026-11-16, founder "as vrea sa ajungem cu ele la pragul de
+  //   minim... in ziua de picioare") — a de-emphasized group collapsed to one day kept
+  //   the BALANCED divisor (06-06 "could barely walk"), so the lone leg day carried half
+  //   the weekly MEV. Its divisor is now clamp(weekly / MEV, true, balanced): the lone
+  //   day carries the weekly MEV, never more than max(MEV, weekly / balanced). Glutes
+  //   excluded (squat + hinge load them). Pinned OFF in fp + sims.
+  dp_lone_day_mev_v1: { rollout: 1, default: true },
+  // dp_rear_delt_pull_day_v1 (2026-11-16, founder "luni si asa e antrenament lung... ce
+  //   solutie ai sa nu facem antrenament de 2 ore?") — in a week with a pull day the
+  //   rear-delt isolation rides the PULL day (his Monday push ~72 min, Tuesday pull ~33).
+  //   Push drops it; pull adds one at 2 sets when it has none. Pinned OFF in fp + sims.
+  dp_rear_delt_pull_day_v1: { rollout: 1, default: true },
+  // dp_upper_back_cap_4d_v1 (2026-11-16, founder "spate as vrea o idee mai mult volum") —
+  //   the upper contract deflated the back cap ×1.5 for over-delivery at 4-7 days, but at
+  //   4 days back lands on only two days (his week ≈1.1×), so back sat at MEV 10. The
+  //   deflate now starts at 5 days. Pinned OFF in fp + sims.
+  dp_upper_back_cap_4d_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

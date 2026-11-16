@@ -4937,6 +4937,25 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // dp_rear_delt_pull_day_v1 (founder 2026-11-16: "luni si asa e antrenament lung...
+  // ce solutie ai sa nu facem antrenament de 2 ore?") — in a week WITH a pull day the
+  // rear-delt isolation (Reverse Pec Deck / rear-delt fly / face pull) rides the PULL
+  // day with the rest of the upper-back work, not the push day: his Monday push ran
+  // ~72 min while Tuesday's pull day was ~33. Push drops it; pull adds one (from the
+  // umeri pool, his logged pick first) at ISOLATION_MIN_SETS when it has none. Set by
+  // getDailyWorkout only for push/pull days of a week that has a pull day.
+  if (ctx?.rearDeltToPullDay === true) {
+    const isRearIso = (name) => REAR_DELT_ISOLATION_RE.test(name) && metaOf(name).muscle_target_primary === 'umeri';
+    if (cluster === 'push') {
+      exercises = exercises.filter((e) => !isRearIso(e.name));
+    } else if (cluster === 'pull' && !exercises.some((e) => isRearIso(e.name))) {
+      const rear = dropEquipmentMissing(
+        poolForGroup('umeri', available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal),
+      ).find((e) => isRearIso(e.name));
+      if (rear) exercises = [...exercises, { name: rear.name, sets: ISOLATION_MIN_SETS }];
+    }
+  }
+
   // #70-D2 COMPOUND-FIRST guarantee (final): the weak/emphasis front-loaders above
   // pull a target group's selected exercise to position 0, which can be an ISOLATION
   // when that group's slot resolved to one (a glute-emphasis leg day whose fese pick

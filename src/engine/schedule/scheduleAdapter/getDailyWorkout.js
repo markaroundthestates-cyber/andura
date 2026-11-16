@@ -63,7 +63,7 @@ import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, ef
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
 import { detectOwedClusters, detectDoneEarlySwap } from './carryoverBalance.js';
-import { ISRAETEL_BASELINES, PHASE_CLUSTERS_BIG6 } from '../../periodization/constants.js';
+import { ISRAETEL_BASELINES, PHASE_CLUSTERS_BIG6, BIG11_RO_TO_EN_MAP } from '../../periodization/constants.js';
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
@@ -712,7 +712,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     }
     return out;
   };
-  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset, emphasisActive, effectivePreset);
+  // dp_focus_up_beside_spec_v1 — the spec target's up-bias belongs to the weakness
+  // amplification; the focus's OTHER emphasized groups still get theirs (upper: back +
+  // shoulders sat at the raw cut budget while chest was the spec target).
+  const focusBiasedTargets = applyFocusBias(
+    baseVolumeTargets,
+    focusPreset,
+    emphasisActive,
+    effectivePreset,
+    isEnabled('dp_focus_up_beside_spec_v1') ? specializationTarget : null,
+  );
   const amplifiedTargets = clampToPreDeloadBaseline(
     applyWeaknessAmplification(focusBiasedTargets, weakGroups),
   );
@@ -1033,6 +1042,26 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     };
   })();
 
+  // dp_lone_day_mev_v1 (founder 2026-11-16: "stiu ca e focus upper insa as vrea sa ajungem
+  // cu ele la pragul de minim... mai repede le punem in ziua de picioare") — the
+  // de-emphasized divisor fix (06-06, "could barely walk") keeps a collapsed group's
+  // divisor at the BALANCED count, so his lone leg day carried HALF the weekly MEV
+  // (quads 4 of 8). The lone day now carries at least the weekly MEV and never more
+  // than max(MEV, weekly / balanced): divisor = clamp(weekly / MEV, true, balanced).
+  // Glutes keep the balanced divisor — the day's squat + hinge already load them.
+  if (isEnabled('dp_lone_day_mev_v1') && deEmphSet.size > 0 && volumeTargets) {
+    for (const roGroup of deEmphSet) {
+      if (roGroup === 'fese') continue;
+      const trueFreq = trueSessionsPerGroup[roGroup];
+      const raised = sessionsPerGroup[roGroup];
+      if (typeof trueFreq !== 'number' || typeof raised !== 'number' || raised <= trueFreq) continue;
+      const enKey = BIG11_RO_TO_EN_MAP[roGroup];
+      const weekly = volumeTargets[enKey];
+      const mev = ISRAETEL_BASELINES[enKey]?.MEV;
+      if (!(weekly > 0) || !(mev > 0)) continue;
+      sessionsPerGroup[roGroup] = Math.max(trueFreq, Math.min(raised, weekly / mev));
+    }
+  }
   const sessionCtx = {
     equipment: { available: availableCoarse, ...(noStation ? { noStation: true } : {}) },
     weakGroups,
@@ -1648,6 +1677,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       && (sessionsPerGroup.spate ?? 0) < (sessionsPerGroup.piept ?? 0),
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
+    // dp_rear_delt_pull_day_v1 — the rear-delt isolation rides the pull day of a week
+    // that has one (sessionBuilder: push drops it, pull adds it).
+    rearDeltToPullDay:
+      isEnabled('dp_rear_delt_pull_day_v1') && weekHasPullDay && (cluster === 'push' || cluster === 'pull'),
   };
 
   const session = buildSession(cluster, sessionCtx);

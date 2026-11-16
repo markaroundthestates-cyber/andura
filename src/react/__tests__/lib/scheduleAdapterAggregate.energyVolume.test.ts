@@ -130,3 +130,25 @@ describe('W-Meso intra-block RIR ramp — phaseRirShift folded via shiftRirBand'
     expect(banded('LOAD', null)).toBeNull();
   });
 });
+
+// Founder 2026-11-16: "nu vreau sa avem sub volum pe ele". His Monday triceps 3+3 → 2+2
+// (4 of MEV 6) and Friday hamstrings 4+3 → 3+2 (5 of MEV 6) sat under the weekly minimum
+// only through the deficit cut. dp_energy_cut_mev_floor_v1.
+describe('scaleSetsByEnergy — the deficit cut never takes a group below its weekly MEV', () => {
+  it('triceps 3+3 (= MEV 6) keep all 6 sets under the deepest cut', () => {
+    const out = scaleSetsByEnergy([ex('Cable Triceps Kickback Rope', 3), ex('Cable Overhead Triceps Extension Rope', 3)], 0.7);
+    expect(out.reduce((n, e) => n + e.sets, 0)).toBe(6);
+  });
+
+  it('hamstrings 4+3 (above MEV 6) are cut only down to 6, sets restored in plan order', () => {
+    const out = scaleSetsByEnergy([ex('Romanian Deadlift', 4, 110), ex('Leg Curl', 3, 118)], 0.7);
+    expect(out.reduce((n, e) => n + e.sets, 0)).toBe(6);
+    expect(out.map((e) => e.targetKg)).toEqual([110, 118]);
+  });
+
+  it('a group far above MEV still takes the cut; abs (MEV 0) take it in full', () => {
+    const chest = [ex('Flat Chest Press Machine', 5), ex('Smith Incline Bench', 5), ex('Pec Deck / Cable Fly', 4)];
+    expect(scaleSetsByEnergy(chest, 0.7).reduce((n, e) => n + e.sets, 0)).toBeLessThan(14);
+    expect(scaleSetsByEnergy([ex('Reverse Crunch', 3)], 0.7)[0]!.sets).toBe(2);
+  });
+});

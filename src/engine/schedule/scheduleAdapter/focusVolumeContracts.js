@@ -29,6 +29,7 @@
 // the [MEV,MRV] clamp reads landmarks directly with no RO bridge.
 
 import { ISRAETEL_BASELINES } from '../../periodization/constants.js';
+import { isEnabled } from '../../../util/featureFlags.js';
 
 /** Day-band key from training days/week (mirrors focusPolicy.dayBandKey). */
 function band(daysPerWeek) {
@@ -228,7 +229,7 @@ const CONTRACTS = Object.freeze({
   // back 25 vs shldr 14 @4d); direct triceps ≥8 + direct biceps ≥8 @4d+ (tri 4-6).
   // piept/spate/umeri all emphasized. Cap back to the tighter of the two ratios in
   // DELIVERED space (deflated); floor the arms so the upper-body arm work DELIVERS.
-  upper(out, b) {
+  upper(out, b, _armsSignatureOn, daysPerWeek) {
     const sh = out.shoulders;
     const ch = out.chest;
     // delivered shoulders ≈0.6×budget; delivered chest ≈1×budget; back ≈1.5×budget.
@@ -237,7 +238,13 @@ const CONTRACTS = Object.freeze({
     if (typeof sh === 'number' && sh > 0) refsDelivered.push(0.6 * sh);
     if (typeof ch === 'number' && ch > 0) refsDelivered.push(ch);
     if (refsDelivered.length) {
-      const deflate = b === 'hi' ? OVERDELIVER_HI : 1;
+      // dp_upper_back_cap_4d_v1 (founder 2026-11-16: "spate as vrea o idee mai mult
+      // volum... o sa ramana in urma") — the ×1.5 over-delivery deflate comes from back
+      // anchors landing on EVERY pull/upper day; at 4 days there are only two (his week:
+      // budget 10-12 → delivered 12, ≈1.1×), so the deflate pinned back at MEV. It now
+      // applies from 5 days up.
+      const fourDayNoDeflate = isEnabled('dp_upper_back_cap_4d_v1') && Number(daysPerWeek) === 4;
+      const deflate = b === 'hi' && !fourDayNoDeflate ? OVERDELIVER_HI : 1;
       capTo(out, 'back', (1.5 * Math.min(...refsDelivered)) / deflate);
     }
     if (b === 'hi') {
@@ -334,7 +341,7 @@ export function applyFocusVolumeContracts(volumeTargetsEN, focusPreset, daysPerW
   const fn = CONTRACTS[focusPreset];
   const out = { ...volumeTargetsEN };
   if (typeof fn !== 'function') return out;
-  fn(out, band(daysPerWeek), armsSignatureOn);
+  fn(out, band(daysPerWeek), armsSignatureOn, daysPerWeek);
   return out;
 }
 

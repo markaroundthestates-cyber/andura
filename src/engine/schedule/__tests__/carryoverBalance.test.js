@@ -323,3 +323,22 @@ describe('detectDoneEarlySwap — a past day already trained today\'s cluster', 
     expect(detectDoneEarlySwap({ ...base, recoveryLogs })).toBeNull();
   });
 });
+
+// Founder 2026-11-16 (upper 4d Mon/Tue/Thu/Fri = push/pull/upper/lower): the rear-delt
+// isolation moved onto the pull day (dp_rear_delt_pull_day_v1). Tuesday's back + biceps +
+// Reverse Pec Deck then read as 'upper' (3 of 5 groups > 2 of 2) and Thursday's upper day
+// was swapped for a second pull day.
+describe('detectDoneEarlySwap — a day that trained all of its own cluster did its own cluster', () => {
+  const WEEK = [true, true, false, true, true, false, false];
+  const THU = new Date(2026, 10, 19, 7, 30).getTime();
+  const at = (d, h = 9) => new Date(2026, 10, d, h, 0).getTime();
+  it('pull day + Reverse Pec Deck → Thursday stays upper', () => {
+    expect(clusterForDay(WEEK, 1, 'upper', true)).toBe('pull');
+    expect(clusterForDay(WEEK, 3, 'upper', true)).toBe('upper');
+    const recoveryLogs = [
+      log(EX.chest, at(16)), log(EX.shoulders, at(16)),
+      log(EX.back, at(17)), log(EX.biceps, at(17)), log('Reverse Pec Deck', at(17)),
+    ];
+    expect(detectDoneEarlySwap({ activeWeek: WEEK, focusPreset: 'upper', splitRebalance: true, nowMs: THU, todayIdx: 3, recoveryLogs })).toBeNull();
+  });
+});

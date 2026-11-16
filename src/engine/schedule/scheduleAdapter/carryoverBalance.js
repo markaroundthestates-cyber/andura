@@ -23,6 +23,7 @@
 import { clusterForDay } from './frequencySplit.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
+import { isEnabled } from '../../../util/featureFlags.js';
 
 /**
  * Derive the current 7-day microcycle START (ms) deterministically from `nowMs`
@@ -215,6 +216,15 @@ export function detectDoneEarlySwap({
   const actual = new Map();
   for (const [day, groups] of byDay) {
     const own = activeWeek[day] ? clusterOf(day) : null;
+    // dp_rear_delt_pull_day_v1 — a day that trained EVERY group of its own cluster did
+    // its own cluster, even with an extra group on top: a pull day carrying the rear-delt
+    // isolation (spate + biceps + umeri) read as 'upper' (3 of 5 > 2 of 2) and swapped
+    // Thursday's upper day for a second pull day.
+    if (own && isEnabled('dp_rear_delt_pull_day_v1')
+      && [...clusterTrainedGroups(own)].every((g) => groups.has(g))) {
+      actual.set(day, own);
+      continue;
+    }
     let best = own;
     let bestN = own ? [...clusterTrainedGroups(own)].filter((g) => groups.has(g)).length : -1;
     for (const c of weekClusters) {
