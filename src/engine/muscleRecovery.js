@@ -112,12 +112,12 @@ function _median(arr) {
  * @returns {{stressSets: number, typicalDose: number, layoffDays: number|null}|null}
  *   null when the head was never trained.
  */
-function _headDoseSignal(logs, head, now) {
+function _headDoseSignal(logs, head, now, musclesOf = musclesForExercise) {
   /** @type {Map<number, number>} */
   const setsByDay = new Map(); // dayKey → sets touching this head that day
   for (const log of logs || []) {
     if (!log || log.baseline || !log.ex) continue;
-    const ms = musclesForExercise(log.ex); // QA-F8: curated OR metadata-derived
+    const ms = musclesOf(log.ex); // QA-F8: curated OR metadata-derived
     if (!ms) continue;
     const touches = (ms.primary || []).includes(head) || (ms.secondary || []).includes(head);
     if (!touches) continue;
@@ -201,9 +201,17 @@ export function buildDoseScaledRecoveryHours(logs, now = Date.now(), baseHours =
       : heads[m]?.recoveryHours) || 48;
   /** @type {Record<string, number>} */
   const out = {};
+  // Perf (2026-11-16): every head re-resolved every row's muscles (flag read each
+  // time) — ~23k calls per plan on his log. One lookup per distinct exercise.
+  /** @type {Map<string, ReturnType<typeof musclesForExercise>>} */
+  const seen = new Map();
+  const musclesOf = (/** @type {string} */ ex) => {
+    if (!seen.has(ex)) seen.set(ex, musclesForExercise(ex));
+    return seen.get(ex) ?? null;
+  };
   for (const m of Object.keys(heads)) {
     const base = baseFor(m);
-    const sig = _headDoseSignal(logs, m, now);
+    const sig = _headDoseSignal(logs, m, now, musclesOf);
     if (!sig) { out[m] = base; continue; }
     const mult = Math.min(
       RECOVERY_SCALE_CAP,

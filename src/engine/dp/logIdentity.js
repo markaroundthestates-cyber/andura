@@ -120,10 +120,20 @@ export function canonicalLoggedName(name) {
 export function loggedNameMatchesCI(ex) {
   const canon = canonicalIdentity(ex);
   const lc = typeof ex === 'string' ? ex.toLowerCase() : '';
-  return canon
-    ? (rowEx) => typeof rowEx === 'string' &&
-        (rowEx.toLowerCase() === lc || canonicalIdentity(rowEx) === canon)
-    : (rowEx) => typeof rowEx === 'string' && rowEx.toLowerCase() === lc;
+  if (!canon) return (rowEx) => typeof rowEx === 'string' && rowEx.toLowerCase() === lc;
+  // Perf (2026-11-16, founder "verifica toate load timeurile"): weeklyProgression ran
+  // canonicalIdentity — 5 flag reads + the gym profile — for EVERY stored row, twice
+  // per lift per plan (~2.2 s of a 3.3 s compose profile on his 1155-row log). Each
+  // distinct row name resolves once per matcher; same answers.
+  /** @type {Map<string, string|null>} */
+  const memo = new Map();
+  return (rowEx) => {
+    if (typeof rowEx !== 'string') return false;
+    if (rowEx.toLowerCase() === lc) return true;
+    let c = memo.get(rowEx);
+    if (c === undefined) { c = canonicalIdentity(rowEx); memo.set(rowEx, c); }
+    return c === canon;
+  };
 }
 
 /**
@@ -183,9 +193,9 @@ function _raw(k) {
  * localStorage (the caller reads through DB as before).
  * @param {string} ex @returns {ReadonlyArray<{ex?: string, w?: number, ts?: number}>|null}
  */
-export function matchedLogs(ex) {
+function _refreshRows() {
   const raw = _raw('logs');
-  if (raw === null) return null;
+  if (raw === null) return false;
   const gyms = _raw('dp-gyms');
   const flags = _raw('_devFlags');
   canonicalIdentity('Lat Pulldown'); // refreshes the identity memo generation
@@ -193,6 +203,21 @@ export function matchedLogs(ex) {
     _memoRaw = raw; _memoGyms = gyms; _memoFlags = flags; _memoIdGen = _idMemo; _memoByEx = new Map();
     try { const p = JSON.parse(raw || 'null'); _memoRows = Array.isArray(p) ? p : []; } catch { _memoRows = []; }
   }
+  return true;
+}
+
+/**
+ * The whole stored log, parsed once per stored value (and re-read when the gym
+ * equivalences / dev flags change — a NEW array then). Callers must not mutate it.
+ * Null when nothing is stored in localStorage (the caller reads through DB).
+ * @returns {ReadonlyArray<{ex?: string, w?: number, ts?: number}>|null}
+ */
+export function allLoggedRows() {
+  return _refreshRows() ? _memoRows : null;
+}
+
+export function matchedLogs(ex) {
+  if (!_refreshRows()) return null;
   let hit = _memoByEx.get(ex);
   if (!hit) {
     const matches = loggedRowMatcher(ex);

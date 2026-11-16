@@ -40,7 +40,7 @@ import { shouldProbe, probeSet } from './dp/activeProbing.js';
 import { chooseCandidate } from './dp/mpc.js';
 import { deriveLoadTransition } from './dp/loadTransition.js';
 import { isPinnedPainful } from './dp/painMemory.js';
-import { detectStagnation } from './stagnationDetector.js';
+import { stagnationWeeks } from './dp/stagnationMemo.js';
 import { getMetricType } from './metricType.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -676,9 +676,7 @@ export const DP = {
   // internally). Pure read; 0 when there is no usable cross-week history.
   /** @param {string} ex @returns {number} */
   _stagnationWeeks(ex) {
-    const logs = /** @type {Array<any>} */ (DB.get('logs')) || [];
-    if (!Array.isArray(logs) || logs.length === 0) return 0;
-    return detectStagnation(ex, logs).stagnationWeeks;
+    return stagnationWeeks(ex); // dp/stagnationMemo — memoized per stored log (dp_read_memo_v1)
   },
 
   // #2/C — escalation occurrence for a PROBLEM plateau, derived from how LONG the
