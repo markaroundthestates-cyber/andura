@@ -646,6 +646,36 @@ export function personalPaceFactor(
   const median = ratios.length % 2 ? ratios[mid]! : (ratios[mid - 1]! + ratios[mid]!) / 2;
   return Math.min(1.8, Math.max(0.8, median));
 }
+/** An exercise whose primary group has NO weekly minimum (MEV 0: abs, forearms). */
+function hasNoWeeklyMinimum(e: TrimmableExercise): boolean {
+  const g = (getExerciseMetadata(e.engineName ?? e.name) as { muscle_target_primary?: string } | null)?.muscle_target_primary;
+  if (!g) return false;
+  const en = BIG11_RO_TO_EN_MAP[g as keyof typeof BIG11_RO_TO_EN_MAP];
+  return (en ? ISRAETEL_BASELINES[en as keyof typeof ISRAETEL_BASELINES]?.MEV ?? 0 : 0) === 0;
+}
+
+/**
+ * dp_pace_trim_v1 — while the session is over `capMin` in the user's own minutes
+ * (standard estimate × pace), drop exercises whose primary group has NO weekly minimum
+ * (MEV 0: abs, forearms), last first, never below MIN_EXERCISES_FLOOR exercises. Groups
+ * with an MEV are never touched. Pace ≤ 1 → unchanged. Pure.
+ */
+export function dropNoMinimumOverCap(
+  exercises: ReadonlyArray<TrimmableExercise>,
+  warmupMin: number,
+  pace: number,
+  capMin: number,
+): TrimmableExercise[] {
+  let out = [...exercises];
+  if (!(pace > 1)) return out;
+  const realMin = (xs: TrimmableExercise[]): number => (computeEstimatedDurationMin(xs, warmupMin) ?? 0) * pace;
+  for (let i = out.length - 1; i >= 0 && realMin(out) > capMin; i--) {
+    const e = out[i];
+    if (e && hasNoWeeklyMinimum(e) && out.length > MIN_EXERCISES_FLOOR) out = out.filter((_, j) => j !== i);
+  }
+  return out;
+}
+
 
 // ── Persona-aware session TIME budget (rest-inclusive) ─────────────────────
 // The chassis sizes a session from the weekly volume budget (exercise count
@@ -1090,6 +1120,7 @@ export function trimSessionToTimeBudget(
   // candidate instead of strictly the positional last (denser remaining session).
   // OFF → strict tail-first (out.pop) → byte-identical.
   const stimulusTrimOn = isEnabled('dp_stimulus_per_min_v1');
+  const noMinimumFirst = isEnabled('dp_trim_no_minimum_first_v1');
   // No guard supplied (flag OFF / no focus) → a predicate that protects NOTHING, so
   // every branch below is byte-identical to the pre-guard trim.
   const isDropProtected =
@@ -1169,6 +1200,18 @@ export function trimSessionToTimeBudget(
       // (out.pop()) → byte-identical. A density tie → the positionally-last (keeps
       // the legacy ordering deterministic).
       let dropIdx = -1;
+      // dp_trim_no_minimum_first_v1 (founder 2026-11-16: "nu vreau sa avem sub volum pe ele")
+      // — the stimulus-per-minute pick dropped his friend's Seated Calf Raise (calves MEV 8)
+      // and kept a Cable Crunch (abs, no weekly minimum). A no-minimum exercise goes first.
+      if (noMinimumFirst) {
+        for (let i = out.length - 1; i >= minExercises; i -= 1) {
+          if (!isDropProtected(out, i) && hasNoWeeklyMinimum(out[i]!)) { dropIdx = i; break; }
+        }
+      }
+      if (dropIdx >= 0) {
+        out.splice(dropIdx, 1);
+        continue;
+      }
       if (stimulusTrimOn) {
         let lowest = Infinity;
         for (let i = out.length - 1; i >= minExercises; i -= 1) {
@@ -1784,13 +1827,25 @@ export async function composePlannedWorkoutToday(
         guardFocusPreset, spateInjured, posteriorFloorFull, lateralDeltGuard, calfDeliveryGuard,
       )
       : null;
-    const trimmedExercises = trimSessionToTimeBudget(
+    // The user's own pace (median real / estimated duration over his last sessions).
+    const pace = isEnabled('dp_pace_duration_v1') || isEnabled('dp_pace_trim_v1')
+      ? personalPaceFactor(useWorkoutStore.getState().sessionsHistory ?? [], restRange)
+      : 1;
+    const timeTrimmed = trimSessionToTimeBudget(
       energyScaled,
       warmup?.durationMin ?? 0,
       timeCapMin,
       dropGuard ?? undefined,
       userHardCap,
     );
+    // dp_pace_trim_v1 (founder 2026-11-16: "sa nu facem antrenament de 2 ore") — the trim
+    // above measures the standard estimate, ~1.5× fast for him (a "55 min" Friday ran ~83).
+    // When the day is still over the cap in HIS minutes, exercises of groups with NO weekly
+    // minimum (MEV 0: abs, forearms) go first, last one first. A full pace-scaled trim cut
+    // his Friday legs to 2 calf sets — groups with a minimum are never touched here.
+    const trimmedExercises = isEnabled('dp_pace_trim_v1')
+      ? dropNoMinimumOverCap(timeTrimmed, warmup?.durationMin ?? 0, pace, timeCapMin)
+      : timeTrimmed;
     // ══ PERSONA-AWARE MRV CEILING (dp_mrv_ceiling_v1, 2026-06-15) ══════════════════════
     // No muscle's TRUE DELIVERED weekly hard-set total may exceed its persona MRV. The
     // budget is already MRV-clamped, but an OVER-TRAINED group DELIVERS ~1.3-1.8× its
@@ -1895,11 +1950,9 @@ export async function composePlannedWorkoutToday(
     // Durata estimata REAL din volumul de seturi + odihna (vs hardcode 50 engine):
     // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
     const baseDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
-    // dp_pace_duration_v1 — shown in the user's own pace (display only).
-    const pace = isEnabled('dp_pace_duration_v1')
-      ? personalPaceFactor(useWorkoutStore.getState().sessionsHistory ?? [], restRange)
-      : 1;
-    const estimatedDuration = baseDuration !== null && pace !== 1 ? Math.round(baseDuration * pace) : baseDuration;
+    // dp_pace_duration_v1 — shown in the user's own pace (pace computed above the trim).
+    const shownPace = isEnabled('dp_pace_duration_v1') ? pace : 1;
+    const estimatedDuration = baseDuration !== null && shownPace !== 1 ? Math.round(baseDuration * shownPace) : baseDuration;
     // A2.1 — consolidated HONEST decision trace, behind dp_decision_trace_v1 (default
     // ON). Pure derivation over values THIS compose already computed — phase (the
     // active CUT/BULK direction), readiness (the energy-check score), the engine's

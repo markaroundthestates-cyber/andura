@@ -1681,6 +1681,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // that has one (sessionBuilder: push drops it, pull adds it).
     rearDeltToPullDay:
       isEnabled('dp_rear_delt_pull_day_v1') && weekHasPullDay && (cluster === 'push' || cluster === 'pull'),
+    // dp_straight_arm_own_movement_v1 — a straight-arm pulldown is not deduped against
+    // Lat Pulldown (it is the lat-isolation role, sessionBuilder dedupKey).
+    straightArmOwnMovement: isEnabled('dp_straight_arm_own_movement_v1'),
+    // dp_mev_group_full_budget_v1 — a group at/below its weekly MEV keeps its full
+    // per-session budget when the pool fills fewer slots (sessionBuilder de-balloon).
+    mevGroupsKeepBudget: isEnabled('dp_mev_group_full_budget_v1'),
   };
 
   const session = buildSession(cluster, sessionCtx);

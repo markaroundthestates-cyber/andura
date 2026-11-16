@@ -7,7 +7,7 @@
 // test (the sibling Path-A set scaler) so the two are comparable.
 
 import { describe, it, expect } from 'vitest';
-import { scaleSetsByEnergy, shiftRirBand, personalPaceFactor, computeEstimatedDurationMin } from '../../lib/scheduleAdapterAggregate';
+import { scaleSetsByEnergy, shiftRirBand, personalPaceFactor, computeEstimatedDurationMin, dropNoMinimumOverCap, trimSessionToTimeBudget } from '../../lib/scheduleAdapterAggregate';
 import { phaseRirShift } from '../../../engine/periodization/mesocycle.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
@@ -170,5 +170,42 @@ describe('personalPaceFactor — the estimate in the user\'s own pace', () => {
     expect(personalPaceFactor([sess(70, 20), sess(70, 20), sess(70, 20)], [90, 90])).toBe(1);
     expect(personalPaceFactor([1, 2, 3, 4].map(() => sess(300, 20)), [90, 90])).toBe(1.8);
     expect(personalPaceFactor([1, 2, 3, 4].map(() => sess(15, 20)), [90, 90])).toBe(0.8);
+  });
+});
+
+// Founder 2026-11-16 ("sa nu facem antrenament de 2 ore"): his Friday leg day ran ~83 min
+// in his pace with a Reverse Crunch on the tail. dp_pace_trim_v1.
+describe('dropNoMinimumOverCap — over the cap in his minutes, no-minimum groups go first', () => {
+  const day = (): PlannedExercise[] => [
+    ex('Barbell Back Squat (High Bar)', 4, 80), ex('Romanian Deadlift', 4, 110), ex('Leg Extension', 3, 111),
+    ex('Leg Curl', 2, 118), ex('Seated Calf Raise Machine', 3, 120), ex('Leg Press Calf Raise', 3, 180),
+    ex('Reverse Crunch', 2, 0),
+  ];
+  it('drops the abs exercise when the day is over 75 min at pace 1.5; legs untouched', () => {
+    const out = dropNoMinimumOverCap(day(), 0, 1.5, 75);
+    expect(out.map((e) => e.name)).not.toContain('Reverse Crunch');
+    expect(out).toHaveLength(6);
+  });
+  it('pace 1 or a day under the cap → unchanged', () => {
+    expect(dropNoMinimumOverCap(day(), 0, 1, 75)).toHaveLength(7);
+    expect(dropNoMinimumOverCap(day(), 0, 1.5, 200)).toHaveLength(7);
+  });
+});
+
+// Founder 2026-11-16: the time trim's stimulus-per-minute pick dropped his friend's Seated
+// Calf Raise (calves MEV 8) and kept a Cable Crunch (abs, no minimum).
+// dp_trim_no_minimum_first_v1.
+describe('trimSessionToTimeBudget — a no-minimum exercise is dropped before a minimum one', () => {
+  it('Cable Crunch goes before Seated Calf Raise when the day must lose an exercise', () => {
+    const day: PlannedExercise[] = [
+      ex('Leg Press', 4, 110), ex('Walking Lunge', 3, 12), ex('Leg Extension', 2, 111), ex('Leg Curl', 3, 109),
+      ex('Hip Abduction Machine', 2, 52), ex('Leg Press Calf Raise', 2, 90), ex('Cable Crunch Kneeling', 2, 32),
+      ex('Seated Calf Raise Machine', 2, 47.5),
+    ];
+    const full = computeEstimatedDurationMin(day)!;
+    const out = trimSessionToTimeBudget(day, 0, full - 3);
+    const names = out.map((e) => e.name);
+    expect(names).not.toContain('Cable Crunch Kneeling');
+    expect(names).toContain('Seated Calf Raise Machine');
   });
 });

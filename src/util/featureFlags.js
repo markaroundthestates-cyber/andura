@@ -722,6 +722,29 @@ export const FLAGS = Object.freeze({
   //   4 days back lands on only two days (his week ≈1.1×), so back sat at MEV 10. The
   //   deflate now starts at 5 days. Pinned OFF in fp + sims.
   dp_upper_back_cap_4d_v1: { rollout: 1, default: true },
+  // dp_straight_arm_own_movement_v1 (2026-11-16, founder's upper week: the pull day's third
+  //   back exercise came out DB Shrug) — Straight-Arm Lat Pulldown (logged 14×) is a lat
+  //   isolation but the session dedup keyed it as 'pulldown' with Lat Pulldown; it is now
+  //   its own movement there. Pinned OFF in fp + sims.
+  dp_straight_arm_own_movement_v1: { rollout: 1, default: true },
+  // dp_pace_trim_v1 (2026-11-16, founder "sa nu facem antrenament de 2 ore") — when a day is
+  //   still over the time cap in the user's own pace (personalPaceFactor; his estimates ran
+  //   ~1.5× fast), exercises of groups with no weekly minimum (abs, forearms) are dropped,
+  //   last first; groups with an MEV are never touched (a full pace-scaled trim cut his
+  //   Friday legs to 2 calf sets). Pace 1 (under 4 usable sessions) → unchanged. Pinned OFF
+  //   in fp + sims.
+  dp_pace_trim_v1: { rollout: 1, default: true },
+  // dp_mev_group_full_budget_v1 (2026-11-16, founder "nu vreau sa avem sub volum pe ele") —
+  //   the session builder's de-balloon halved a lone exercise's dose when the pool filled
+  //   fewer slots than expected (his friend refuses hinges → one Leg Curl at 2 sets,
+  //   hamstrings 2/week). Like the calf rule, a group at/below its weekly MEV keeps its full
+  //   per-session budget. Pinned OFF in fp + sims.
+  dp_mev_group_full_budget_v1: { rollout: 1, default: true },
+  // dp_trim_no_minimum_first_v1 (2026-11-16, founder "nu vreau sa avem sub volum pe ele") —
+  //   the time trim's stimulus-per-minute pick dropped his friend's Seated Calf Raise (calves
+  //   MEV 8) and kept a Cable Crunch; an exercise of a group with no weekly minimum (abs,
+  //   forearms) is now dropped first. Pinned OFF in fp + sims.
+  dp_trim_no_minimum_first_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.

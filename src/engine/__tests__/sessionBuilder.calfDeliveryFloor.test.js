@@ -50,7 +50,10 @@ async function composeWeek(data, floorOff) {
 // Synthetic weeks log nothing, so every later day carries a "skipped" deficit; the LEAN A/B
     // was calibrated on the legacy make-up environment → held there (same pin as the fp/
     // calibration sims) so the A/B isolates the floor, not the week make-up.
-    if (floorOff) localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_calf_delivery_floor_v1: false, dp_makeup_through_yesterday_v1: false }));
+    // The 2026-11-16 general rules (a group at its MEV keeps its full budget; the time trim
+    // drops no-minimum exercises first) also lift these calves — the OFF arm pins them too
+    // so it stays the pre-floor orphan baseline this file measures against.
+    if (floorOff) localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_calf_delivery_floor_v1: false, dp_makeup_through_yesterday_v1: false, dp_mev_group_full_budget_v1: false, dp_trim_no_minimum_first_v1: false }));
     else localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_makeup_through_yesterday_v1: false }));
   } catch { /* jsdom always has localStorage */ }
   world.useOnboardingStore.setState({

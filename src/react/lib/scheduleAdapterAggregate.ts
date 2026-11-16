@@ -41,6 +41,7 @@ export {
   computePlannedVolumeKg,
   computeEstimatedDurationMin,
   personalPaceFactor,
+  dropNoMinimumOverCap,
   composePlannedWorkoutToday,
   personaTimeCapMin,
   personaTimeTargetMin,

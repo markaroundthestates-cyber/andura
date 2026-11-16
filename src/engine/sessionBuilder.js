@@ -1966,7 +1966,18 @@ export function buildSession(cluster, ctx) {
   // coverage / big-lower / exclusion-token) stay on the plain key → unchanged.
   // OFF (default-absent / pure-fn callers) → deepFamily false → byte-identical.
   const deepFamilyDedup = ctx?.selectionDedup === true;
-  const dedupKey = (name, meta) => movementKey(name, meta, deepFamilyDedup);
+  // dp_straight_arm_own_movement_v1 (founder 2026-11-16: his upper week's pull day took a
+  // DB Shrug as the third back exercise) — a straight-arm pulldown is a lat ISOLATION
+  // (shoulder extension, the focus policy's lat_isolation role), not a second vertical
+  // pull, but the 'pulldown' token deduped it against Lat Pulldown. With the flag it is
+  // its own movement in the session dedup (rotation / coverage keys unchanged).
+  const straightArmOwn = ctx?.straightArmOwnMovement === true;
+  const dedupKey = (name, meta) => {
+    const k = movementKey(name, meta, deepFamilyDedup);
+    return straightArmOwn && k.endsWith('::pulldown') && /straight[-\s]arm/i.test(String(name))
+      ? k.replace(/::pulldown$/, '::straight-arm-pulldown')
+      : k;
+  };
   // BUG 5 — dedup by MOVEMENT (muscle + movement token), not exact name, so two
   // same-movement variants (e.g. two chest flyes under different names) can never
   // both land in one plan. chosenNames stays as the exact-name guard underneath.
@@ -4359,7 +4370,18 @@ export function buildSession(cluster, ctx) {
       && typeof weeklyForGroup === 'number'
       && typeof groupMev === 'number'
       && weeklyForGroup <= groupMev;
-    const budget = coherentAlloc && !skipDeballoon && !skipCalfDeballoon
+    // dp_mev_group_full_budget_v1 (founder 2026-11-16: "nu vreau sa avem sub volum pe ele")
+    // — the calf rule above, for EVERY group whose weekly budget sits at/below its MEV: the
+    // de-balloon shrink halved a lone exercise's dose when the pool filled fewer slots than
+    // the budget expected (his friend refuses hinges/hip thrusts → one Leg Curl at 2 sets,
+    // hamstrings 2/week). A group at its weekly minimum keeps its full per-session budget.
+    const skipMevDeballoon =
+      ctx?.mevGroupsKeepBudget === true
+      && typeof weeklyForGroup === 'number'
+      && typeof groupMev === 'number'
+      && groupMev > 0
+      && weeklyForGroup <= groupMev;
+    const budget = coherentAlloc && !skipDeballoon && !skipCalfDeballoon && !skipMevDeballoon
       ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
       : perSessionBudget;
     const counts = distributeGroupSets(
