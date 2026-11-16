@@ -20,7 +20,7 @@
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthCallback } from '../../routes/screens/AuthCallback';
 import { ProtectedRoute } from '../../routes/ProtectedRoute';
@@ -165,19 +165,23 @@ describe('AuthCallback onboarding-gate — restore times out (no-trap fallback)'
     runPostAuthSync.mockImplementation(
       () => new Promise<void>(() => {/* never resolves */})
     );
+    // Fake timers drive the 6 s restore cap (the test used to wait it out in real
+    // time — ~6 s of every suite run; 2026-11-16 slow-test pass).
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      renderFlow();
 
-    renderFlow();
+      // Spinner is up while awaiting.
+      expect(screen.getByTestId('auth-callback')).toBeInTheDocument();
 
-    // Spinner is up while awaiting.
-    expect(screen.getByTestId('auth-callback')).toBeInTheDocument();
-
-    // Within the 6s timeout the user lands in the app (not trapped on spinner).
-    await waitFor(
-      () => {
+      // Past the 6 s timeout the user lands in the app (not trapped on spinner).
+      await act(async () => { await vi.advanceTimersByTimeAsync(6100); });
+      await waitFor(() => {
         expect(screen.getByTestId('app-home')).toBeInTheDocument();
-      },
-      { timeout: 7000 }
-    );
-    expect(screen.queryByTestId('auth-callback')).not.toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('auth-callback')).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

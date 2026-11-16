@@ -89,8 +89,17 @@ function evenSpacedDays(freq) {
   return [...new Set(out)];
 }
 
+// Deterministic per (persona, flag, freq, focus) — the LEAN GLOBAL case re-asked for 12
+// weeks the earlier cases already composed (2026-11-16 slow-test pass: ~14 s file).
+const _weeks = new Map();
+function composeWeek(personaId, guaranteeOn, freq, focus = 'balanced') {
+  const key = `${personaId}|${guaranteeOn}|${freq}|${focus}`;
+  if (!_weeks.has(key)) _weeks.set(key, composeWeekUncached(personaId, guaranteeOn, freq, focus));
+  return _weeks.get(key);
+}
+
 /** Compose a persona's week; tally weekly direct-triceps/biceps sets, triceps days, TOTAL slots. */
-async function composeWeek(personaId, guaranteeOn, freq, focus = 'balanced') {
+async function composeWeekUncached(personaId, guaranteeOn, freq, focus = 'balanced') {
   setFlags(guaranteeOn);
   const offsets = evenSpacedDays(freq);
   seedSchedule(offsets);
