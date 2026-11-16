@@ -618,6 +618,35 @@ export function computeEstimatedDurationMin(
   return Math.round(totalSec / 60) + Math.round(warmup);
 }
 
+/**
+ * dp_pace_duration_v1 (founder 2026-11-16: Andura said 49 min for his Monday, he took
+ * 72) — the user's own pace: the median of real durationMin / this estimator's minutes
+ * over his last 8 logged sessions (each re-estimated from its logged sets with today's
+ * rest band). Needs 4 usable sessions (≥15 min, ≥6 sets); clamped to [0.8, 1.8]; else 1.
+ * Display only — the time-budget trim keeps the standard estimate. Pure.
+ */
+export function personalPaceFactor(
+  sessions: ReadonlyArray<{ durationMin?: number; exercises?: ReadonlyArray<{ engineName?: string; exerciseName?: string; sets?: ReadonlyArray<unknown> }> }>,
+  restRange: readonly [number, number] | null,
+): number {
+  const ratios: number[] = [];
+  for (const s of sessions.slice(-8)) {
+    const real = Number(s?.durationMin);
+    const exs = (s?.exercises ?? []).map((e) => ({
+      sets: Array.isArray(e?.sets) ? e.sets.length : 0,
+      restSec: resolveRestSec(String(e?.engineName ?? e?.exerciseName ?? ''), restRange),
+    }));
+    if (!(real >= 15) || exs.reduce((n, e) => n + e.sets, 0) < 6) continue;
+    const est = computeEstimatedDurationMin(exs);
+    if (est !== null && est > 0) ratios.push(real / est);
+  }
+  if (ratios.length < 4) return 1;
+  ratios.sort((a, b) => a - b);
+  const mid = Math.floor(ratios.length / 2);
+  const median = ratios.length % 2 ? ratios[mid]! : (ratios[mid - 1]! + ratios[mid]!) / 2;
+  return Math.min(1.8, Math.max(0.8, median));
+}
+
 // ── Persona-aware session TIME budget (rest-inclusive) ─────────────────────
 // The chassis sizes a session from the weekly volume budget (exercise count
 // [4,8] × sets [2,5]) but never bounds the resulting session DURATION, so a
@@ -1865,7 +1894,12 @@ export async function composePlannedWorkoutToday(
     const volumeKg = computePlannedVolumeKg(exercises, coldStartProfile.bodyweightKg);
     // Durata estimata REAL din volumul de seturi + odihna (vs hardcode 50 engine):
     // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
-    const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
+    const baseDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
+    // dp_pace_duration_v1 — shown in the user's own pace (display only).
+    const pace = isEnabled('dp_pace_duration_v1')
+      ? personalPaceFactor(useWorkoutStore.getState().sessionsHistory ?? [], restRange)
+      : 1;
+    const estimatedDuration = baseDuration !== null && pace !== 1 ? Math.round(baseDuration * pace) : baseDuration;
     // A2.1 — consolidated HONEST decision trace, behind dp_decision_trace_v1 (default
     // ON). Pure derivation over values THIS compose already computed — phase (the
     // active CUT/BULK direction), readiness (the energy-check score), the engine's

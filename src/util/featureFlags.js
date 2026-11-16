@@ -722,6 +722,11 @@ export const FLAGS = Object.freeze({
   //   4 days back lands on only two days (his week ≈1.1×), so back sat at MEV 10. The
   //   deflate now starts at 5 days. Pinned OFF in fp + sims.
   dp_upper_back_cap_4d_v1: { rollout: 1, default: true },
+  // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
+  //   — the estimated duration is shown in the user's own pace (median real/estimated over
+  //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.
+  //   Pinned OFF in fp + sims.
+  dp_pace_duration_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are

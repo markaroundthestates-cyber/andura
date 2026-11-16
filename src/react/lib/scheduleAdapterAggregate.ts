@@ -40,6 +40,7 @@ export {
   buildSwappedExercise,
   computePlannedVolumeKg,
   computeEstimatedDurationMin,
+  personalPaceFactor,
   composePlannedWorkoutToday,
   personaTimeCapMin,
   personaTimeTargetMin,

@@ -7,7 +7,7 @@
 // test (the sibling Path-A set scaler) so the two are comparable.
 
 import { describe, it, expect } from 'vitest';
-import { scaleSetsByEnergy, shiftRirBand } from '../../lib/scheduleAdapterAggregate';
+import { scaleSetsByEnergy, shiftRirBand, personalPaceFactor, computeEstimatedDurationMin } from '../../lib/scheduleAdapterAggregate';
 import { phaseRirShift } from '../../../engine/periodization/mesocycle.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
@@ -150,5 +150,25 @@ describe('scaleSetsByEnergy — the deficit cut never takes a group below its we
     const chest = [ex('Flat Chest Press Machine', 5), ex('Smith Incline Bench', 5), ex('Pec Deck / Cable Fly', 4)];
     expect(scaleSetsByEnergy(chest, 0.7).reduce((n, e) => n + e.sets, 0)).toBeLessThan(14);
     expect(scaleSetsByEnergy([ex('Reverse Crunch', 3)], 0.7)[0]!.sets).toBe(2);
+  });
+});
+
+// Founder 2026-11-16: Andura estimated 49 min for his Monday, he took 72 (his last 8
+// sessions ran ~2.9-4.0 min per set). dp_pace_duration_v1.
+describe('personalPaceFactor — the estimate in the user\'s own pace', () => {
+  const sess = (durationMin: number, sets: number) => ({
+    durationMin,
+    exercises: [{ engineName: 'Flat Chest Press Machine', sets: Array.from({ length: sets }, () => ({})) }],
+  });
+  it('a lifter who takes ~1.5× the estimate gets ~1.5', () => {
+    const est = computeEstimatedDurationMin([{ sets: 20, restSec: 90 }])!;
+    const f = personalPaceFactor([1, 2, 3, 4, 5].map(() => sess(Math.round(est * 1.5), 20)), [90, 90]);
+    expect(f).toBeGreaterThan(1.4);
+    expect(f).toBeLessThan(1.6);
+  });
+  it('fewer than 4 usable sessions → 1; clamped to [0.8, 1.8]', () => {
+    expect(personalPaceFactor([sess(70, 20), sess(70, 20), sess(70, 20)], [90, 90])).toBe(1);
+    expect(personalPaceFactor([1, 2, 3, 4].map(() => sess(300, 20)), [90, 90])).toBe(1.8);
+    expect(personalPaceFactor([1, 2, 3, 4].map(() => sess(15, 20)), [90, 90])).toBe(0.8);
   });
 });
