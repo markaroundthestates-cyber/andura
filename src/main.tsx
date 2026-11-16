@@ -112,13 +112,19 @@ const preloadCriticalChunks = (): void => {
   // route_prefetch_v1 (founder 2026-10-10: "inclusiv la schimbarea de pagini") — the
   // tabs and the workout flow are lazy chunks evaluated on the first tap; warm them
   // while the app is idle so the first switch is instant.
+  // 2026-11-16 perf pass: run 3 s later. Fired right at the first idle, these ~30 chunks
+  // downloaded in parallel with the first screen's own chunk — live Lighthouse LCP 7.3 s,
+  // 92% render delay. The screen being opened is fetched by its route anyway; the rest
+  // still warm well before a second tap.
   if (isEnabled('route_prefetch_v1')) {
-    void import('./react/routes/screens/antrenor/Antrenor');
-    void import('./react/routes/screens/progres/Progres');
-    void import('./react/routes/screens/istoric/Istoric');
-    void import('./react/routes/screens/cont/Cont');
-    void import('./react/routes/screens/antrenor/WorkoutPreview');
-    void import('./react/routes/screens/antrenor/Workout');
+    setTimeout(() => {
+      void import('./react/routes/screens/antrenor/Antrenor');
+      void import('./react/routes/screens/progres/Progres');
+      void import('./react/routes/screens/istoric/Istoric');
+      void import('./react/routes/screens/cont/Cont');
+      void import('./react/routes/screens/antrenor/WorkoutPreview');
+      void import('./react/routes/screens/antrenor/Workout');
+    }, 3000);
   }
 };
 if ('requestIdleCallback' in window) {
