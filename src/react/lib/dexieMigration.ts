@@ -12,10 +12,20 @@
 // jsdom test environment: IndexedDB native NOT available → fail-silent
 // returns empty array. Production browser env: Dexie persists.
 
-import Dexie from 'dexie';
 import type { Table } from 'dexie';
 import type { LastSessionSummary } from '../stores/workoutStore';
-import { getNamespace } from '../../storage/db.js';
+import { getNamespace } from '../../storage/namespace.js';
+
+// Dexie loads on the first archive call (2026-11-16 perf pass): workoutStore + Istoric
+// import this module, so a static `import Dexie` put Dexie (~32 KB gzip) on every cold
+// start. After the first load the constructor is cached, so the per-call cost is one
+// already-resolved await and the open/cache logic below stays synchronous.
+type DexieCtor = typeof import('dexie').default;
+let _Dexie: DexieCtor | null = null;
+async function loadDexie(): Promise<DexieCtor> {
+  if (_Dexie === null) _Dexie = (await import('dexie')).default;
+  return _Dexie;
+}
 
 interface ArchivedSession extends LastSessionSummary {
   archivedAt: number;
@@ -36,15 +46,14 @@ export const ARCHIVE_DB_NAME = (ns: string): string => `${ARCHIVE_PREFIX}_${ns}`
 /** The legacy pre-isolation device-global archive (migrated once, then deleted). */
 const LEGACY_GLOBAL = ARCHIVE_PREFIX;
 
-class AnduraDexieDB extends Dexie {
-  sessions!: Table<ArchivedSession, number>;
+type AnduraDexieDB = InstanceType<DexieCtor> & { sessions: Table<ArchivedSession, number> };
 
-  constructor(dbName: string) {
-    super(dbName);
-    this.version(1).stores({
-      sessions: '++id, ts, archivedAt',
-    });
-  }
+function openArchiveDb(D: DexieCtor, dbName: string): AnduraDexieDB {
+  const db = new D(dbName) as AnduraDexieDB;
+  db.version(1).stores({
+    sessions: '++id, ts, archivedAt',
+  });
+  return db;
 }
 
 // Cache keyed by namespace — on an account switch getNamespace() changes, so a stale
@@ -53,8 +62,14 @@ let _db: AnduraDexieDB | null = null;
 let _dbNs: string | null = null;
 let _migratedNs: string | null = null;
 
-function getDb(): AnduraDexieDB | null {
+async function getDb(): Promise<AnduraDexieDB | null> {
   if (typeof indexedDB === 'undefined') return null;
+  let D: DexieCtor;
+  try {
+    D = await loadDexie();
+  } catch {
+    return null;
+  }
   let ns: string;
   try {
     ns = getNamespace();
@@ -67,7 +82,7 @@ function getDb(): AnduraDexieDB | null {
     _db = null;
   }
   try {
-    _db = new AnduraDexieDB(ARCHIVE_DB_NAME(ns));
+    _db = openArchiveDb(D, ARCHIVE_DB_NAME(ns));
     _dbNs = ns;
   } catch {
     _db = null;
@@ -110,10 +125,10 @@ async function migrateLegacyIfNeeded(db: AnduraDexieDB, ns: string): Promise<voi
     if (existing > 0) {
       // This per-UID DB already has data → never merge the global in (avoid a second
       // user inheriting it); just retire the global so it stops being residue.
-      await Dexie.delete(LEGACY_GLOBAL);
+      await (await loadDexie()).delete(LEGACY_GLOBAL);
       return;
     }
-    const legacy = new AnduraDexieDB(LEGACY_GLOBAL);
+    const legacy = openArchiveDb(await loadDexie(), LEGACY_GLOBAL);
     let rows: ArchivedSession[] = [];
     try {
       rows = await legacy.sessions.orderBy('ts').toArray();
@@ -128,7 +143,7 @@ async function migrateLegacyIfNeeded(db: AnduraDexieDB, ns: string): Promise<voi
         return copy as ArchivedSession;
       }));
     }
-    await Dexie.delete(LEGACY_GLOBAL);
+    await (await loadDexie()).delete(LEGACY_GLOBAL);
   } catch {
     /* fail silent — additive layer, never block the workout path */
   }
@@ -136,7 +151,7 @@ async function migrateLegacyIfNeeded(db: AnduraDexieDB, ns: string): Promise<voi
 
 /** Archive a session în IndexedDB (additive, NU modify localStorage). Per-UID. */
 export async function archiveSession(session: LastSessionSummary): Promise<void> {
-  const db = getDb();
+  const db = await getDb();
   if (db === null) return;
   try {
     await migrateLegacyIfNeeded(db, _dbNs as string);
@@ -148,7 +163,7 @@ export async function archiveSession(session: LastSessionSummary): Promise<void>
 
 /** Retrieve archived sessions (reverse-chrono) for the CURRENT user only. */
 export async function getArchivedSessions(): Promise<ArchivedSession[]> {
-  const db = getDb();
+  const db = await getDb();
   if (db === null) return [];
   try {
     await migrateLegacyIfNeeded(db, _dbNs as string);
@@ -165,7 +180,7 @@ export async function getArchivedSessions(): Promise<ArchivedSession[]> {
  * the cap freezing the true lifetime at 500. Soft-fail to 0 (no IDB / SSR).
  */
 export async function getArchivedSessionCount(): Promise<number> {
-  const db = getDb();
+  const db = await getDb();
   if (db === null) return 0;
   try {
     await migrateLegacyIfNeeded(db, _dbNs as string);
@@ -177,7 +192,7 @@ export async function getArchivedSessionCount(): Promise<number> {
 
 /** Clear the CURRENT user's archive (admin/dev helper + teardown). */
 export async function clearArchive(): Promise<void> {
-  const db = getDb();
+  const db = await getDb();
   if (db === null) return;
   try {
     await db.sessions.clear();
@@ -201,7 +216,7 @@ export async function deleteArchiveDb(): Promise<void> {
   }
   closeArchive();
   try {
-    await Dexie.delete(ARCHIVE_DB_NAME(ns));
+    await (await loadDexie()).delete(ARCHIVE_DB_NAME(ns));
   } catch {
     /* fail silent */
   }

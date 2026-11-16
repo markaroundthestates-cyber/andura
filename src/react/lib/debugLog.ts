@@ -28,7 +28,9 @@
 // be able to break the app. The IDB write is async + best-effort (fire-and-forget
 // from the sync `event()` boundary) so render is never blocked. jsdom/SSR-safe.
 
-import { getDb, STORES } from '../../storage/db.js';
+// The durable behavior store (storage/db.js → Dexie) loads on the first write/read, not
+// with this module (2026-11-16 perf pass: a static import put Dexie on every cold start).
+const idb = (): Promise<typeof import('../../storage/db.js')> => import('../../storage/db.js');
 import { DB } from '../../db.js';
 import { isEnabled } from '../../util/featureFlags.js';
 
@@ -182,6 +184,7 @@ async function pruneOld(): Promise<void> {
   if (now - _lastPruneAt < PRUNE_MIN_MS) return;
   _lastPruneAt = now;
   try {
+    const { getDb, STORES } = await idb();
     const db = getDb();
     const cutoff = now - RETENTION_DAYS * DAY_MS;
     await db.table(STORES.BEHAVIOR_TIER1).where('t').below(cutoff).delete();
@@ -193,6 +196,7 @@ async function pruneOld(): Promise<void> {
 /** Append one durable row to the behavior store + throttled prune. Best-effort. */
 async function appendDurable(e: BehaviorEvent): Promise<void> {
   try {
+    const { getDb, STORES } = await idb();
     const db = getDb();
     await db.table(STORES.BEHAVIOR_TIER1).put(e);
     await pruneOld();
@@ -242,6 +246,7 @@ function event(
  *  device's events back. Empty array on any failure. Async (IDB). */
 async function localSnapshot(): Promise<BehaviorEvent[]> {
   try {
+    const { getDb, STORES } = await idb();
     const db = getDb();
     const rows = (await db.table(STORES.BEHAVIOR_TIER1).toArray()) as BehaviorEvent[];
     return rows.sort((a, b) => (a.t ?? 0) - (b.t ?? 0));
@@ -385,6 +390,7 @@ async function exportJson(scope: ExportScope = 'last'): Promise<string> {
 /** Wipe the durable behavior store (keeps the flags). Async (IDB). */
 async function clear(): Promise<void> {
   try {
+    const { getDb, STORES } = await idb();
     const db = getDb();
     await db.table(STORES.BEHAVIOR_TIER1).clear();
   } catch {

@@ -1,8 +1,8 @@
 [
   {
-    "name": "main entry (index)",
+    "name": "Sentry lazy chunk (index-*, src/util/sentry-sdk)",
     "path": "dist/assets/index-*.js",
-    "limit": "152 KB",
+    "limit": "30 KB",
     "gzip": true
   },
   {

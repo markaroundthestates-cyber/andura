@@ -57,7 +57,7 @@ import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync
 import { startLiveSync } from './liveSync';
 import { debugLog } from './debugLog';
 import { resetInMemoryStores } from './resetStores';
-import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
+import { anonMigrationPending } from '../../storage/anonMigrationGuard.js';
 import { readDeletionMarker } from './accountDeletion';
 import { runIdMigrationOnce } from '../../engine/idMigration.js';
 import { isEnabled } from '../../util/featureFlags.js';
@@ -265,8 +265,11 @@ export async function runPostAuthSync(): Promise<void> {
       // into the auth namespace (union by id, dest-wins, never-delete). Idempotent
       // per-uid flag; best-effort + non-fatal. Skip on an account switch — the
       // anonymous archive does not belong to the newly-authed different user.
-      if (!dataSwitch) {
+      // The merge module (Dexie) is imported only when there is something to merge
+      // (anonMigrationGuard — 2026-11-16 perf pass: it sat on every cold start).
+      if (!dataSwitch && anonMigrationPending(uid)) {
         try {
+          const { migrateAnonymousToAuth } = await import('../../storage/migrateAnonymousToAuth.js');
           await migrateAnonymousToAuth(uid);
         } catch (err) {
           logger.warn('[Auth] anon→auth IDB migration threw:', err);

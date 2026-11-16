@@ -22,8 +22,9 @@
 import Dexie from 'dexie';
 import { DB_NAME_PREFIX, STORES, closeDb, logMigrationEvent } from './db.js';
 
-/** localStorage flag prefix marking a completed anon→auth migration per uid. */
-export const ANON_MIGRATED_FLAG_PREFIX = 'anon-migrated-';
+import { ANON_MIGRATED_FLAG_PREFIX } from './anonMigrationGuard.js';
+
+export { ANON_MIGRATED_FLAG_PREFIX };
 
 /** Sanitize a raw namespace segment the same way db.js getNamespace does. */
 function _sanitize(raw) {
