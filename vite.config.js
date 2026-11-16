@@ -11,6 +11,29 @@ import { fileURLToPath, URL } from 'node:url';
 // dist/manifest.webmanifest production build. devOptions.enabled=false →
 // dev mode skip (HMR conflicts cu SW lifecycle).
 
+// Perf (2026-11-16, founder "verifica toate load timeurile"): the self-hosted text
+// fonts were discovered only after main.css parsed AND React painted text — Lighthouse
+// (mobile) had them landing at ~5.3-5.5 s, after FCP. Preload the two body/heading
+// faces (hashed names known only at build time) so they download alongside main.js.
+function preloadTextFonts() {
+  return {
+    name: 'andura-preload-text-fonts',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, ctx) {
+        return Object.keys(ctx.bundle ?? {})
+          .filter((f) => /^assets\/(manrope|space-grotesk)-latin-wght-normal-[^/]+\.woff2$/.test(f))
+          .map((f) => ({
+            tag: 'link',
+            attrs: { rel: 'preload', href: `/${f}`, as: 'font', type: 'font/woff2', crossorigin: '' },
+            injectTo: 'head',
+          }));
+      },
+    },
+  };
+}
+
 export default defineConfig({
   base: '/',
   // §1-C2 audit fix: strip console.*/debugger in production bundles (data privacy
@@ -32,6 +55,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    preloadTextFonts(),
     VitePWA({
       // §S-12 audit fix (AUDIT-3) — 'prompt' (not 'autoUpdate'). autoUpdate
       // silently skipWaiting+clientsClaim → SW could swap assets mid-session

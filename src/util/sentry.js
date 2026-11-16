@@ -10,7 +10,7 @@ const DEFAULT_SENTRY_DSN = 'https://dcbb183e8d98e95c6cd8b2c3c49b2427@o4511269200
 const SENTRY_DSN = import.meta.env?.VITE_SENTRY_DSN || DEFAULT_SENTRY_DSN;
 
 let _initialized = false;
-/** @type {typeof import('@sentry/browser') | null} */
+/** @type {typeof import('./sentry-sdk/index.js') | null} */
 let _Sentry = null;
 
 export async function initSentry() {
@@ -23,7 +23,7 @@ export async function initSentry() {
   if (_initialized) return;
 
   try {
-    _Sentry = await import('@sentry/browser');
+    _Sentry = await import('./sentry-sdk/index.js');
     _Sentry.init({
       dsn: SENTRY_DSN,
       environment: 'production',

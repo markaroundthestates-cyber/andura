@@ -39,6 +39,31 @@
   <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
   <link rel="dns-prefetch" href="//securetoken.googleapis.com" />
   <link rel="dns-prefetch" href="//o4511269200068608.ingest.de.sentry.io" />
+  <link rel="preconnect" href="https://o4511269200068608.ingest.de.sentry.io" crossorigin />
+  <!-- Boot shell (2026-11-16 perf pass): nothing painted until main.js (~320 KB gzip)
+       downloaded + ran — Lighthouse mobile FCP 4.4 s on a blank page. The shell paints
+       the app background + wordmark from the HTML alone; React's first render replaces
+       it. The theme is resolved here exactly like themeSync.applyInitialTheme (stored
+       wv2-settings-store theme, 'auto' → OS, default dark) so there is no flash. -->
+  <script>
+    (function () {
+      var t = 'dark';
+      try {
+        var s = JSON.parse(localStorage.getItem('wv2-settings-store') || 'null');
+        var v = s && s.state && s.state.theme;
+        if (v === 'light' || v === 'dark') t = v;
+        else if (v === 'auto') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } catch (e) { /* default dark */ }
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+  <style>
+    html { background: #090b13; }
+    html[data-theme="light"] { background: #eef0f6; }
+    #boot-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font: 700 28px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: 0.02em; color: #f3f5fc; }
+    html[data-theme="light"] #boot-shell { color: #0a0c14; }
+  </style>
   <!-- LOCK V1 D061 — font self-host Latin subset 344→48KB (DECISIONS.md §D061).
        Self-host Inter Variable Latin subset @font-face declared in
        src/styles/global.css (font-display: swap). Bundled via Vite from
@@ -84,7 +109,7 @@
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root"><div id="boot-shell" aria-hidden="true">Andura</div></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
