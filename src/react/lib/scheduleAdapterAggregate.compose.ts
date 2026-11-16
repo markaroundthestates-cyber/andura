@@ -419,9 +419,15 @@ function toPlannedExercise(
     // (rec.setsAdjust, −1). Composes with the schedule layer's own recovery-aware
     // set count (engineEx.sets already reflects volume + recovery cuts) by
     // subtracting on top, floored at 1 so a session never drops below one set.
+    // dp_sets_adjust_floor_two_v1 (founder 2026-11-16: "1 serie?"): the trim stops at
+    // MIN_SETS_PER_EX like every other set cut — Pec Deck 2 → 1 on its return ramp
+    // read as broken. An exercise the engine already gave 1 set keeps it.
     sets:
       rec && typeof rec.setsAdjust === 'number'
-        ? Math.max(1, engineEx.sets + rec.setsAdjust)
+        ? Math.max(
+          isEnabled('dp_sets_adjust_floor_two_v1') ? Math.min(engineEx.sets, MIN_SETS_PER_EX) : 1,
+          engineEx.sets + rec.setsAdjust,
+        )
         : engineEx.sets,
     targetReps: finalTargetReps,
     // R6c — the rep BAND for preview display ("10–15"). DP attaches repsRange on

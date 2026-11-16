@@ -953,3 +953,31 @@ describe('scheduleAdapterAggregate — dp_lifedip_inputs_v1 real LIFE_DIP inputs
     expect((state.meta as { suppressReactiveDeload?: boolean }).suppressReactiveDeload).toBe(true);
   });
 });
+
+// Founder 2026-11-16: "mi-a recomandat doar o serie de chest fly... 1 serie?". Pec Deck was
+// on its return-after-gap ramp (4.3 weeks off it, chest pressed all along): DP's
+// setsAdjust −1 took its 2 planned sets to 1. dp_sets_adjust_floor_two_v1.
+describe('scheduleAdapterAggregate — a DP set trim never leaves a one-set exercise', () => {
+  function trimEveryRec(): void {
+    const real = DP.getSmartRecommendation.bind(DP);
+    vi.spyOn(DP, 'getSmartRecommendation').mockImplementation((...args: Parameters<typeof DP.getSmartRecommendation>) => {
+      const rec = real(...args);
+      return rec ? { ...rec, setsAdjust: -2 } : rec;
+    });
+  }
+
+  it('flag on: the trim stops at 2 sets; flag off: a 3-set exercise trimmed by 2 drops to 1', async () => {
+    // Maintenance goal → no energy volume scaling, whose floors would re-raise the sets
+    // and hide the trim (for him the fly was an EMPHASIZED chest lift, floored at its
+    // already-trimmed count).
+    useOnboardingStore.setState({ data: { ...useOnboardingStore.getState().data, goal: 'mentenanta' } });
+    trimEveryRec();
+    const on = await composePlannedWorkoutToday(MONDAY_2026_05_18);
+    expect(on!.exercises.length).toBeGreaterThan(0);
+    for (const e of on!.exercises) expect(e.sets).toBeGreaterThanOrEqual(2);
+
+    localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ dp_sets_adjust_floor_two_v1: false }));
+    const off = await composePlannedWorkoutToday(MONDAY_2026_05_18);
+    expect(off!.exercises.some((e) => e.sets === 1)).toBe(true);
+  });
+});

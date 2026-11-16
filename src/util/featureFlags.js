@@ -687,6 +687,11 @@ export const FLAGS = Object.freeze({
   //   deload spilled into Monday 11-16. Weeks now count calendar weeks from the Monday
   //   of the first session (local midnight, DST-safe). Pinned OFF in fp + sims.
   dp_meso_week_monday_v1: { rollout: 1, default: true },
+  // dp_sets_adjust_floor_two_v1 (2026-11-16, founder "mi-a recomandat doar o serie de
+  //   chest fly... 1 serie?") — DP's setsAdjust (return-after-gap ramp −1, N-of-1 −1)
+  //   was floored at 1 in compose, so Pec Deck 2 → 1 on its comeback ramp. It now
+  //   stops at MIN_SETS_PER_EX (2) like every other set cut. Pinned OFF in fp + sims.
+  dp_sets_adjust_floor_two_v1: { rollout: 1, default: true },
   // dp_read_memo_v1 (2026-10-10, founder "daca ajung la 10000000 seturi si dureaza 3
   //   ore") — DP.getLogs re-parsed the whole stored log on each of ~1450 calls per plan;
   //   the parsed log + each lift's rows are memoized while logs / gym / flags are
