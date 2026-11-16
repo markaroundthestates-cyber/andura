@@ -84,3 +84,28 @@ describe('upper week — the rear-delt isolation rides the pull day (dp_rear_del
     expect(tue.exercises.filter((e) => REAR.test(e.name))).toHaveLength(1);
   });
 });
+
+// Founder 2026-11-16: his friend's L5-S1 rules out every hinge (refused squat / deadlift /
+// hip-thrust), so one Leg Curl is his whole hamstring day — "de ce nu marim volumul pe leg
+// curl simplu?". dp_lone_mev_four_sets_v1.
+describe('a lone isolation whose day budget is over 3 sets may carry 4', () => {
+  const FRI = new Date(2026, 4, 22);
+  const noHinge = () => ({
+    // On a cut the de-emphasized legs sit at MEV → the lone leg day asks hamstrings 6 sets.
+    ...user('v-taper', 'slabire'),
+    user: { ...user('v-taper', 'slabire').user, refusedPatterns: ['squat', 'deadlift', 'hip-thrust'] },
+  });
+  const curlSets = (plan) => (plan.exercises || [])
+    .filter((e) => getExerciseMetadata(e.name).muscle_target_primary === 'picioare-hamstrings')
+    .map((e) => e.sets);
+  it('no-hinge leg day: the single hamstring exercise goes past the 3-set isolation band', async () => {
+    // His lumbar exclusions (Reverse Hyper / Glute-Ham Raise / Hyperextension) → one curl left.
+    localStorage.setItem('wv2-equipment-missing-exercises', JSON.stringify(['Reverse Hyper', 'Glute-Ham Raise', 'Hyperextension Bodyweight']));
+    const on = await getDailyWorkout(noHinge(), FRI);
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_lone_mev_four_sets_v1: false }));
+    const off = await getDailyWorkout(noHinge(), FRI);
+    expect(curlSets(off)).toHaveLength(1);
+    expect(curlSets(off)[0]).toBeLessThanOrEqual(3);
+    expect(curlSets(on)).toEqual([4]);
+  });
+});

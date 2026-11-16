@@ -4381,13 +4381,27 @@ export function buildSession(cluster, ctx) {
       && typeof groupMev === 'number'
       && groupMev > 0
       && weeklyForGroup <= groupMev;
-    const budget = coherentAlloc && !skipDeballoon && !skipCalfDeballoon && !skipMevDeballoon
+    const baseBudget = coherentAlloc && !skipDeballoon && !skipCalfDeballoon && !skipMevDeballoon
       ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
       : perSessionBudget;
+    // dp_lone_mev_four_sets_v1 (founder 2026-11-16, his friend's L5-S1 rules out every hinge:
+    // "de ce nu marim volumul pe leg curl simplu?") — when ONE isolation is all a group gets
+    // today and the day asks for more than the 3-set isolation band, it carries up to the
+    // focus ceiling (4 sets) — the de-balloon above would otherwise shrink the lone curl back
+    // to 3 because the pool filled fewer slots than the budget expected.
+    const loneMevExercise =
+      ctx?.loneMevFourSets === true
+      && exs.length === 1
+      && (getExerciseMetadata(exs[0].name).tier ?? 2) > COMPOUND_TIER
+      && typeof perSessionBudget === 'number'
+      && perSessionBudget > ISOLATION_MAX_SETS;
+    const budget = loneMevExercise
+      ? Math.max(baseBudget, Math.min(perSessionBudget, ISOLATION_MAX_SETS_EMPHASIZED))
+      : baseBudget;
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
       ctx?.effectiveRepsSetsTrim, noviceCompoundFloor, ctx?.anchorProtect === true,
-      structuralDemoteSet, isEmphasizedGroup,
+      structuralDemoteSet, isEmphasizedGroup || loneMevExercise,
     );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }

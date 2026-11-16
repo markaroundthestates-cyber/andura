@@ -1684,6 +1684,9 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // dp_straight_arm_own_movement_v1 — a straight-arm pulldown is not deduped against
     // Lat Pulldown (it is the lat-isolation role, sessionBuilder dedupKey).
     straightArmOwnMovement: isEnabled('dp_straight_arm_own_movement_v1'),
+    // dp_lone_mev_four_sets_v1 — the lone exercise of a group at its weekly MEV may take
+    // 4 sets (sessionBuilder, the emphasized isolation ceiling).
+    loneMevFourSets: isEnabled('dp_lone_mev_four_sets_v1'),
     // dp_mev_group_full_budget_v1 — a group at/below its weekly MEV keeps its full
     // per-session budget when the pool fills fewer slots (sessionBuilder de-balloon).
     mevGroupsKeepBudget: isEnabled('dp_mev_group_full_budget_v1'),

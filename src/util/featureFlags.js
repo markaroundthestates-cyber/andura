@@ -745,6 +745,11 @@ export const FLAGS = Object.freeze({
   //   MEV 8) and kept a Cable Crunch; an exercise of a group with no weekly minimum (abs,
   //   forearms) is now dropped first. Pinned OFF in fp + sims.
   dp_trim_no_minimum_first_v1: { rollout: 1, default: true },
+  // dp_lone_mev_four_sets_v1 (2026-11-16, founder: his friend's L5-S1 rules out every hinge —
+  //   "de ce nu marim volumul pe leg curl simplu?") — when one isolation is all a group gets that
+  //   day and the day's budget asks for more than 3 sets, it may carry 4 (the emphasized
+  //   isolation ceiling). Pinned OFF in fp + sims.
+  dp_lone_mev_four_sets_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.

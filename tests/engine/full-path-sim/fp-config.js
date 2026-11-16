@@ -73,7 +73,7 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_station_from_loads_v1', 'dp_gym_light_station_v1', 'dp_anomaly_own_history_v1',
   'dp_swap_same_movement_v1', 'dp_same_lift_variants_v1', 'dp_used_variant_v1', 'dp_read_memo_v1',
   'dp_rear_delt_no_back_load_v1', 'dp_swap_history_variety_v1', 'dp_bf_measured_v1',
-  'dp_transfer_compound_guard_v1', 'dp_glute_drive_hip_thrust_v1', 'dp_vacation_no_station_v1', 'dp_rest_day_train_anyway_v1', 'dp_ego_cap_target_reps_v1', 'dp_learned_ladder_phase_v1', 'dp_station_two_loads_v1', 'dp_meso_week_monday_v1', 'dp_sets_adjust_floor_two_v1', 'dp_focus_up_beside_spec_v1', 'dp_energy_cut_mev_floor_v1', 'dp_lone_day_mev_v1', 'dp_rear_delt_pull_day_v1', 'dp_upper_back_cap_4d_v1', 'dp_pace_duration_v1', 'dp_straight_arm_own_movement_v1', 'dp_pace_trim_v1', 'dp_mev_group_full_budget_v1', 'dp_trim_no_minimum_first_v1',
+  'dp_transfer_compound_guard_v1', 'dp_glute_drive_hip_thrust_v1', 'dp_vacation_no_station_v1', 'dp_rest_day_train_anyway_v1', 'dp_ego_cap_target_reps_v1', 'dp_learned_ladder_phase_v1', 'dp_station_two_loads_v1', 'dp_meso_week_monday_v1', 'dp_sets_adjust_floor_two_v1', 'dp_focus_up_beside_spec_v1', 'dp_energy_cut_mev_floor_v1', 'dp_lone_day_mev_v1', 'dp_rear_delt_pull_day_v1', 'dp_upper_back_cap_4d_v1', 'dp_pace_duration_v1', 'dp_straight_arm_own_movement_v1', 'dp_pace_trim_v1', 'dp_mev_group_full_budget_v1', 'dp_trim_no_minimum_first_v1', 'dp_lone_mev_four_sets_v1',
   // THE FLIP 2026-06-08 — per-exercise intelligence brain + path-A dependents now
   // default ON. Added here so the A/B OFF baseline forces them explicitly OFF
   // (the harness can no longer rely on "no _devFlags ⇒ off"), keeping hashOff a
