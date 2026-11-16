@@ -69,7 +69,12 @@ export default defineConfig({
       // in <head> blocking render. 'script-defer' adds defer attribute so
       // browser keeps parsing HTML in parallel, SW registration runs post
       // DOMContentLoaded. Maria 65 mobile 3G LCP improvement ~1s estimated.
-      injectRegister: 'script-defer',
+      // 2026-11-16 perf pass: registration moved to an inline script in index.html that
+      // waits for load + idle — the injected registerSW.js registered right at `load`, so
+      // on a FIRST visit the precache downloaded every chunk while the sign-in screen was
+      // still loading (live Lighthouse LCP 7.3 s, render delay 6.7 s). Signed-in sessions
+      // also register through useSwUpdate (virtual:pwa-register) as before.
+      injectRegister: false,
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'Andura',

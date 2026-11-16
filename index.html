@@ -110,6 +110,16 @@
 </head>
 <body>
   <div id="root"><div id="boot-shell" aria-hidden="true">Andura</div></div>
+  <script>
+    // Offline precache registration, AFTER the first screen (vite.config.js injectRegister).
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        var go = function () { navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {}); };
+        if ('requestIdleCallback' in window) window.requestIdleCallback(function () { setTimeout(go, 3000); }, { timeout: 5000 });
+        else setTimeout(go, 4000);
+      });
+    }
+  </script>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
