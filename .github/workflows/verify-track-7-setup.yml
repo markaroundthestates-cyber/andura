@@ -38,7 +38,7 @@ env:
 jobs:
   verify:
     name: Verify Daniel-action items complete
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       # Bumped v4 → v5 (Node 24 — silences Node 20 deprecation warning per

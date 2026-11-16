@@ -225,7 +225,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         fallbackPath === 'equipment-swap' ? 'busy' : 'refusal';
       setPickSheet({ open: true, rows, muscleGroup, originalName, reason });
     },
-    [bumpActivity, currentExercise.engineName, otherSessionNames, refusalTriedByEx, safeExIdx, navigate],
+    [bumpActivity, currentExercise.engineName, currentExercise.sets, otherSessionNames, refusalTriedByEx, safeExIdx, navigate],
   );
 
   // Founder Busy/Missing redesign 2026-06-12 — "Ocupat" = DEFER in-session.
@@ -585,6 +585,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     bumpActivity,
     currentExercise.engineName,
     currentExercise.name,
+    currentExercise.sets,
     safeExIdx,
     swapExercise,
     otherSessionNames,

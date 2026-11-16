@@ -53,7 +53,7 @@ env:
 jobs:
   validate:
     name: Validate (typecheck + unit + build)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
 
@@ -144,7 +144,10 @@ jobs:
 
   e2e-smoke:
     name: E2E Smoke Tests
-    runs-on: ubuntu-latest
+    # Pinned (2026-11-16, like e2e-authenticated / qa-report): ubuntu-latest moved to 26.04,
+    # where Playwright 1.60 has no chromium build — the 11-16 scheduled run failed on it.
+    # Every other job is pinned to 24.04 too, which also clears the migration notice.
+    runs-on: ubuntu-24.04
     needs: validate
     # Run only on manual dispatch OR weekly cron — NU pe push/PR (cost optimization)
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}

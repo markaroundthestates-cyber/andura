@@ -25,7 +25,6 @@ vi.mock('../../../lib/engineWrappers', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   getProactiveAlerts: vi.fn(() => []),
 }));
-import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import { getProactiveAlerts } from '../../../lib/engineWrappers';
 
 // The recovery zone (heading + body map) gates on the recovery selector

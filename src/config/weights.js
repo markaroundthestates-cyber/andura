@@ -391,7 +391,6 @@ function _ladderPhase(ex, lo, step) {
 }
 
 function getList(exerciseName) {
-  const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
   const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
   const equipType = getEquipmentType(exerciseName);
   const hardCoded = equipWeights[equipType] || equipWeights['bailib_stack'] || [];
