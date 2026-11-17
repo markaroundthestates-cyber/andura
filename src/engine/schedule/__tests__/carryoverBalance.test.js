@@ -5,9 +5,15 @@
 // empty-owed arm MUST be byte-identical to the legacy split. Deterministic: every
 // time comes from the injected clock, never Date.now().
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { detectOwedClusters, detectDoneEarlySwap } from '../scheduleAdapter/carryoverBalance.js';
 import { clusterForDay, frequencyToSplit, reorderSplitForCarryover } from '../scheduleAdapter/frequencySplit.js';
+
+// Carryover placement is asserted on the template's day mapping; dp_split_layout_spacing_v1
+// (recovery reorder by calendar) is covered in frequencySplit.layoutSpacing.test.js.
+beforeEach(() => {
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_split_layout_spacing_v1: false }));
+});
 
 // A fixed planning clock (Thu 2026-06-04, LOCAL). resolveWeekStartMs derives the
 // LOCAL MONDAY 00:00 of nowMs's week (the Monday-anchored microcycle boundary, like

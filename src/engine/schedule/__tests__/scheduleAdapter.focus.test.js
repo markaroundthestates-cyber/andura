@@ -316,9 +316,11 @@ describe('focus suppresses auto-signals on de-emphasized groups', () => {
 // total sets ≤ a balanced leg day's, and well below the old ≈29.
 describe('v-taper leg day LIGHTENS (de-emphasized divisor fix)', () => {
   // Founder setup: freq 4 → active L/Ma/J/V. Balanced has TWO leg days (Ma=dayIdx1,
-  // V=dayIdx4); v-taper collapses to ONE (V=dayIdx4). Compare the leg-day sessions.
+  // V=dayIdx4); v-taper collapses to ONE — Thursday (dayIdx3) once dp_split_layout_spacing_v1
+  // orders push/pull/legs/upper for recovery. Compare the leg-day sessions.
   const TUE = new Date(2026, 4, 19); // dayIdx 1 — balanced 'lower'
-  const FRI = new Date(2026, 4, 22); // dayIdx 4 — balanced 'lower' AND v-taper 'lower'
+  const FRI = new Date(2026, 4, 22); // dayIdx 4 — balanced 'lower'
+  const THU = new Date(2026, 4, 21); // dayIdx 3 — v-taper's single 'lower'
   const totalSets = (plan) => (plan.exercises || []).reduce((s, e) => s + e.sets, 0);
 
   it('v-taper single leg day ≤ both balanced leg days (no re-concentration)', async () => {
@@ -326,7 +328,7 @@ describe('v-taper leg day LIGHTENS (de-emphasized divisor fix)', () => {
     const balFri = await getDailyWorkout(buildUserState(), FRI);
     const vtFri = await getDailyWorkout(
       buildUserState({ user: { focusPreset: 'v-taper' } }),
-      FRI,
+      THU,
     );
     // All three are leg days (LOWER cluster) — same comparison basis.
     expect(balTue.sessionType).toBe('LOWER');
@@ -344,7 +346,7 @@ describe('v-taper leg day LIGHTENS (de-emphasized divisor fix)', () => {
   it('the de-emphasized leg compounds are not pushed to their max set count', async () => {
     const vtFri = await getDailyWorkout(
       buildUserState({ user: { focusPreset: 'v-taper' } }),
-      FRI,
+      THU,
     );
     // The squat + the leg press (quad compounds) must sit BELOW COMPOUND_MAX_SETS (5)
     // — the divisor bug had Leg Press:4 / RDL:5; the fix keeps them ~3.

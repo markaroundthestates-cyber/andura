@@ -13,6 +13,7 @@
 
 import { SCHEDULE_STORE_KEY } from './constants.js';
 import { resolveFocusPreset } from './focus.js';
+import { isEnabled } from '../../../util/featureFlags.js';
 
 const FREQUENCY_SPLITS = Object.freeze({
   1: Object.freeze(['full']),
@@ -651,6 +652,74 @@ export function reshapeMaintenanceWeek(activeWeek, maxDays) {
   return out;
 }
 
+// ── dp_split_layout_spacing_v1 (founder 2026-11-17: "de ce îmi pune joi upper și nu
+// picioare? mă gândeam doar la recuperare") ─────────────────────────────────────────
+// The day templates are fixed per day COUNT; FOCUS_LOWER_DEEMPH_SPLITS[4] was spaced for
+// the push muscles only (upper on Thursday = 72 h after Monday's push) and left the back
+// 48 h after Tuesday's pull. With the user's real calendar known, order the template's
+// clusters so every region's closest pair of hits is as far apart as possible
+// (lexicographic on the sorted per-region minimum gaps, the week wrapping around); a tie
+// keeps the template (then the fewest moved days). His Mon/Tue/Thu/Fri upper week →
+// push / pull / legs / upper: every region >= 72 h (was back 48 h).
+const CLUSTER_REGIONS = Object.freeze({
+  push: ['chest', 'shoulders', 'triceps'],
+  pull: ['back', 'biceps'],
+  upper: ['chest', 'back', 'shoulders', 'biceps', 'triceps'],
+  lower: ['legs'],
+  legs: ['legs'],
+  full: ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'legs'],
+});
+
+/** Sorted per-region minimum circular gap (days) for an ordering on these weekdays. */
+function _spacingScore(order, days) {
+  /** @type {Record<string, number[]>} */
+  const hits = {};
+  order.forEach((c, i) => { for (const r of CLUSTER_REGIONS[c] ?? []) (hits[r] ??= []).push(days[i]); });
+  const gaps = Object.values(hits).map((ds) => {
+    if (ds.length < 2) return 7;
+    let g = 7;
+    for (let i = 0; i < ds.length; i++) g = Math.min(g, (i + 1 < ds.length ? ds[i + 1] : ds[0] + 7) - ds[i]);
+    return g;
+  });
+  return gaps.sort((a, b) => a - b);
+}
+
+/** @type {Map<string, string[]>} */
+const _layoutMemo = new Map();
+
+/**
+ * The template's clusters re-ordered for the best recovery spacing on these weekdays.
+ * PURE + memoized. @param {string[]} split @param {number[]} days ascending active weekdays
+ * @returns {string[]}
+ */
+export function spacedForLayout(split, days) {
+  if (split.length < 3 || split.length !== days.length) return split;
+  const key = `${split.join(',')}|${days.join(',')}`;
+  const hit = _layoutMemo.get(key);
+  if (hit) return hit;
+  let best = split;
+  let bestScore = _spacingScore(split, days);
+  let bestMoved = 0;
+  const seen = new Set();
+  const permute = (rest, acc) => {
+    if (!rest.length) {
+      const k = acc.join(',');
+      if (seen.has(k)) return;
+      seen.add(k);
+      const score = _spacingScore(acc, days);
+      let cmp = 0;
+      for (let i = 0; i < score.length && cmp === 0; i++) cmp = score[i] - bestScore[i];
+      const moved = acc.reduce((n, c, i) => n + (c === split[i] ? 0 : 1), 0);
+      if (cmp > 0 || (cmp === 0 && moved < bestMoved)) { best = [...acc]; bestScore = score; bestMoved = moved; }
+      return;
+    }
+    for (let i = 0; i < rest.length; i++) permute([...rest.slice(0, i), ...rest.slice(i + 1)], [...acc, rest[i]]);
+  };
+  permute(split, []);
+  _layoutMemo.set(key, best);
+  return best;
+}
+
 /**
  * Resolve the cluster for a given weekday index from an active-day week +
  * frequency split. The cluster is template[ position-of-dayIdx-among-active ].
@@ -673,7 +742,11 @@ export function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced', reba
   const activeIdxs = [];
   for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxs.push(i);
   const n = activeIdxs.length;
-  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset, rebalance, owedClusters);
+  const template = frequencyToSplit(n > 0 ? n : 1, focusPreset, rebalance, owedClusters);
+  // dp_split_layout_spacing_v1 — order for THIS calendar (carryover placement wins when owed).
+  const split = isEnabled('dp_split_layout_spacing_v1') && !(owedClusters && owedClusters.length)
+    ? spacedForLayout(template, activeIdxs)
+    : template;
   const pos = activeIdxs.indexOf(dayIdx);
   // dayIdx active → its ordinal position; otherwise slot by active-days-before-it.
   const position = pos >= 0

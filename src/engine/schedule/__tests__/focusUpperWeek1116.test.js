@@ -45,7 +45,7 @@ describe('upper contract — back cap without the over-delivery deflate at 4 day
 });
 
 // Lone leg day + rear delts, through the real pipeline (cold-start user, 4d L/Ma/J/V →
-// upper week push/pull/upper/lower).
+// upper week push/pull/legs/upper — dp_split_layout_spacing_v1 puts the legs on Thursday).
 
 const user = (focusPreset, goal = 'hipertrofie') => ({
   user: { age: 36, goal, frequency: '4', focusPreset },
@@ -61,13 +61,13 @@ const setsOf = (plan, group) => (plan.exercises || [])
 const REAR = /rear delt|reverse pec deck|face pull|pull-apart/i;
 
 describe('upper week — the lone leg day carries the weekly MEV (dp_lone_day_mev_v1)', () => {
-  const FRI = new Date(2026, 4, 22);
+  const LEGS = new Date(2026, 4, 21);
   it('quads + hamstrings on the single leg day rise to their MEV band; off = the old half', async () => {
     // A cut user like him: the de-emphasized legs sit at their MEV weekly budget.
-    const on = await getDailyWorkout(user('upper', 'slabire'), FRI);
+    const on = await getDailyWorkout(user('upper', 'slabire'), LEGS);
     expect(on.sessionType).toBe('LOWER');
     localStorage.setItem('_devFlags', JSON.stringify({ dp_lone_day_mev_v1: false }));
-    const off = await getDailyWorkout(user('upper', 'slabire'), FRI);
+    const off = await getDailyWorkout(user('upper', 'slabire'), LEGS);
     expect(setsOf(on, 'picioare-quads')).toBeGreaterThan(setsOf(off, 'picioare-quads'));
     expect(setsOf(on, 'picioare-quads')).toBeGreaterThanOrEqual(6);
     expect(setsOf(on, 'picioare-hamstrings')).toBeGreaterThanOrEqual(setsOf(off, 'picioare-hamstrings'));
@@ -89,7 +89,7 @@ describe('upper week — the rear-delt isolation rides the pull day (dp_rear_del
 // hip-thrust), so one Leg Curl is his whole hamstring day — "de ce nu marim volumul pe leg
 // curl simplu?". dp_lone_mev_four_sets_v1.
 describe('a lone isolation whose day budget is over 3 sets may carry 4', () => {
-  const FRI = new Date(2026, 4, 22);
+  const LEGS = new Date(2026, 4, 21);
   const noHinge = () => ({
     // On a cut the de-emphasized legs sit at MEV → the lone leg day asks hamstrings 6 sets.
     ...user('v-taper', 'slabire'),
@@ -101,9 +101,9 @@ describe('a lone isolation whose day budget is over 3 sets may carry 4', () => {
   it('no-hinge leg day: the single hamstring exercise goes past the 3-set isolation band', async () => {
     // His lumbar exclusions (Reverse Hyper / Glute-Ham Raise / Hyperextension) → one curl left.
     localStorage.setItem('wv2-equipment-missing-exercises', JSON.stringify(['Reverse Hyper', 'Glute-Ham Raise', 'Hyperextension Bodyweight']));
-    const on = await getDailyWorkout(noHinge(), FRI);
+    const on = await getDailyWorkout(noHinge(), LEGS);
     localStorage.setItem('_devFlags', JSON.stringify({ dp_lone_mev_four_sets_v1: false }));
-    const off = await getDailyWorkout(noHinge(), FRI);
+    const off = await getDailyWorkout(noHinge(), LEGS);
     expect(curlSets(off)).toHaveLength(1);
     expect(curlSets(off)[0]).toBeLessThanOrEqual(3);
     expect(curlSets(on)).toEqual([4]);

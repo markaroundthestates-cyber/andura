@@ -118,10 +118,11 @@ describe('#34 — missed Tuesday never yields a thin ~27-min legs session (full 
       completed: true,
       completedAt: Date.now(),
     });
-    // v-taper @ Mon/Tue/Thu/Fri → ['push','pull','upper','lower'] → Fri=LOWER.
-    const fri = await composePlannedWorkoutToday(FRI);
-    expect(fri!.sessionType).toBe('LOWER');
-    expect(fri!.estimatedDuration!).toBeGreaterThanOrEqual(40);
-    expect(fri!.exercises.length).toBeGreaterThanOrEqual(5);
+    // v-taper @ Mon/Tue/Thu/Fri → push/pull/legs/upper (dp_split_layout_spacing_v1 orders the
+    // template for recovery: every region >= 72 h apart) → Thu=LOWER, the sole leg day.
+    const thu = await composePlannedWorkoutToday(THU);
+    expect(thu!.sessionType).toBe('LOWER');
+    expect(thu!.estimatedDuration!).toBeGreaterThanOrEqual(40);
+    expect(thu!.exercises.length).toBeGreaterThanOrEqual(5);
   });
 });

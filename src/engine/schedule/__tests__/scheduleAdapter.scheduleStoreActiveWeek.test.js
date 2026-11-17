@@ -84,7 +84,11 @@ describe('getDailyWorkout — honors the user-chosen training days (scheduleStor
     // (Mon/Tue/Thu/Fri). On Daniel's REAL days this is exactly the wrong output
     // he saw. This documents the pre-fix behavior for the fallback path.
     const state = () => buildUserState({ focusPreset: 'v-taper', frequency: '4' });
+    // The template's positional mapping — the recovery reorder (dp_split_layout_spacing_v1)
+    // puts the legs at pos 2 on this week; this documents the fallback-path bug class.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_split_layout_spacing_v1: false }));
     const wed = await getDailyWorkout(state(), WED); // Wed is NOT active in the freq-4 default
+    localStorage.removeItem('_devFlags');
     // Freq-4 default active = Mon/Tue/Thu/Fri; Wed slots after Mon,Tue (pos 2) → 'upper'.
     expect(wed.sessionType).toBe('UPPER');
   });

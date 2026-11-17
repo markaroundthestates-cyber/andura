@@ -54,6 +54,9 @@ function setFlags(swapOn) {
   const o = {};
   for (const f of Object.keys(FLAGS)) o[f] = FLAGS[f].default;
   o.dp_arms_pushday_consolidate_v1 = swapOn;
+  // The tally reads the TEMPLATE order (split[di]); keep the template day mapping
+  // (dp_split_layout_spacing_v1 reorders for recovery — covered in its own tests).
+  o.dp_split_layout_spacing_v1 = false;
   localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(o));
 }
 

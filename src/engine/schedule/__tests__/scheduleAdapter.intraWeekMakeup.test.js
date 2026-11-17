@@ -57,6 +57,9 @@ function weekContext(volumeDone, weekStartMs) {
 
 beforeEach(() => {
   localStorage.clear();
+  // The makeup math is pinned to the template's day mapping (L,Ma,Mi,V,S = upper/lower/
+  // push/pull/legs); dp_split_layout_spacing_v1 reorders it for recovery (own tests).
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_split_layout_spacing_v1: false }));
   vi.restoreAllMocks();
 });
 
