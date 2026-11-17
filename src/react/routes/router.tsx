@@ -23,6 +23,7 @@ import type { JSX, ReactNode } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicOnlyRoute } from './PublicOnlyRoute';
+import { EntryRoute } from './EntryRoute';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { Layout } from './Layout';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -174,7 +175,8 @@ function GymOnlyRoute({ children }: { children: ReactNode }): JSX.Element {
 }
 
 export const router = createBrowserRouter([
-  { path: '/', element: <TopLevelRoute><Splash /></TopLevelRoute> },
+  // splash_skip_returning_v1 — a returning session skips the 2.6 s splash (EntryRoute).
+  { path: '/', element: <EntryRoute><TopLevelRoute><Splash /></TopLevelRoute></EntryRoute> },
   // PublicOnlyRoute (Daniel audit 2026-06-05) — an authenticated user hitting
   // /auth* is bounced into /app instead of re-rendering the login screen.
   { path: '/auth', element: <TopLevelRoute><PublicOnlyRoute mode="auth"><Auth /></PublicOnlyRoute></TopLevelRoute> },

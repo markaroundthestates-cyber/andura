@@ -767,6 +767,10 @@ export const FLAGS = Object.freeze({
   //   set 1 at his usual opening ratio of the target; the working target follows from
   //   set 2 (dp/opener.js + Workout screen). Pinned OFF in fp + sims.
   dp_opener_set_v1: { rollout: 1, default: true },
+  // splash_skip_returning_v1 (2026-11-17, founder "merg pe recomandarea ta") — a signed-in
+  //   (or test-drive) returner opening "/" goes straight to /app/antrenor; the 2.6 s
+  //   Splash stays the first-contact screen (routes/EntryRoute.tsx). UI only, no sim pin.
+  splash_skip_returning_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.
