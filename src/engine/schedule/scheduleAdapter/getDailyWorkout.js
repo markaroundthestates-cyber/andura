@@ -49,6 +49,7 @@ import {
   reshapeMaintenanceWeek,
 } from './frequencySplit.js';
 import { pickAlternativeCluster } from './alternativeCluster.js';
+import { pickExtraDayCluster, extraDaySets } from './extraDay.js';
 import { weeklySessionsPerGroup, homeDayDivisors } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
@@ -349,9 +350,24 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       nowMs: date.getTime(),
     })
     : null;
+  // dp_extra_day_recovered_v1 (founder 2026-11-17) — a session on a calendar REST day is a
+  // bonus: the week's freshest cluster that stays clear of the next days, at reduced
+  // volume (extraDay.js), not the next training day's slot (Wednesday → Thursday's legs
+  // twice in a row). His own "Alta grupa" pick still wins.
+  const extraDay = trainAnyway && !activeWeek[dayIdx] && !wantDifferentMuscle && isEnabled('dp_extra_day_recovered_v1');
+  const extraCluster = extraDay
+    ? pickExtraDayCluster({
+      activeWeek,
+      dayIdx,
+      recoveryState: getRecoveryByGroup(flattenSessionsToRecoveryLogs(userState?.recentSessions), undefined, date.getTime()),
+      focusPreset,
+      splitRebalance,
+      owedClusters,
+    })
+    : null;
   const scheduledCluster = doneEarly
     ? doneEarly.cluster
-    : clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters);
+    : extraCluster ?? clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
   // from the user's logged sessions. Recovery flatten + state are pure + cheap;
@@ -1698,7 +1714,9 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     type: 'training',
     sessionType,
     warmup: blueprints.warmup || null,
-    exercises: session && Array.isArray(session.exercises) ? session.exercises : [],
+    exercises: session && Array.isArray(session.exercises)
+      ? (extraCluster ? extraDaySets(session.exercises) : session.exercises)
+      : [],
     intensityModifier: blueprints.deload?.intensity_modifier ?? null,
     // F2 #4 — Energy Adjustment direction + magnitude (energyAdjustment/index.js:
     // 204-205). RECONCILE only: the in-session ±% scale in Workout.tsx used FLAT

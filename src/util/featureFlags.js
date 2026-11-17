@@ -781,6 +781,12 @@ export const FLAGS = Object.freeze({
   //   every region's closest pair of sessions is as far apart as possible (his Mon/Tue/
   //   Thu/Fri upper week → push/pull/legs/upper, back 48 h → 72 h). Pinned OFF in fp + sims.
   dp_split_layout_spacing_v1: { rollout: 1, default: true },
+  // dp_extra_day_recovered_v1 (2026-11-17, founder: "de ce nu recomanda, cu volum redus,
+  //   grupa care e cea mai recuperata?") — a session on a calendar rest day trains the
+  //   week's freshest cluster that stays clear of the next scheduled days (tomorrow's
+  //   groups read fatigued, the day after's partial) at sets x0.6 (min 2), instead of
+  //   pulling the next training day's slot forward. Pinned OFF in fp + sims.
+  dp_extra_day_recovered_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.
