@@ -324,7 +324,8 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
     await renderWorkoutAndWait();
     // 22.5 * 0.8 = 18 → snap pe bailib_stack default (Bench Press necartografiat)
     // = cea mai apropiata treapta reala = 20 (nu 18, masina nu poate fi setata la 18).
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg');
+    // waitFor: the empty exercise before the plan lands reads 5 kg (first rung).
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg'));
   });
 
   it('engine intensityMod plus creste target kg +15% + snap echipament (22.5 → 25.875 → 25)', async () => {
@@ -348,7 +349,8 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
   it('"Mai usor azi" → target kg -20% even with engine normal (22.5 → 18 → 20)', async () => {
     useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null, userIntensity: 'minus' });
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg');
+    // waitFor: same early 5 kg (empty exercise floored to the first rung) as the +15% cases.
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg'));
   });
 
   it('"Mai greu azi" → target kg +15% even with engine normal (22.5 → 25)', async () => {
