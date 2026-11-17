@@ -332,7 +332,10 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
     await renderWorkoutAndWait();
     // 22.5 * 1.15 = 25.875 → snap pe bailib_stack default = 25 (cea mai apropiata
     // treapta reala; 26 nu exista pe niciun aparat).
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg');
+    // waitFor: before the plan lands the empty exercise (0 kg) x 1.15 snaps to the first
+    // rung (5 kg), which already satisfies renderWorkoutAndWait's "not 0 kg" gate (full-
+    // suite load flake 2026-11-17).
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg'));
   });
 
   it('engine intensityMod normal pastreaza target kg neschimbat (22.5)', async () => {
@@ -351,7 +354,8 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
   it('"Mai greu azi" → target kg +15% even with engine normal (22.5 → 25)', async () => {
     useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null, userIntensity: 'plus' });
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg');
+    // waitFor: same early 5 kg (empty exercise x 1.15) as the engine-plus case above.
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg'));
   });
 
   it('self-report sessionContext NU mai multiplica weight (anti double-count)', async () => {

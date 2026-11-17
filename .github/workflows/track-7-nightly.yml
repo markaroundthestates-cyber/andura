@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       mutate:
-        description: 'Stryker --mutate globs (comma-separated). Empty = engine files changed in the last 26h.'
+        description: 'Stryker --mutate globs or file:start-end ranges (comma-separated). Empty = engine lines changed in the last 26h.'
         required: false
         default: ''
 
@@ -58,9 +58,20 @@ jobs:
           if [ -n "$MUTATE_INPUT" ]; then
             files="$MUTATE_INPUT"
           else
-            files=$(git log --since="26 hours ago" --name-only --pretty=format: -- src/engine \
-              | grep -E '\.(js|ts)$' | grep -vE '\.d\.ts$|__tests__|/tests/|\.test\.' \
-              | sort -u | while read -r p; do [ -f "$p" ] && echo "$p"; done | paste -sd, -)
+            # 2026-11-17: whole changed FILES still timed out (11-16 dispatch + 11-17 night:
+            # dp.js alone is 3k lines). Mutate only the changed LINES (Stryker file:start-end).
+            base=$(git rev-list -1 --before="26 hours ago" HEAD)
+            files=""
+            if [ -n "$base" ]; then
+              files=$(git diff -U0 "$base" HEAD -- src/engine | awk '
+                /^\+\+\+ / { f = $2; sub(/^b\//, "", f); if (f == "/dev/null") f = ""; next }
+                /^@@/ {
+                  if (f ~ /\.(js|ts)$/ && f !~ /\.d\.ts$|__tests__|\/tests\/|\.test\./) {
+                    split($3, a, ","); s = substr(a[1], 2) + 0; n = (a[2] == "") ? 1 : a[2] + 0
+                    if (n > 0) printf "%s:%d-%d\n", f, s, s + n - 1
+                  }
+                }' | paste -sd, -)
+            fi
           fi
           echo "files=$files" >> "$GITHUB_OUTPUT"
           echo "Stryker scope: ${files:-<none — no engine change>}"
