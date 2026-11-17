@@ -98,6 +98,10 @@ export interface PlannedExercise {
   // target (targetKg / targetReps) follows from set 2. Absent for straight-set lifts.
   openKg?: number;
   openReps?: number;
+  // dp_set_shape_v1 (dp/opener.js setShapeFrom) — his whole usual set shape for today
+  // (opener → top → back-offs), one {kg, reps} per planned set; the Workout screen
+  // resamples it onto the live set count. Absent for straight-set lifts.
+  setTargets?: ReadonlyArray<{ kg: number; reps: number }>;
   // For LOADED exercises: the external kg on the bar/stack (the load).
   // For BODYWEIGHT exercises: the ADDED weight (belt/dumbbell; default 0 =
   // pure bodyweight, negative = assisted). The TRAINING load used by

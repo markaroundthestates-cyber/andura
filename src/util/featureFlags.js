@@ -787,6 +787,11 @@ export const FLAGS = Object.freeze({
   //   groups read fatigued, the day after's partial) at sets x0.6 (min 2), instead of
   //   pulling the next training day's slot forward. Pinned OFF in fp + sims.
   dp_extra_day_recovered_v1: { rollout: 1, default: true },
+  // dp_set_shape_v1 (2026-11-17, the rest of "mereu maxim") — every set follows his usual
+  //   shape (opener → top → back-offs, dp/opener.js setShapeFrom) instead of the top on
+  //   every set after the opener: Lat 52 → 59 → 66, CS Row 70 → 80 → 70. Straight-set
+  //   lifts unchanged. Pinned OFF in fp + sims.
+  dp_set_shape_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.

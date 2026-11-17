@@ -349,19 +349,29 @@ export function Workout(): JSX.Element {
       ? roundToEquipmentWeight(currentExercise.targetKg * plusFactor, currentExercise.engineName ?? currentExercise.name)
       : currentExercise.targetKg;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
-  // dp_opener_set_v1 (dp/opener.js) — a lift he climbs on opens at his usual lighter
-  // load; set 1 offers it and the working target follows from set 2. Only on the
-  // session's own targets (an intensity-adapted day keeps straight targets).
-  const openKg =
-    !currentExercise.isBodyweight && intensityMod !== 'minus' && intensityMod !== 'plus' && typeof currentExercise.openKg === 'number'
-    && currentExercise.openKg > 0 && currentExercise.openKg < targetKg
-      ? currentExercise.openKg
-      : null;
-  const openReps =
-    openKg !== null && typeof currentExercise.openReps === 'number' && currentExercise.openReps > 0
-      ? currentExercise.openReps
-      : currentExercise.targetReps;
-  const opensLighter = openKg !== null && currentSetIdx === 0;
+  // dp_opener_set_v1 / dp_set_shape_v1 (dp/opener.js) — his usual set SHAPE: the lighter
+  // opener he climbs from, the top (targetKg), the back-offs after it. setTargets carries
+  // the whole shape (resampled onto today's set count); openKg alone = opener then target.
+  // Only on the session's own targets (an intensity-adapted day keeps straight targets).
+  const shapeAllowed = !currentExercise.isBodyweight && intensityMod !== 'minus' && intensityMod !== 'plus';
+  const setShape: ReadonlyArray<{ kg: number; reps: number }> | null =
+    shapeAllowed && Array.isArray(currentExercise.setTargets) && currentExercise.setTargets.length >= 2
+      ? currentExercise.setTargets
+      : shapeAllowed && typeof currentExercise.openKg === 'number' && currentExercise.openKg > 0 && currentExercise.openKg < targetKg
+        ? [
+          { kg: currentExercise.openKg, reps: currentExercise.openReps ?? currentExercise.targetReps },
+          ...Array.from({ length: Math.max(1, currentExercise.sets - 1) }, () => ({ kg: targetKg, reps: currentExercise.targetReps })),
+        ]
+        : null;
+  const slotAt = (k: number): { kg: number; reps: number } => {
+    const fallback = { kg: targetKg, reps: currentExercise.targetReps };
+    if (!setShape) return fallback;
+    const n = Math.max(1, currentExercise.sets);
+    const last = setShape.length - 1;
+    return setShape[n <= 1 ? last : Math.min(last, Math.max(0, Math.round((k * last) / (n - 1))))] ?? fallback;
+  };
+  const startSlot = slotAt(currentSetIdx);
+  const shapeKey = setShape ? setShape.map((x) => x.kg + 'x' + x.reps).join(',') : '';
   const isLastSetOfExercise =
     hasWorkout && currentSetIdx + 1 >= currentExercise.sets;
   // Founder UX 2026-06-06 — index of the next exercise with REAL work left: not
@@ -707,20 +717,20 @@ export function Workout(): JSX.Element {
   // in-session adjust notice — an auto-correction is scoped to the exercise it
   // fired on; carrying it onto the next exercise would mislead.
   useEffect(() => {
-    setKgInput(opensLighter && openKg !== null ? openKg : targetKg);
-    setRepsInput(opensLighter ? openReps : currentExercise.targetReps);
+    setKgInput(startSlot.kg);
+    setRepsInput(startSlot.reps);
     // #7 — seed the seconds entry from the prescribed duration on exercise change
     // (time/carry only; reps sets never read durationInput).
     setDurationInput(currentExercise.targetSec ?? 30);
     // Shared current-recommended-load resets to the per-exercise target on
     // exercise change — in-session autoreg bumps it from here within the set run.
-    setRecKg(opensLighter && openKg !== null ? openKg : targetKg);
-    setRecReps(opensLighter ? openReps : currentExercise.targetReps);
+    setRecKg(startSlot.kg);
+    setRecReps(startSlot.reps);
     setAdjustNotice(null);
-    // opensLighter reads the set index at the exercise change only (a resumed mid-exercise
-    // session starts on the working target); the post-log handler moves set 2 on.
+    // startSlot reads the set index at the exercise change only (a resumed mid-exercise
+    // session starts on its own slot); the post-log handler moves each next set.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeExIdx, targetKg, currentExercise.targetReps, currentExercise.targetSec, openKg, openReps]);
+  }, [safeExIdx, targetKg, currentExercise.targetReps, currentExercise.targetSec, shapeKey]);
 
   // §F-pass2-setloginput-02 — each new set begins at pre-log `tinta`. Keyed on
   // exercise (safeExIdx) + set index (currentSetIdx bumps when a set logs into
@@ -805,8 +815,8 @@ export function Workout(): JSX.Element {
     if (!hasWorkout) return;
     const identity = `${safeExIdx}:${currentEngineKey}`;
     const isTransition = identity !== recEmitRef.current.identity;
-    const shownKg = isTransition ? (opensLighter && openKg !== null ? openKg : targetKg) : recKg;
-    const shownReps = isTransition ? (opensLighter ? openReps : currentExercise.targetReps) : recReps;
+    const shownKg = isTransition ? startSlot.kg : recKg;
+    const shownReps = isTransition ? startSlot.reps : recReps;
     const sig = `${identity}:${currentSetIdx}:${shownKg}:${shownReps}`;
     if (sig === recEmitRef.current.sig) return; // post-reset re-render — already logged
     recEmitRef.current = { identity, sig };
@@ -1146,19 +1156,29 @@ export function Workout(): JSX.Element {
       } else {
         setAdjustNotice(null);
       }
-      // dp_opener_set_v1 — the opener is done: set 2 is the working target (or the
-      // engine's higher climb). A hard opener keeps the engine's ease.
-      if (opensLighter && adjust.dir !== 'down') {
-        const work = adjust.adjust && adjust.dir === 'up' && typeof adjust.newKg === 'number'
-          ? Math.max(targetKg, adjust.newKg)
-          : targetKg;
-        setRecKg(work);
-        setRecReps(currentExercise.targetReps);
-        if (!inputDirty) {
-          setKgInput(work);
-          setRepsInput(currentExercise.targetReps);
+      // dp_opener_set_v1 / dp_set_shape_v1 — the next set follows his shape. Climbing: the
+      // planned load (or the engine's higher climb); a hard set keeps the engine's ease.
+      // Backing off: the planned back-off, or the engine's ease when that is lower.
+      const curSlot = slotAt(currentSetIdx);
+      const nextSlot = slotAt(currentSetIdx + 1);
+      if (setShape && nextSlot.kg !== curSlot.kg) {
+        const engineKg = adjust.adjust && typeof adjust.newKg === 'number' ? adjust.newKg : null;
+        const climbing = nextSlot.kg > curSlot.kg;
+        if (!(climbing && adjust.dir === 'down')) {
+          const work = climbing
+            ? Math.max(nextSlot.kg, adjust.dir === 'up' && engineKg !== null ? engineKg : 0)
+            : Math.min(nextSlot.kg, engineKg ?? Infinity);
+          setRecKg(work);
+          setRecReps(nextSlot.reps);
+          if (!inputDirty) {
+            setKgInput(work);
+            setRepsInput(nextSlot.reps);
+          }
+          const key = climbing
+            ? (currentSetIdx === 0 ? 'workout.adjust.openerToWorking' : 'workout.adjust.shapeUp')
+            : 'workout.adjust.shapeDown';
+          setAdjustNotice(t(key, { kg: work, reps: nextSlot.reps }));
         }
-        setAdjustNotice(t('workout.adjust.openerToWorking', { kg: work, reps: currentExercise.targetReps }));
       }
 
       // D107 — capture the engine's post-input RE-RECOMMENDATION for the NEXT

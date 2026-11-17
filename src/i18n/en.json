@@ -389,6 +389,8 @@
       "potrivitWeight": "Noted - staying at {kg} kg on the next set",
       "egoCap": "You jumped up a lot and it got heavy - staying at {kg} kg to build it right",
       "openerToWorking": "Opener done - now your working set: {kg} kg x {reps}",
+      "shapeUp": "Next set: up to {kg} kg x {reps}",
+      "shapeDown": "Next set: down to {kg} kg x {reps}",
       "baselineNote": "First session - building your baseline. Recommendations start adapting from your next session."
     },
     "activeProbe": {

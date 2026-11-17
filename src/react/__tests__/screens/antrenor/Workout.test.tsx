@@ -2557,3 +2557,53 @@ describe('Workout — opening set before the working target', () => {
     expect(screen.getByTestId('setlog-tinta-kg')).not.toHaveTextContent('66 kg');
   });
 });
+
+// dp_set_shape_v1 — the whole shape: climbing and backing off after the top.
+describe('Workout — his usual set shape (setTargets)', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+  const withShape = (setTargets: Array<{ kg: number; reps: number }>, targetKg: number, targetReps: number) => ({
+    ...PHASE_5_FIXTURE,
+    exercises: [
+      { id: 'lat-pulldown', name: 'Lat Pulldown', engineName: 'Lat Pulldown', sets: 3, targetReps, targetKg, setTargets, restSec: 120 },
+      ...PHASE_5_FIXTURE.exercises.slice(1),
+    ],
+  });
+  const tinta = (): HTMLElement => screen.getByTestId('setlog-tinta-kg');
+
+  it('climbs 52 → 59 → 66 like his Lat Pulldown', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(withShape([{ kg: 52, reps: 9 }, { kg: 59, reps: 7 }, { kg: 66, reps: 6 }], 66, 6));
+    await renderWorkoutAndWait();
+    await waitFor(() => expect(tinta()).toHaveTextContent('52 kg'));
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(tinta()).toHaveTextContent('59 kg');
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('7');
+    backdate();
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(tinta()).toHaveTextContent('66 kg');
+  });
+
+  it('backs off after the top (70 → 80 → 70)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(withShape([{ kg: 70, reps: 11 }, { kg: 80, reps: 8 }, { kg: 70, reps: 9 }], 80, 8));
+    await renderWorkoutAndWait();
+    await waitFor(() => expect(tinta()).toHaveTextContent('70 kg'));
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(tinta()).toHaveTextContent('80 kg');
+    backdate();
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(tinta()).toHaveTextContent('70 kg');
+    expect(screen.getByTestId('insession-adjust-notice')).toHaveTextContent('70');
+  });
+
+  // Push the previous set into the past so the fast_sets guard (<30 s) stays quiet.
+  function backdate(): void {
+    const st = useWorkoutStore.getState();
+    const hist = st.history[0] ?? [];
+    useWorkoutStore.setState({ history: { ...st.history, 0: hist.map((h) => ({ ...h, timestamp: (h.timestamp ?? Date.now()) - 5 * 60_000 })) } });
+  }
+});
