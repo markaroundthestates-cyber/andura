@@ -153,4 +153,47 @@ describe('dp_drift_session_window_v1 — age window + per-session aggregation', 
     expect(v.ratingDrift).toBe(true);
     expect(v.drift).toBe(true);
   });
+
+  // dp_drift_systemic_regions_v1 (founder 2026-11-17: "azi mi-a aparut ca e deload week").
+  // His real shoulder rows (account dump 2026-11-17, last 21 days): Reverse Pec Deck 50
+  // at the end of push days, then hard after four sets of rows on 11-17; DB Lateral
+  // Raise 8 kg with one 12-rep set on 10-27 and 10/8 on 11-16.
+  it('two lifts of ONE region (rear + side delts) are local, not systemic', () => {
+    const rpd = desc([
+      { w: 50, reps: '10', rpe: 7.5, ts: 1793602381145, session: 1793600537645 },
+      { w: 50, reps: '8', rpe: 7.5, ts: 1793602482103, session: 1793600537645 },
+      { w: 50, reps: '8', rpe: 7.5, ts: 1793951291274, session: 1793947735180 },
+      { w: 50, reps: '7', rpe: 7.5, ts: 1793951426289, session: 1793947735180 },
+      { w: 50, reps: '8', rpe: 7.5, ts: 1794208583576, session: 1794206135922 },
+      { w: 50, reps: '9', rpe: 7.5, ts: 1794208710502, session: 1794206135922 },
+      { w: 50, reps: '8', rpe: 7.5, ts: 1794814720492, session: 1794810481417 },
+      { w: 50, reps: '9', rpe: 7.5, ts: 1794814840487, session: 1794810481417 },
+      { w: 50, reps: '8', rpe: 8.5, ts: 1794900820517, session: 1794897701927 },
+      { w: 41, reps: '8', rpe: 7.5, ts: 1794900944951, session: 1794897701927 },
+    ]);
+    const lat = desc([
+      { w: 8, reps: '12', rpe: 7.5, ts: 1793602596731, session: 1793600537645 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1793602701655, session: 1793600537645 },
+      { w: 8, reps: '9', rpe: 7.5, ts: 1793602815215, session: 1793600537645 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1793950386121, session: 1793947735180 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1793950565863, session: 1793947735180 },
+      { w: 8, reps: '9', rpe: 7.5, ts: 1793950654419, session: 1793947735180 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1794208852989, session: 1794206135922 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1794208958073, session: 1794206135922 },
+      { w: 8, reps: '9', rpe: 7.5, ts: 1794209073621, session: 1794206135922 },
+      { w: 8, reps: '11', rpe: 7.5, ts: 1794555218892, session: 1794552115306 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1794555398069, session: 1794552115306 },
+      { w: 8, reps: '9', rpe: 7.5, ts: 1794555529508, session: 1794552115306 },
+      { w: 8, reps: '10', rpe: 7.5, ts: 1794814305689, session: 1794810481417 },
+      { w: 8, reps: '8', rpe: 7.5, ts: 1794814450323, session: 1794810481417 },
+    ]);
+    const now = Date.UTC(2026, 10, 17, 8, 0); // 10:00 his time — the 21-day window still holds 10-27
+    const epley = (w, reps) => w * (1 + Number(reps) / 30);
+    const res = detectSubRecoveryDrift({ 'Reverse Pec Deck': rpd, 'DB Lateral Raise': lat }, now, epley);
+    expect(res.exercises.length).toBe(2);
+    expect(res.systemic).toBe(false);
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_drift_systemic_regions_v1: false }));
+    expect(detectSubRecoveryDrift({ 'Reverse Pec Deck': rpd, 'DB Lateral Raise': lat }, now, epley).systemic).toBe(true);
+    localStorage.removeItem('_devFlags');
+  });
 });

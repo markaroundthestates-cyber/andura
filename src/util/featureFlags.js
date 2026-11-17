@@ -771,6 +771,11 @@ export const FLAGS = Object.freeze({
   //   (or test-drive) returner opening "/" goes straight to /app/antrenor; the 2.6 s
   //   Splash stays the first-contact screen (routes/EntryRoute.tsx). UI only, no sim pin.
   splash_skip_returning_v1: { rollout: 1, default: true },
+  // dp_drift_systemic_regions_v1 (2026-11-17, founder: "azi mi-a aparut ca e deload week")
+  //   — the sub-recovery drift calls the body "systemic" only when lifts of >= 2 distinct
+  //   Big-11 groups drift; two shoulder lifts (Reverse Pec Deck + DB Lateral Raise) had
+  //   armed a full reactive deload. Pinned OFF in fp + sims.
+  dp_drift_systemic_regions_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.

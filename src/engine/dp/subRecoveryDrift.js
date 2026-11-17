@@ -20,6 +20,7 @@
 // once → {systemic:true}; a single exercise → {exercise-local} (narrate only).
 
 import { musclesForExercise } from '../muscleMap.js';
+import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { isEnabled } from '../../util/featureFlags.js';
 
 // ── Daniel-tunable (F6a §1f / §7 — DESIGN PROPOSAL, needs a sim sweep + sanity
@@ -206,7 +207,14 @@ export function detectSubRecoveryDrift(logsByEx, now, e1rmFn) {
   const enoughExercises = isEnabled('dp_drift_session_window_v1')
     ? driftingEx.length >= DRIFT_SYSTEMIC_GROUPS
     : true;
-  const systemic = groups.length >= DRIFT_SYSTEMIC_GROUPS && enoughExercises;
+  // dp_drift_systemic_regions_v1 (founder 2026-11-17: "azi mi-a aparut ca e deload week").
+  // Systemic under-recovery is the WHOLE body: two lifts of ONE region drifting is local.
+  // His Reverse Pec Deck (moved behind four sets of rows) + DB Lateral Raise read as
+  // delt_rear + rear_delt_trap + delt_mid = 3 heads → a full-body −12.5% reactive deload
+  // the Monday after his scheduled one. Count distinct Big-11 groups of the drifting lifts.
+  const regions = new Set(driftingEx.map((ex) => getExerciseMetadata(ex)?.muscle_target_primary).filter((g) => g && g !== 'unknown'));
+  const enoughRegions = !isEnabled('dp_drift_systemic_regions_v1') || regions.size >= DRIFT_SYSTEMIC_GROUPS;
+  const systemic = groups.length >= DRIFT_SYSTEMIC_GROUPS && enoughExercises && enoughRegions;
   // severity: 0 (none) .. 1 (broad) — share of drifting groups, capped. Narration
   // tiers + #32 read this; it never drives kg.
   const severity = systemic ? Math.min(1, groups.length / 4) : 0;
