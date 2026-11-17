@@ -25,6 +25,7 @@ import { resolveMaxKg } from '../../engine/dp/loadModel.js';
 import { onGymStations } from '../../engine/dp/gymProfile.js';
 import { onUsedVariants } from '../../engine/dp/usedVariant.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
+import { openerFrom } from '../../engine/dp/opener.js';
 import { warmupRampFor } from '../../engine/warmupRamp.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { getMetricType } from '../../engine/metricType.js';
@@ -409,6 +410,10 @@ function toPlannedExercise(
   // and a prescribed DURATION (targetSec) is emitted instead. A load may still ride
   // (a weighted plank / a farmer's-walk carry) — targetKg is kept as-is.
   const finalTargetReps = honorMetric ? 0 : targetReps;
+  // dp_opener_set_v1 — he climbs to a top set: set 1 offers his usual opener.
+  const opener = isEnabled('dp_opener_set_v1') && hasHistory && !isBw && !honorMetric && engineEx.sets >= 2
+    ? openerFrom(DP.getLogs(engineEx.name, 40), targetKg, (kg) => roundToEquipmentWeight(kg, engineEx.name))
+    : null;
   const targetSec = honorMetric ? METRIC_DEFAULT_SEC[metricType] : undefined;
   return {
     id: `${slug}-${idx}`,
@@ -438,6 +443,7 @@ function toPlannedExercise(
       ? { repsBand: (rec as unknown as { repsRange: string }).repsRange }
       : {}),
     targetKg,
+    ...(opener ? { openKg: opener.kg, ...(opener.reps ? { openReps: opener.reps } : {}) } : {}),
     // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
     // NOT the prior hardcoded 90 for every exercise.
     restSec: resolveRestSec(engineEx.name, restRange),

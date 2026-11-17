@@ -388,6 +388,7 @@
       "underReps": "A fost prea greu - coboram la {reps} reps pe setul urmator",
       "potrivitWeight": "Am notat - ramanem la {kg} kg pe setul urmator",
       "egoCap": "Ai sarit prea sus si a fost prea greu - ramanem la {kg} kg sa construim corect",
+      "openerToWorking": "Gata deschiderea - acum seria de lucru: {kg} kg x {reps}",
       "baselineNote": "Prima sesiune - iti construiesc baseline-ul. Recomandarile se adapteaza de la sesiunea urmatoare."
     },
     "activeProbe": {

@@ -164,6 +164,78 @@ export function ownLoadsForGuard(ex) {
   return isEnabled('dp_anomaly_own_history_v1') && typeof ex === 'string' ? usedLoads(ex) : null;
 }
 
+// ── dp_refused_rungs_v1 (founder 2026-11-17: "pe aparatul de reverse pec deck nu exista
+// 45kg cat recomanda andura") ──────────────────────────────────────────────────────
+// His Reverse Pec Deck reads on the Matrix cable grid (4.5 kg rungs), but that machine
+// steps 41 → 50: after a hard 50 the ease offered 45 and he set 41. A rung the app
+// offered and he stepped PAST, in the direction it was taking him, and never set in the
+// window, is not on his machine. Offer = the rec stored with the set (`rk`), or — for
+// rows logged before `rk` existed — the one-step ease a hard set triggers (`easeStep`,
+// the station's raw step down). A rung he stopped SHORT of (declined a climb) is not
+// refused, and setting it again later un-refuses it (the window is recomputed).
+
+/**
+ * Rungs he stepped past, ascending. PURE given the rows.
+ * @param {Array<{ex?: string, w?: number, ts?: number, rpe?: number, rk?: number, session?: number}>} rows
+ * @param {string} ex
+ * @param {(w: number) => number} [easeStep] the station's raw one-step-down from w
+ * @returns {number[]}
+ */
+export function refusedRungsFromRows(rows, ex, easeStep) {
+  if (!Array.isArray(rows) || typeof ex !== 'string' || !ex) return [];
+  let newest = 0;
+  for (const l of rows) { const t = Number(l && l.ts); if (Number.isFinite(t) && t > newest) newest = t; }
+  const since = newest - USED_WINDOW_DAYS * 86400000;
+  const matches = loggedRowMatcher(ex);
+  const mine = rows
+    .filter((l) => l && Number(l.ts) >= since && matches(l) && Number(l.w) > 0)
+    .sort((a, b) => Number(a.ts) - Number(b.ts));
+  const logged = new Set(mine.map((l) => round05(Number(l.w))));
+  const refused = new Set();
+  for (let i = 1; i < mine.length; i++) {
+    const r = mine[i];
+    const prev = mine[i - 1];
+    const rk = Number(r.rk);
+    const sameSession = r.session != null && r.session === prev.session;
+    const offered = Number.isFinite(rk) && rk > 0 ? rk
+      : (sameSession && Number(prev.rpe) >= 8.5 && typeof easeStep === 'function' ? easeStep(Number(prev.w)) : NaN);
+    if (!(offered > 0)) continue;
+    const o = round05(offered);
+    const b = round05(Number(prev.w));
+    const w = round05(Number(r.w));
+    if (logged.has(o)) continue;
+    if ((o < b && w < o) || (o > b && w > o)) refused.add(o);
+  }
+  return [...refused].sort((a, b) => a - b);
+}
+
+let _refusedRaw = /** @type {string|null|undefined} */ (undefined);
+/** @type {Map<string, number[]>} */
+let _refusedCache = new Map();
+
+/**
+ * Memoized refusedRungsFromRows over the live logs (empty with the flag off).
+ * @param {string} ex @param {(w: number) => number} [easeStep] @returns {number[]}
+ */
+export function refusedRungs(ex, easeStep) {
+  if (!isEnabled('dp_refused_rungs_v1') || typeof ex !== 'string' || !ex) return [];
+  const rows = _rows();
+  if (_refusedRaw !== _rawCache) { _refusedRaw = _rawCache; _refusedCache = new Map(); }
+  if (!_refusedCache.has(ex)) _refusedCache.set(ex, refusedRungsFromRows(rows, ex, easeStep));
+  return /** @type {number[]} */ (_refusedCache.get(ex));
+}
+
+/**
+ * The rungs minus the ones he refused (within 0.5 kg). Keeps the list when fewer than
+ * two rungs would remain. PURE. @param {number[]} steps @param {number[]} refused
+ * @returns {number[]}
+ */
+export function withoutRefused(steps, refused) {
+  if (!Array.isArray(steps) || !refused || !refused.length) return steps;
+  const kept = steps.filter((s) => !refused.some((r) => Math.abs(r - s) <= 0.5));
+  return kept.length >= 2 ? kept : steps;
+}
+
 /**
  * The increment of his machine from his rungs: the modal adjacent gap when two gaps
  * agree, else the top gap (where a climb continues). PURE. @param {number[]} rungs

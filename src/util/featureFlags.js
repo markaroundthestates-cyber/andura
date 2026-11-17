@@ -750,6 +750,23 @@ export const FLAGS = Object.freeze({
   //   day and the day's budget asks for more than 3 sets, it may carry 4 (the emphasized
   //   isolation ceiling). Pinned OFF in fp + sims.
   dp_lone_mev_four_sets_v1: { rollout: 1, default: true },
+  // dp_refused_rungs_v1 (2026-11-17, founder: "pe aparatul de reverse pec deck nu exista
+  //   45kg cat recomanda andura") — a rung the app offered and he stepped past (45 offered
+  //   after a hard 50, he set 41), never set in 90 days, leaves that lift's ladder; the rec
+  //   shown is stored with each set (`rk`). Pinned OFF in fp + sims.
+  dp_refused_rungs_v1: { rollout: 1, default: true },
+  // dp_prefatigue_relative_v1 (2026-11-17, founder: after rows + pulldowns + curls the
+  //   Reverse Pec Deck still asked 50x10, "nu cred ca ia in calcul fatigue") — the rec
+  //   compares the work done before the lift TODAY with the work before it in the session
+  //   its rec comes from, and takes the difference off (kg on a fine ladder, reps on a
+  //   coarse one); replaces the absolute synergist discount the PR floor always cancelled.
+  //   Pinned OFF in fp + sims.
+  dp_prefatigue_relative_v1: { rollout: 1, default: true },
+  // dp_opener_set_v1 (2026-11-17, founder: his partner's Andura "ii recomanda mereu
+  //   maxim") — a lifter who opens lighter and climbs to a top set (52 → 59 → 66) gets
+  //   set 1 at his usual opening ratio of the target; the working target follows from
+  //   set 2 (dp/opener.js + Workout screen). Pinned OFF in fp + sims.
+  dp_opener_set_v1: { rollout: 1, default: true },
   // dp_pace_duration_v1 (2026-11-16, founder: Andura said 49 min for his Monday, he took 72)
   //   — the estimated duration is shown in the user's own pace (median real/estimated over
   //   his last 8 sessions, clamped 0.8-1.8). Display only; the time trim is unchanged.

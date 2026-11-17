@@ -6,7 +6,8 @@ import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../const
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getPrevWeightGym, getNextWeightGym, getEquipmentType } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
-import { loggedRowMatcher, canonicalLoggedName, matchedLogs, loggedExerciseNames } from './dp/logIdentity.js';
+import { loggedRowMatcher, canonicalLoggedName, matchedLogs, loggedExerciseNames, allLoggedRows } from './dp/logIdentity.js';
+import { applyRelativePreFatigue, fatiguedReps } from './dp/preFatigue.js';
 import { reconcileFloorUp, reconcileLadderStep } from './dp/ladderReconcile.js';
 import { subfloorDemoW } from './dp/demoFloorSubfloor.js';
 import { now as clockNow } from './clock.js';
@@ -2676,7 +2677,7 @@ export const DP = {
     // load axis is reps, not external kg). Orthogonal to _recordSessionBias (load-
     // deviation bucket EMA) and muscleRecovery (across-session hours) — no double-
     // count: those never see this session's plan-ordered synergist volume.
-    const synergistLoad = this.accumulateSynergistLoad(priorExercises || []);
+    const synergistLoad = isEnabled('dp_prefatigue_relative_v1') ? applyRelativePreFatigue(this, ex, result, priorExercises, allLoggedRows() ?? DB.get('logs')) : this.accumulateSynergistLoad(priorExercises || []);
     const discountFraction = this.synergistDiscountFraction(ex, synergistLoad);
     if (discountFraction > 0 && Number.isFinite(result.kg) && result.kg > 0) {
       const preKg = result.kg;
@@ -2840,6 +2841,7 @@ export const DP = {
     }
     // dp_reps_follow_recent_v1: reps capped at what he did at this load recently + 1 (dp/followRecent.js).
     if (isEnabled('dp_reps_follow_recent_v1') && !result.returnDeload && Number.isFinite(result.repsTarget) && result.kg > 0) result.repsTarget = followRecentReps(this.getLogs(ex, 12), result.kg, result.repsTarget);
+    if (result.preFatigueReps > 0 && Number.isFinite(result.repsTarget)) result.repsTarget = fatiguedReps(result, result.repsTarget); // dp_prefatigue_relative_v1, after the goal band
     const rTarget = result.repsTarget || rMinSafe;
     const rLow = Math.max(isEnabled('dp_reps_follow_recent_v1') && rTarget < rMinSafe ? rTarget : rMinSafe, rTarget - 1);
     const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);

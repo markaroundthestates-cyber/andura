@@ -5,7 +5,7 @@ import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
 import { activeGymStepsForType, activeGym } from '../engine/dp/gymProfile.js';
-import { loggedRungs, usedLoads, rungStep } from '../engine/dp/loggedRungs.js';
+import { loggedRungs, usedLoads, rungStep, refusedRungs } from '../engine/dp/loggedRungs.js';
 import { getExerciseMetadata } from '../engine/exerciseLibrary.js';
 
 /** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
@@ -423,6 +423,11 @@ function getList(exerciseName) {
  * @param {string} exerciseName
  */
 export function getNextWeight(current, exerciseName) {
+  return _pastRefused(_nextWeight(current, exerciseName), exerciseName, _nextWeight, 1);
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _nextWeight(current, exerciseName) {
   const own = _loggedStep(current, exerciseName, 1);
   if (own !== null) return own;
   return _towardLogged(current, exerciseName, 1, _genericNext(current, exerciseName));
@@ -452,6 +457,11 @@ function _genericNext(current, exerciseName) {
  * @param {string} exerciseName
  */
 export function getPrevWeight(current, exerciseName) {
+  return _pastRefused(_prevWeight(current, exerciseName), exerciseName, _prevWeight, -1);
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _prevWeight(current, exerciseName) {
   return _towardLogged(current, exerciseName, -1, _genericPrev(current, exerciseName));
 }
 
@@ -556,6 +566,39 @@ function _loggedStep(current, ex, dir) {
   return grid !== undefined ? Math.min(current + st, grid) : current + st;
 }
 
+// ── dp_refused_rungs_v1 (founder 2026-11-17: "pe aparatul de reverse pec deck nu exista
+// 45kg cat recomanda andura") — a rung he stepped past is not on his machine
+// (dp/loggedRungs refusedRungs). Applied at the OUTPUT of every step + snap, so it holds
+// whichever ladder produced the rung (gym stack, logged rungs, a top-of-grid
+// extrapolation). The legacy-row inference replays the RAW ease (the guard below keeps
+// the lookup from filtering itself).
+let _readingRefused = false;
+/** @param {string} ex @returns {number[]} */
+function _refused(ex) {
+  if (_readingRefused || typeof ex !== 'string') return [];
+  _readingRefused = true;
+  try {
+    return refusedRungs(ex, (w) => _prevWeightGym(w, ex));
+  } finally {
+    _readingRefused = false;
+  }
+}
+/** @param {number} w @param {string} ex */
+function _isRefused(w, ex) {
+  if (!Number.isFinite(w)) return false;
+  return _refused(ex).some((r) => Math.abs(r - w) <= 0.5);
+}
+/** Keep stepping the same way while the rung is refused (bounded; a stuck step stops).
+ *  @param {number} r @param {string} ex @param {(c:number, e:string)=>number} step @param {1|-1} dir */
+function _pastRefused(r, ex, step, dir) {
+  for (let i = 0; i < 8 && _isRefused(r, ex); i++) {
+    const n = step(r, ex);
+    if (dir < 0 ? !(n < r) : !(n > r)) break;
+    r = n;
+  }
+  return r;
+}
+
 /** The hard-coded grid of the lift's station type (no learned refinement — that may be
  *  an old gym's). @param {string} ex @returns {number[]} */
 function _typeGrid(ex) {
@@ -585,8 +628,13 @@ function _activeGymLadder(exerciseName) {
  *  byte-identical getNextWeight. Above the top rung clamps to it (no extrapolation —
  *  the machine has no higher pin). @param {number} current @param {string} exerciseName */
 export function getNextWeightGym(current, exerciseName) {
+  return _pastRefused(_nextWeightGym(current, exerciseName), exerciseName, _nextWeightGym, 1);
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _nextWeightGym(current, exerciseName) {
   const gym = _activeGymLadder(exerciseName);
-  if (!gym) return getNextWeight(current, exerciseName);
+  if (!gym) return _nextWeight(current, exerciseName);
   const idx = gym.findIndex((w) => w > current);
   return idx === -1 ? (gym[gym.length - 1] ?? current) : gym[idx];
 }
@@ -595,8 +643,13 @@ export function getNextWeightGym(current, exerciseName) {
  *  byte-identical getPrevWeight. Largest rung strictly below current; at/under the
  *  floor holds the floor. @param {number} current @param {string} exerciseName */
 export function getPrevWeightGym(current, exerciseName) {
+  return _pastRefused(_prevWeightGym(current, exerciseName), exerciseName, _prevWeightGym, -1);
+}
+
+/** @param {number} current @param {string} exerciseName */
+function _prevWeightGym(current, exerciseName) {
   const gym = _activeGymLadder(exerciseName);
-  if (!gym) return getPrevWeight(current, exerciseName);
+  if (!gym) return _prevWeight(current, exerciseName);
   let prev = gym[0];
   for (const w of gym) { if (w < current) prev = w; else break; }
   return prev;
@@ -616,6 +669,19 @@ export function getPrevWeightGym(current, exerciseName) {
  *   too, so it is safe to always pass ctx once wired.
  */
 export function roundToEquipmentWeight(weight, exerciseName, ctx) {
+  const snapped = _roundToEquipmentWeight(weight, exerciseName, ctx);
+  if (!_isRefused(snapped, exerciseName)) return snapped;
+  // A refused rung is not on his machine: the nearer real neighbour (a tie → the lighter).
+  const lo = getPrevWeightGym(snapped, exerciseName);
+  const hi = getNextWeightGym(snapped, exerciseName);
+  const okLo = lo < snapped && !_isRefused(lo, exerciseName);
+  const okHi = hi > snapped && !_isRefused(hi, exerciseName);
+  if (okLo && okHi) return Math.abs(hi - weight) < Math.abs(lo - weight) ? hi : lo;
+  return okLo ? lo : okHi ? hi : snapped;
+}
+
+/** @param {number} weight @param {string} exerciseName @param {{ladderAware?:boolean, curatedSteps?:ReadonlyArray<number>}} [ctx] */
+function _roundToEquipmentWeight(weight, exerciseName, ctx) {
   // dp_logged_loads_sacred_v1 — a load he set >= 2x on this exercise in 90 days is a
   // real rung of the machine he uses: never snapped away, by any ladder (dp/loggedRungs).
   const used = isEnabled('dp_logged_loads_sacred_v1') && Number.isFinite(weight) && typeof exerciseName === 'string'

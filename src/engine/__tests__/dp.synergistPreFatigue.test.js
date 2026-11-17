@@ -45,6 +45,9 @@ beforeEach(() => {
   try {
     localStorage.setItem('_devFlags', JSON.stringify({
       dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+      // The LEGACY absolute discount under test; dp_prefatigue_relative_v1 replaces it
+      // (covered in dp/__tests__/preFatigue.test.js).
+      dp_prefatigue_relative_v1: false,
     }));
   } catch { /* jsdom always provides localStorage */ }
 });
@@ -218,7 +221,7 @@ describe('getSmartRecommendation — synergist discount NEVER drops below the PR
   it("Bayesian Curl logged 14×10 / 18×7 is NOT dropped to 9 by pre-fatigue — clamps at the proven floor", () => {
     try {
       localStorage.setItem('_devFlags', JSON.stringify({
-        dp_e1rm_v1: true, dp_transfer_coldstart_v1: true,
+        dp_e1rm_v1: true, dp_transfer_coldstart_v1: true, dp_prefatigue_relative_v1: false,
       }));
     } catch { /* jsdom */ }
     // His REAL backfill rows (2026-06-03): 14×10 potrivit, 18×7 (PR), 14×10 potrivit.
@@ -241,7 +244,7 @@ describe('getSmartRecommendation — synergist discount NEVER drops below the PR
     // pre-fatigue haircut that stays AT/ABOVE the demonstrated floor is still honored —
     // the clamp only blocks a drop BELOW proven capacity, it does not disable the
     // discount wholesale. With e1RM ON the floor is ~27, so a discount toward 27 holds.
-    try { localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true })); } catch { /* jsdom */ }
+    try { localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true, dp_prefatigue_relative_v1: false })); } catch { /* jsdom */ }
     const ts = Date.now() - 24 * 3600 * 1000;
     store['logs'] = [
       { ex: 'Cable Curl', w: 27, kg: 27, reps: '12', rpe: 7.5, ts, session: ts },

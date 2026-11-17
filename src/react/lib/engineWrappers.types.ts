@@ -93,6 +93,11 @@ export interface PlannedExercise {
   // Sourced from DP.getSmartRecommendation().repsRange at the compose boundary;
   // optional — preview rows fall back to targetReps when absent.
   repsBand?: string;
+  // dp_opener_set_v1 (dp/opener.js) — the lighter OPENING set a lifter who climbs to a
+  // top set usually starts with (his 52 before the 66). Set 1 offers it; the working
+  // target (targetKg / targetReps) follows from set 2. Absent for straight-set lifts.
+  openKg?: number;
+  openReps?: number;
   // For LOADED exercises: the external kg on the bar/stack (the load).
   // For BODYWEIGHT exercises: the ADDED weight (belt/dumbbell; default 0 =
   // pure bodyweight, negative = assisted). The TRAINING load used by

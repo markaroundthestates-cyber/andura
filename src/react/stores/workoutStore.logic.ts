@@ -168,6 +168,8 @@ export function buildLogEntriesFromSummary(
         // detectPR excludes these rows from prevBest (like baseline), so a false
         // anchor never becomes the record to beat.
         ...(s.calibration ? { calibration: true } : {}),
+        // dp_refused_rungs_v1 — the rec shown for this set (dp/loggedRungs refusedRungs).
+        ...(typeof s.recKg === 'number' && s.recKg > 0 ? { rk: s.recKg } : {}),
         // C17-METRIC-DURATION-LOST — persist the PERFORMED seconds for a
         // time/carry set so the durable log row records the real held work (was
         // lost as reps:0). Absent on reps sets → kg/reps consumers unchanged.

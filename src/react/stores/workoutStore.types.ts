@@ -106,6 +106,9 @@ export interface ExerciseHistoryEntry {
   // Istoric. Same finish-time-independence rationale as engineName. Optional for
   // backward compat.
   exerciseName?: string;
+  // dp_refused_rungs_v1 — the load the screen recommended for THIS set. Rides to the
+  // durable row as `rk` so a rung he steps past (offered 45, set 41) leaves the ladder.
+  recKg?: number;
   // CALIBRATION set (gym-log arc 2026-06-11): a benchmark over a cold-start rec
   // OR a massive manual jump (>= 1.5x rec) — a level-set, NOT a beaten record.
   // Rides into the durable `logs` row so detectPR (prEngine) excludes it from
@@ -175,6 +178,8 @@ export interface SessionExerciseBreakdown {
     // Gym-log arc 2026-06-11: calibration level-set marker (rides history →
     // breakdown → durable logs row; detectPR excludes it from prevBest).
     calibration?: boolean;
+    // dp_refused_rungs_v1 — the rec shown for this set (durable row `rk`).
+    recKg?: number;
     // C17-METRIC-DURATION-LOST — the PERFORMED seconds for a time/carry set
     // (Plank, Farmer's Walk, etc.). Captured live (ExerciseHistoryEntry.durationSec)
     // but was dropped at writeback, leaving the durable row at reps:0. Carried
@@ -260,6 +265,8 @@ export interface LogEntry {
   // as reps:0). Absent on reps/weight sets → engine consumers (PR/volume/DP read
   // w/kg/reps) unchanged.
   durationSec?: number;
+  // dp_refused_rungs_v1 — the load recommended for this set (dp/loggedRungs).
+  rk?: number;
 }
 
 export interface WorkoutState {

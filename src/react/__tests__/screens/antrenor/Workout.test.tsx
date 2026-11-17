@@ -2514,3 +2514,40 @@ describe('Workout — kg +/- step on the machine ladder', async () => {
     expect(Number(input().value) % 2.5).toBe(0);
   });
 });
+
+// dp_opener_set_v1 (founder 2026-11-17: his partner's Andura "ii recomanda mereu maxim").
+// The plan carries the lighter OPENING set he climbs from (dp/opener.js): set 1 offers it,
+// set 2 moves to the working target.
+describe('Workout — opening set before the working target', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+  const withOpener = {
+    ...PHASE_5_FIXTURE,
+    exercises: [
+      { id: 'lat-pulldown', name: 'Lat Pulldown', engineName: 'Lat Pulldown', sets: 3, targetReps: 6, targetKg: 66, openKg: 52, openReps: 9, restSec: 120 },
+      ...PHASE_5_FIXTURE.exercises.slice(1),
+    ],
+  };
+
+  it('set 1 offers his opener, set 2 the working target with a notice', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(withOpener);
+    await renderWorkoutAndWait();
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('52 kg'));
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('9');
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('66 kg');
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('6');
+    expect(screen.getByTestId('insession-adjust-notice')).toHaveTextContent('66');
+  });
+
+  it('a hard opener keeps the engine ease (no jump to the working target)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(withOpener);
+    await renderWorkoutAndWait();
+    await waitFor(() => expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('52 kg'));
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.getByTestId('setlog-tinta-kg')).not.toHaveTextContent('66 kg');
+  });
+});
